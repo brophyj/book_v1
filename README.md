@@ -1,1 +1,1 @@
-# book_v1
+# this is volume 1 of a future clinical epidemiology with R and includes the first 6 chapters
