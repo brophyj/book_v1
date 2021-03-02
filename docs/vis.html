@@ -13,7 +13,7 @@
   
   
   <meta property="og:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
-  <meta name="github-repo" content="brophyj/epi_book" />
+  <meta name="github-repo" content="brophyj/book_v1" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Chapter 3 Exploratory Data Analysis - Data visualization | (Mostly Clinical) Epidemiology with R" />
@@ -896,6 +896,7 @@ div.csl-indent {
 
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="" data-path="simple-acknowledgment-and-request.html"><a href="simple-acknowledgment-and-request.html"><i class="fa fa-check"></i>Simple acknowledgment and request</a></li>
 <li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
 <ul>
 <li class="chapter" data-level="1.0.1" data-path="intro.html"><a href="intro.html#r-packages-required-for-this-chapter"><i class="fa fa-check"></i><b>1.0.1</b> R packages required for this chapter</a></li>
@@ -1002,19 +1003,19 @@ div.csl-indent {
 <h1><span class="header-section-number">Chapter 3</span> Exploratory Data Analysis - Data visualization</h1>
 <div id="r-packages-required-for-this-chapter-2" class="section level3" number="3.0.1">
 <h3><span class="header-section-number">3.0.1</span> R packages required for this chapter</h3>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="vis.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dslabs)</span>
-<span id="cb1-2"><a href="vis.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-3"><a href="vis.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-4"><a href="vis.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
-<span id="cb1-5"><a href="vis.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
-<span id="cb1-6"><a href="vis.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
-<span id="cb1-7"><a href="vis.html#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(transformr)</span>
-<span id="cb1-8"><a href="vis.html#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dslabs) <span class="co"># contains gapminder data set, also found in gapminder package</span></span>
-<span id="cb1-9"><a href="vis.html#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HistData)</span>
-<span id="cb1-10"><a href="vis.html#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maptools)</span>
-<span id="cb1-11"><a href="vis.html#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rgdal)</span>
-<span id="cb1-12"><a href="vis.html#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(leaflet)</span>
-<span id="cb1-13"><a href="vis.html#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggmap)</span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="vis.html#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dslabs)</span>
+<span id="cb38-2"><a href="vis.html#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb38-3"><a href="vis.html#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb38-4"><a href="vis.html#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb38-5"><a href="vis.html#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
+<span id="cb38-6"><a href="vis.html#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb38-7"><a href="vis.html#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(transformr)</span>
+<span id="cb38-8"><a href="vis.html#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dslabs) <span class="co"># contains gapminder data set, also found in gapminder package</span></span>
+<span id="cb38-9"><a href="vis.html#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HistData)</span>
+<span id="cb38-10"><a href="vis.html#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maptools)</span>
+<span id="cb38-11"><a href="vis.html#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rgdal)</span>
+<span id="cb38-12"><a href="vis.html#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(leaflet)</span>
+<span id="cb38-13"><a href="vis.html#cb38-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggmap)</span></code></pre></div>
 </div>
 <div id="introduction" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> Introduction</h2>
@@ -1023,14 +1024,14 @@ div.csl-indent {
 <div class="figure"><span id="fig:unnamed-chunk-2"></span>
 <img src="img/rose.png" alt="Classic epidemiology visualizations - Nightingale's Rose" width="100%" />
 <p class="caption">
-Figure 3.1: Classic epidemiology visualizations - Nightingale’s Rose
+Figure 2.1: Classic epidemiology visualizations - Nightingale’s Rose
 </p>
 </div>
 <p><a href="https://en.wikipedia.org/wiki/Charles_Joseph_Minard">Charles Minard’s</a> 1869 publication of a flow map of Napoleon’s Russian 1812 campaign has been called best statistical graphic ever drawn by <a href="https://en.wikipedia.org/wiki/Edward_Tufte">Edward Tufte</a> who is a preeminent 21st century statistician and pioneer in the field of data visualization. The figure shows 6 six types of data in two dimensions: the number of Napoleon’s troops; the distance traveled; temperature; latitude and longitude; direction of travel; and location relative to specific dates. The chart tells with painful clarity the atrocious losses associated with this campaign as an initial force of 422,000 saw only only 10,000 return. On the retrurn trip 50% of the forces were lost while crossing the Bérézina river under heavy attack. “C’est la Bérézina” is a French expression used to describe a total disaster.</p>
 <div class="figure"><span id="fig:unnamed-chunk-3"></span>
 <img src="img/minard.png" alt="Classic epidemiology visualizations - Napoleon’s Russian 1812 Campaign " width="100%" />
 <p class="caption">
-Figure 3.2: Classic epidemiology visualizations - Napoleon’s Russian 1812 Campaign
+Figure 3.1: Classic epidemiology visualizations - Napoleon’s Russian 1812 Campaign
 </p>
 </div>
 </div>
@@ -1044,17 +1045,17 @@ Figure 3.2: Classic epidemiology visualizations - Napoleon’s Russian 1812 Camp
 * clarify your story for others<br />
 * inform / influence their decisions<br />
 * <strong>poor data visualizations can do the opposite!</strong></p>
-<p>As an example of an uninspired visualization, consider the frequently observed bar plot which is a regular item in scientific publications. Contrast the lack of information provided by the commonly used bar plot format (Figure <a href="vis.html#fig:bad">3.3</a>) (avoiding any association with inferiority simply because it was created with Excel) with the additional data insights provided by simple histograms and box plots (Figure <a href="vis.html#fig:better">3.4</a>).</p>
+<p>As an example of an uninspired visualization, consider the frequently observed bar plot which is a regular item in scientific publications. Contrast the lack of information provided by the commonly used bar plot format (Figure <a href="vis.html#fig:bad">3.2</a>) (avoiding any association with inferiority simply because it was created with Excel) with the additional data insights provided by simple histograms and box plots (Figure <a href="vis.html#fig:better">3.3</a>).</p>
 <div class="figure" style="text-align: center"><span id="fig:bad"></span>
 <img src="img/viz/bad.png" alt="Poor presentation - Bar plot" width="50%" />
 <p class="caption">
-Figure 3.3: Poor presentation - Bar plot
+Figure 3.2: Poor presentation - Bar plot
 </p>
 </div>
 <div class="figure"><span id="fig:better"></span>
 <img src="img/viz/better.png" alt="Improved presentation - histograms and box plots" width="100%" />
 <p class="caption">
-Figure 3.4: Improved presentation - histograms and box plots
+Figure 3.3: Improved presentation - histograms and box plots
 </p>
 </div>
 <p>As another example of an uninspired plot, consider the pie chart which has been rightly criticized as being difficult to understand as we are effectively being asked to compared angles and the area subtended by them rather than simply making linear comparisons as in barplots. Notwithstanding the presence of Steve Jobs with the pie chart, which visualization is easiest to understand?</p>
@@ -1063,7 +1064,7 @@ Figure 3.4: Improved presentation - histograms and box plots
 <div class="figure" style="text-align: left"><span id="fig:unnamed-chunk-4"></span>
 <img src="img/viz/jobs.png" alt="Pie chart (with Steve Jobs)" width="200%" />
 <p class="caption">
-Figure 3.5: Pie chart (with Steve Jobs)
+Figure 3.4: Pie chart (with Steve Jobs)
 </p>
 </div>
 </div>
@@ -1071,7 +1072,7 @@ Figure 3.5: Pie chart (with Steve Jobs)
 <div class="figure" style="text-align: right"><span id="fig:unnamed-chunk-5"></span>
 <img src="03-visualizations_files/figure-html/unnamed-chunk-5-1.png" alt="Bar plot (without Steve Jobs)" width="50%" />
 <p class="caption">
-Figure 3.6: Bar plot (without Steve Jobs)
+Figure 3.5: Bar plot (without Steve Jobs)
 </p>
 </div>
 </div>
@@ -1084,29 +1085,29 @@ Figure 3.6: Bar plot (without Steve Jobs)
 <div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-6"></span>
 <img src="img/un_graph.png" alt="Gapminder data" width="50%" />
 <p class="caption">
-Figure 3.7: Gapminder data
+Figure 3.6: Gapminder data
 </p>
 </div>
 <p>If the first plot we produce is of this quality, it will hopefully inspire us to realize what we can accomplish with data visualizations using <code>R</code>. While this may rightly not completely dispel the notion that a definitive learning curve is associated with<code>R</code>, it is certainly suggests it can be manageable. Here is the code that reproduces the graph.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="vis.html#cb2-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> gapminder <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2007</span>)</span>
-<span id="cb2-2"><a href="vis.html#cb2-2" aria-hidden="true" tabindex="-1"></a>un_graph <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(<span class="at">x =</span> gdp<span class="sc">/</span>population, <span class="at">y =</span> life_expectancy)) <span class="sc">+</span></span>
-<span id="cb2-3"><a href="vis.html#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> population, <span class="at">color =</span> continent), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb2-4"><a href="vis.html#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_smooth</span>(<span class="at">formula =</span> y <span class="sc">~</span> <span class="fu">log10</span>(x), <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">method =</span> <span class="st">&#39;gam&#39;</span>, <span class="at">linetype=</span><span class="st">&quot;dotted&quot;</span>) <span class="sc">+</span></span>
-<span id="cb2-5"><a href="vis.html#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;GDP per capita&quot;</span>) <span class="sc">+</span></span>
-<span id="cb2-6"><a href="vis.html#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Life expectancy at birth&quot;</span>) <span class="sc">+</span></span>
-<span id="cb2-7"><a href="vis.html#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_size_area</span>(<span class="at">guide =</span> <span class="cn">FALSE</span>, <span class="at">max_size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
-<span id="cb2-8"><a href="vis.html#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">50000</span>, <span class="at">by =</span> <span class="dv">10000</span>)) <span class="sc">+</span></span>
-<span id="cb2-9"><a href="vis.html#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Gapminder data from 2007&quot;</span>) <span class="sc">+</span></span>
-<span id="cb2-10"><a href="vis.html#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">&quot;Data from dslabs library&quot;</span>) <span class="sc">+</span></span>
-<span id="cb2-11"><a href="vis.html#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_brewer</span>(<span class="at">name =</span> <span class="st">&quot;&quot;</span>, <span class="at">palette =</span> <span class="st">&quot;Dark2&quot;</span>) <span class="sc">+</span></span>
-<span id="cb2-12"><a href="vis.html#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">&quot;Georgia&quot;</span>)</span>
-<span id="cb2-13"><a href="vis.html#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="vis.html#cb2-14" aria-hidden="true" tabindex="-1"></a>un_graph</span></code></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="vis.html#cb39-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> gapminder <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2007</span>)</span>
+<span id="cb39-2"><a href="vis.html#cb39-2" aria-hidden="true" tabindex="-1"></a>un_graph <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(<span class="at">x =</span> gdp<span class="sc">/</span>population, <span class="at">y =</span> life_expectancy)) <span class="sc">+</span></span>
+<span id="cb39-3"><a href="vis.html#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> population, <span class="at">color =</span> continent), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb39-4"><a href="vis.html#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_smooth</span>(<span class="at">formula =</span> y <span class="sc">~</span> <span class="fu">log10</span>(x), <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">method =</span> <span class="st">&#39;gam&#39;</span>, <span class="at">linetype=</span><span class="st">&quot;dotted&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-5"><a href="vis.html#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;GDP per capita&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-6"><a href="vis.html#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Life expectancy at birth&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-7"><a href="vis.html#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_size_area</span>(<span class="at">guide =</span> <span class="cn">FALSE</span>, <span class="at">max_size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
+<span id="cb39-8"><a href="vis.html#cb39-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">50000</span>, <span class="at">by =</span> <span class="dv">10000</span>)) <span class="sc">+</span></span>
+<span id="cb39-9"><a href="vis.html#cb39-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Gapminder data from 2007&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-10"><a href="vis.html#cb39-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">&quot;Data from dslabs library&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-11"><a href="vis.html#cb39-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_brewer</span>(<span class="at">name =</span> <span class="st">&quot;&quot;</span>, <span class="at">palette =</span> <span class="st">&quot;Dark2&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-12"><a href="vis.html#cb39-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">&quot;Georgia&quot;</span>)</span>
+<span id="cb39-13"><a href="vis.html#cb39-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-14"><a href="vis.html#cb39-14" aria-hidden="true" tabindex="-1"></a>un_graph</span></code></pre></div>
 <pre><code>## Warning: Removed 4 rows containing non-finite values (stat_smooth).</code></pre>
 <pre><code>## Warning: Removed 4 rows containing missing values (geom_point).</code></pre>
 <p><img src="03-visualizations_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="vis.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to save your figure</span></span>
-<span id="cb5-2"><a href="vis.html#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ggsave(&quot;files/un_graph.png&quot;)</span></span></code></pre></div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="vis.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to save your figure</span></span>
+<span id="cb42-2"><a href="vis.html#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ggsave(&quot;files/un_graph.png&quot;)</span></span></code></pre></div>
 <p>The code can be understood as follows;<br />
 1. We load the data which is available in both the <code>R</code> <code>Gapminder</code> and <code>dslabs</code> libraries (dslabs more complete).<br />
 2. As data exists every 5 years from 1952, we have selectrd only 2007 data to match the static plot<br />
@@ -1118,26 +1119,26 @@ Figure 3.7: Gapminder data
 8. Next purely aesthetic details such as a title, legends and a theme are added. As a beginner, and even as a more advanced user, it is not necessary to memorize all the possible formatting options as quick and accessible online resources are available to add these final refinements to your graphs (see <a href="https://ggplot2.tidyverse.org"></a></p>
 <p>Using the <code>gganimate</code> package, a fully animated graph can be made with the code below
 <img src="img/nations.gif" /><!-- --></p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="vis.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">### animated graph</span></span>
-<span id="cb6-2"><a href="vis.html#cb6-2" aria-hidden="true" tabindex="-1"></a>un_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(<span class="at">x =</span> gdpPercap, <span class="at">y =</span> lifeExp)) <span class="sc">+</span></span>
-<span id="cb6-3"><a href="vis.html#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> pop, <span class="at">color =</span> continent), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb6-4"><a href="vis.html#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_smooth</span>(<span class="at">formula =</span> y <span class="sc">~</span> <span class="fu">log10</span>(x), <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">method =</span> <span class="st">&#39;gam&#39;</span>, <span class="at">linetype=</span><span class="st">&quot;dotted&quot;</span>) <span class="sc">+</span></span>
-<span id="cb6-5"><a href="vis.html#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;GDP per capita&quot;</span>) <span class="sc">+</span></span>
-<span id="cb6-6"><a href="vis.html#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Life expectancy at birth&quot;</span>) <span class="sc">+</span></span>
-<span id="cb6-7"><a href="vis.html#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_size_area</span>(<span class="at">guide =</span> <span class="cn">FALSE</span>, <span class="at">max_size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
-<span id="cb6-8"><a href="vis.html#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar) <span class="sc">+</span></span>
-<span id="cb6-9"><a href="vis.html#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Gapminder data from 2007&quot;</span>) <span class="sc">+</span></span>
-<span id="cb6-10"><a href="vis.html#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">&quot;Data from gapminder library&quot;</span>) <span class="sc">+</span></span>
-<span id="cb6-11"><a href="vis.html#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_brewer</span>(<span class="at">name =</span> <span class="st">&quot;&quot;</span>, <span class="at">palette =</span> <span class="st">&quot;Dark2&quot;</span>) <span class="sc">+</span></span>
-<span id="cb6-12"><a href="vis.html#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">&quot;Georgia&quot;</span>) <span class="sc">+</span></span>
-<span id="cb6-13"><a href="vis.html#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># gganimate code</span></span>
-<span id="cb6-14"><a href="vis.html#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;{frame_time}&quot;</span>) <span class="sc">+</span></span>
-<span id="cb6-15"><a href="vis.html#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">transition_time</span>(year) <span class="sc">+</span></span>
-<span id="cb6-16"><a href="vis.html#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ease_aes</span>(<span class="st">&quot;linear&quot;</span>) <span class="sc">+</span></span>
-<span id="cb6-17"><a href="vis.html#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">enter_fade</span>() <span class="sc">+</span></span>
-<span id="cb6-18"><a href="vis.html#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">exit_fade</span>()</span>
-<span id="cb6-19"><a href="vis.html#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-20"><a href="vis.html#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="fu">animate</span>(un_plot)</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="vis.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="do">### animated graph</span></span>
+<span id="cb43-2"><a href="vis.html#cb43-2" aria-hidden="true" tabindex="-1"></a>un_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(<span class="at">x =</span> gdpPercap, <span class="at">y =</span> lifeExp)) <span class="sc">+</span></span>
+<span id="cb43-3"><a href="vis.html#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> pop, <span class="at">color =</span> continent), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb43-4"><a href="vis.html#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_smooth</span>(<span class="at">formula =</span> y <span class="sc">~</span> <span class="fu">log10</span>(x), <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">method =</span> <span class="st">&#39;gam&#39;</span>, <span class="at">linetype=</span><span class="st">&quot;dotted&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-5"><a href="vis.html#cb43-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;GDP per capita&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-6"><a href="vis.html#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Life expectancy at birth&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-7"><a href="vis.html#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_size_area</span>(<span class="at">guide =</span> <span class="cn">FALSE</span>, <span class="at">max_size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
+<span id="cb43-8"><a href="vis.html#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar) <span class="sc">+</span></span>
+<span id="cb43-9"><a href="vis.html#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Gapminder data from 2007&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-10"><a href="vis.html#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">&quot;Data from gapminder library&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-11"><a href="vis.html#cb43-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_brewer</span>(<span class="at">name =</span> <span class="st">&quot;&quot;</span>, <span class="at">palette =</span> <span class="st">&quot;Dark2&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-12"><a href="vis.html#cb43-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">&quot;Georgia&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-13"><a href="vis.html#cb43-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># gganimate code</span></span>
+<span id="cb43-14"><a href="vis.html#cb43-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;{frame_time}&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-15"><a href="vis.html#cb43-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">transition_time</span>(year) <span class="sc">+</span></span>
+<span id="cb43-16"><a href="vis.html#cb43-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ease_aes</span>(<span class="st">&quot;linear&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-17"><a href="vis.html#cb43-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">enter_fade</span>() <span class="sc">+</span></span>
+<span id="cb43-18"><a href="vis.html#cb43-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">exit_fade</span>()</span>
+<span id="cb43-19"><a href="vis.html#cb43-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-20"><a href="vis.html#cb43-20" aria-hidden="true" tabindex="-1"></a><span class="fu">animate</span>(un_plot)</span></code></pre></div>
 <p>While we are considering this international data source, let’s see how you do with a simple quiz.<br />
 Q1. Which countries in each pair have the highest child mortality (2015)?<br />
 Q2. Which pairs of countries are most similar?<br />
@@ -1147,54 +1148,54 @@ Q2. Which pairs of countries are most similar?<br />
 * Pakistan or Vietnam<br />
 * Thailand or South Africa</p>
 <p>Now as it is unlikely that you have actual knowledge of country specific mortality data, most individuals will attempt to employ some heuristic to help answer the question. One such heuristic would say <em>“European countries lower child mortality than non-European”</em>. Following that heuristic, our answers might be: Sri Lanka, South Korea, Malaysia with Pakistan or Vietnam and Thailand or South Africa as non-European countries being the most similar. Fortunately we can do better by analyzing the <code>gapminder</code> dataset</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="vis.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="do">## A bit of code</span></span>
-<span id="cb7-2"><a href="vis.html#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dslabs) <span class="co">#source of gapminder data</span></span>
-<span id="cb7-3"><a href="vis.html#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(gapminder)</span>
-<span id="cb7-4"><a href="vis.html#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="vis.html#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># write a simple function for the comparison between 2 countries</span></span>
-<span id="cb7-6"><a href="vis.html#cb7-6" aria-hidden="true" tabindex="-1"></a>compare_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y){</span>
-<span id="cb7-7"><a href="vis.html#cb7-7" aria-hidden="true" tabindex="-1"></a>    gapminder <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="st">&quot;2015&quot;</span> <span class="sc">&amp;</span> country <span class="sc">%in%</span> <span class="fu">c</span>(x, y)) <span class="sc">%&gt;%</span></span>
-<span id="cb7-8"><a href="vis.html#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(country, infant_mortality)</span>
-<span id="cb7-9"><a href="vis.html#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-10"><a href="vis.html#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-11"><a href="vis.html#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Sri Lanka&quot;</span>, <span class="st">&quot;Turkey&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="vis.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="do">## A bit of code</span></span>
+<span id="cb44-2"><a href="vis.html#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dslabs) <span class="co">#source of gapminder data</span></span>
+<span id="cb44-3"><a href="vis.html#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(gapminder)</span>
+<span id="cb44-4"><a href="vis.html#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="vis.html#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co"># write a simple function for the comparison between 2 countries</span></span>
+<span id="cb44-6"><a href="vis.html#cb44-6" aria-hidden="true" tabindex="-1"></a>compare_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y){</span>
+<span id="cb44-7"><a href="vis.html#cb44-7" aria-hidden="true" tabindex="-1"></a>    gapminder <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="st">&quot;2015&quot;</span> <span class="sc">&amp;</span> country <span class="sc">%in%</span> <span class="fu">c</span>(x, y)) <span class="sc">%&gt;%</span></span>
+<span id="cb44-8"><a href="vis.html#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(country, infant_mortality)</span>
+<span id="cb44-9"><a href="vis.html#cb44-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-10"><a href="vis.html#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-11"><a href="vis.html#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Sri Lanka&quot;</span>, <span class="st">&quot;Turkey&quot;</span>)</span></code></pre></div>
 <pre><code>##     country infant_mortality
 ## 1 Sri Lanka              8.4
 ## 2    Turkey             11.6</code></pre>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="vis.html#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Poland&quot;</span>, <span class="st">&quot;South Korea&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="vis.html#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Poland&quot;</span>, <span class="st">&quot;South Korea&quot;</span>)</span></code></pre></div>
 <pre><code>##       country infant_mortality
 ## 1 South Korea              2.9
 ## 2      Poland              4.5</code></pre>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="vis.html#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Malaysia&quot;</span>, <span class="st">&quot;Russia&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="vis.html#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Malaysia&quot;</span>, <span class="st">&quot;Russia&quot;</span>)</span></code></pre></div>
 <pre><code>##    country infant_mortality
 ## 1 Malaysia              6.0
 ## 2   Russia              8.2</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="vis.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Pakistan&quot;</span>, <span class="st">&quot;Vietnam&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="vis.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Pakistan&quot;</span>, <span class="st">&quot;Vietnam&quot;</span>)</span></code></pre></div>
 <pre><code>##    country infant_mortality
 ## 1 Pakistan             65.8
 ## 2  Vietnam             17.3</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="vis.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Thailand&quot;</span>, <span class="st">&quot;South Africa&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="vis.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Thailand&quot;</span>, <span class="st">&quot;South Africa&quot;</span>)</span></code></pre></div>
 <pre><code>##        country infant_mortality
 ## 1 South Africa             33.6
 ## 2     Thailand             10.5</code></pre>
 <p>If we were merely ignorant we might have expected to get 2.5 answers right but it seems if we followed our heuristic we would have got 0 right answers implying we are more than simply ignorant but actually misinformed! We can use the same dataset to query our heuristic about better survival in European countries.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="vis.html#cb17-1" aria-hidden="true" tabindex="-1"></a>gapminder <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">&quot;Asia&quot;</span> <span class="sc">|</span> continent <span class="sc">==</span> <span class="st">&quot;Europe&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb17-2"><a href="vis.html#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1962</span>, <span class="dv">1980</span>, <span class="dv">1990</span>, <span class="dv">2012</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb17-3"><a href="vis.html#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(fertility, infant_mortality, <span class="at">color=</span> continent)) <span class="sc">+</span> </span>
-<span id="cb17-4"><a href="vis.html#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="at">cols =</span> <span class="fu">vars</span>(year)) <span class="sc">+</span></span>
-<span id="cb17-5"><a href="vis.html#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb17-6"><a href="vis.html#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">200</span>) <span class="sc">+</span></span>
-<span id="cb17-7"><a href="vis.html#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Infant mortality over time&quot;</span>) <span class="sc">+</span></span>
-<span id="cb17-8"><a href="vis.html#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="vis.html#cb54-1" aria-hidden="true" tabindex="-1"></a>gapminder <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">&quot;Asia&quot;</span> <span class="sc">|</span> continent <span class="sc">==</span> <span class="st">&quot;Europe&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-2"><a href="vis.html#cb54-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1962</span>, <span class="dv">1980</span>, <span class="dv">1990</span>, <span class="dv">2012</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-3"><a href="vis.html#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(fertility, infant_mortality, <span class="at">color=</span> continent)) <span class="sc">+</span> </span>
+<span id="cb54-4"><a href="vis.html#cb54-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="at">cols =</span> <span class="fu">vars</span>(year)) <span class="sc">+</span></span>
+<span id="cb54-5"><a href="vis.html#cb54-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb54-6"><a href="vis.html#cb54-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">200</span>) <span class="sc">+</span></span>
+<span id="cb54-7"><a href="vis.html#cb54-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Infant mortality over time&quot;</span>) <span class="sc">+</span></span>
+<span id="cb54-8"><a href="vis.html#cb54-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span></code></pre></div>
 <pre><code>## Warning: Removed 53 rows containing missing values (geom_point).</code></pre>
 <p><img src="03-visualizations_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="vis.html#cb19-1" aria-hidden="true" tabindex="-1"></a>gapminder <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">&quot;Asia&quot;</span> <span class="sc">|</span> continent <span class="sc">==</span> <span class="st">&quot;Europe&quot;</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-2"><a href="vis.html#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1962</span>, <span class="dv">1980</span>, <span class="dv">1990</span>, <span class="dv">2012</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb19-3"><a href="vis.html#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(fertility, life_expectancy, <span class="at">color=</span> continent)) <span class="sc">+</span> </span>
-<span id="cb19-4"><a href="vis.html#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="at">cols =</span> <span class="fu">vars</span>(year)) <span class="sc">+</span></span>
-<span id="cb19-5"><a href="vis.html#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
-<span id="cb19-6"><a href="vis.html#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Life expectancy over time&quot;</span>) <span class="sc">+</span></span>
-<span id="cb19-7"><a href="vis.html#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="vis.html#cb56-1" aria-hidden="true" tabindex="-1"></a>gapminder <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">&quot;Asia&quot;</span> <span class="sc">|</span> continent <span class="sc">==</span> <span class="st">&quot;Europe&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-2"><a href="vis.html#cb56-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1962</span>, <span class="dv">1980</span>, <span class="dv">1990</span>, <span class="dv">2012</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-3"><a href="vis.html#cb56-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(fertility, life_expectancy, <span class="at">color=</span> continent)) <span class="sc">+</span> </span>
+<span id="cb56-4"><a href="vis.html#cb56-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="at">cols =</span> <span class="fu">vars</span>(year)) <span class="sc">+</span></span>
+<span id="cb56-5"><a href="vis.html#cb56-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb56-6"><a href="vis.html#cb56-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Life expectancy over time&quot;</span>) <span class="sc">+</span></span>
+<span id="cb56-7"><a href="vis.html#cb56-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span></code></pre></div>
 <p><img src="03-visualizations_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
 <p>These graphs show that the heuristic of improved infant and overall life expectancy among European countries was true 60 years ago but is no longer today’s truth. This underlines the need to continually question our baseline assumptions.</p>
 </div>
@@ -1211,21 +1212,21 @@ The most common visualization methods are:<br />
 <div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-12"></span>
 <img src="img/graphs.png" alt="Data visualization -&gt; Quick understanding of data" width="1000%" />
 <p class="caption">
-Figure 3.8: Data visualization -&gt; Quick understanding of data
+Figure 3.7: Data visualization -&gt; Quick understanding of data
 </p>
 </div>
 <p>Consider this story from the <a href="https://www.nytimes.com/2011/02/19/nyregion/19schools.html?searchResultPosition=1">New York Times</a> about the scoring of high school leaving exams where 65 is the passing grade. A histogram of the grades shows important abnormalities with 5 times more students scoring exactly 65 than those scoring between 61-64, leaving a suspicion that grading may not be completely unbiased. Simply reporting the mean, median, standard deviations, percentage passing or any other numerical summary would not have detected the strangeness of the data.</p>
 <div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-13"></span>
 <img src="img/hs_grades.png" alt="Histogram of grades" width="100%" />
 <p class="caption">
-Figure 3.9: Histogram of grades
+Figure 3.8: Histogram of grades
 </p>
 </div>
 <p>Graphs can also be combined to provide further insights into the data. The following is a graph from the excellent book <a href="https://github.com/dspiegel29/ArtofStatistics">The Art of Statistics</a> by David Speigelhalter that shows the gender and timing of the 215 confirmed victims of the mass murderer, Dr. Harold Shipman.</p>
 <div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-14"></span>
 <img src="img/shipman.png" alt="Murder victims" width="100%" />
 <p class="caption">
-Figure 3.10: Murder victims
+Figure 3.9: Murder victims
 </p>
 </div>
 <p>Here a basic scatter plot has been combined with marginal histograms. This enables a quick appreciation that the victims were<br />
@@ -1244,71 +1245,71 @@ Figure 3.10: Murder victims
 <div class="figure"><span id="fig:unnamed-chunk-15"></span>
 <img src="img/ghost_map.png" alt="Classic epidemiology visualizations - John Snow's Cholera Broad Street Ghost Map" width="100%" />
 <p class="caption">
-Figure 3.11: Classic epidemiology visualizations - John Snow’s Cholera Broad Street Ghost Map
+Figure 3.10: Classic epidemiology visualizations - John Snow’s Cholera Broad Street Ghost Map
 </p>
 </div>
 <p>When many points are associated with a single street address, they are “stacked” in a line away from the street so that they are more easily visualized. This dataset is found in the <code>HistData</code> package and has 578 observations on the following 3 variables, giving the address of a person who died from cholera.</p>
 <div id="using-modern-geographic-information-system-mapping" class="section level3" number="3.5.1">
 <h3><span class="header-section-number">3.5.1</span> Using modern Geographic Information System mapping</h3>
 <p>Can download a zip file with GIS layers relating to John Snow’s 1854 investigation of the Cholera outbreak in London. This file contains a number of GIS layers created from Snow’s original map which allow analyses to be conducted on the data in modern GIS systems.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="vis.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Download the zip archive of geographical information</span></span>
-<span id="cb20-2"><a href="vis.html#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="at">url      =</span> <span class="st">&quot;http://www.rtwilson.com/downloads/SnowGIS_v2.zip&quot;</span>,</span>
-<span id="cb20-3"><a href="vis.html#cb20-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">destfile =</span> <span class="st">&quot;datasets/SnowGIS_v2.zip&quot;</span>)</span>
-<span id="cb20-4"><a href="vis.html#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-5"><a href="vis.html#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Unzip</span></span>
-<span id="cb20-6"><a href="vis.html#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span>(<span class="at">zipfile =</span> <span class="st">&quot;datasets/SnowGIS_v2.zip&quot;</span>, <span class="at">exdir =</span><span class="st">&quot;datasets&quot;</span>)</span>
-<span id="cb20-7"><a href="vis.html#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="do">## List files in the unzipped folder -&gt; dir(path = &quot;./datasets/SnowGIS&quot;) </span></span>
-<span id="cb20-8"><a href="vis.html#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-9"><a href="vis.html#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="co"># register_google(key = &quot;Put your API key here&quot;) # my API is hidden</span></span>
-<span id="cb20-10"><a href="vis.html#cb20-10" aria-hidden="true" tabindex="-1"></a>GDAL <span class="ot">&lt;-</span> <span class="fu">GDALinfo</span>(<span class="st">&quot;./datasets/SnowGIS/OSMap.tif&quot;</span>)</span>
-<span id="cb20-11"><a href="vis.html#cb20-11" aria-hidden="true" tabindex="-1"></a>OSMap <span class="ot">&lt;-</span> <span class="fu">readGDAL</span>(<span class="st">&quot;./datasets/SnowGIS/OSMap_Grayscale.tif&quot;</span>)</span>
-<span id="cb20-12"><a href="vis.html#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
-<span id="cb20-13"><a href="vis.html#cb20-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-14"><a href="vis.html#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="co"># image(OSMap, col = grey(1:500/1000)) modern plot not shown here</span></span>
-<span id="cb20-15"><a href="vis.html#cb20-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-16"><a href="vis.html#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="fu">getinfo.shape</span>(<span class="st">&quot;./datasets/SnowGIS/Cholera_Deaths.shp&quot;</span>)</span>
-<span id="cb20-17"><a href="vis.html#cb20-17" aria-hidden="true" tabindex="-1"></a>map1 <span class="ot">&lt;-</span> <span class="fu">get_map</span>(<span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">137</span>,<span class="fl">51.513</span>), <span class="at">zoom=</span><span class="dv">16</span>)</span>
-<span id="cb20-18"><a href="vis.html#cb20-18" aria-hidden="true" tabindex="-1"></a>london_main <span class="ot">&lt;-</span> <span class="fu">ggmap</span>(map1) <span class="sc">+</span></span>
-<span id="cb20-19"><a href="vis.html#cb20-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Modern Google style Ghost map&quot;</span>) </span></code></pre></div>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="vis.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Assigning the Cordinates of Deaths &amp; Pumps Variables from the Dataset</span></span>
-<span id="cb21-2"><a href="vis.html#cb21-2" aria-hidden="true" tabindex="-1"></a>deaths <span class="ot">&lt;-</span> <span class="fu">readShapePoints</span>(<span class="st">&quot;datasets/SnowGIS/Cholera_Deaths&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="vis.html#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Download the zip archive of geographical information</span></span>
+<span id="cb57-2"><a href="vis.html#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="at">url      =</span> <span class="st">&quot;http://www.rtwilson.com/downloads/SnowGIS_v2.zip&quot;</span>,</span>
+<span id="cb57-3"><a href="vis.html#cb57-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">destfile =</span> <span class="st">&quot;datasets/SnowGIS_v2.zip&quot;</span>)</span>
+<span id="cb57-4"><a href="vis.html#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="vis.html#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Unzip</span></span>
+<span id="cb57-6"><a href="vis.html#cb57-6" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span>(<span class="at">zipfile =</span> <span class="st">&quot;datasets/SnowGIS_v2.zip&quot;</span>, <span class="at">exdir =</span><span class="st">&quot;datasets&quot;</span>)</span>
+<span id="cb57-7"><a href="vis.html#cb57-7" aria-hidden="true" tabindex="-1"></a><span class="do">## List files in the unzipped folder -&gt; dir(path = &quot;./datasets/SnowGIS&quot;) </span></span>
+<span id="cb57-8"><a href="vis.html#cb57-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-9"><a href="vis.html#cb57-9" aria-hidden="true" tabindex="-1"></a><span class="co"># register_google(key = &quot;Put your API key here&quot;) # my API is hidden</span></span>
+<span id="cb57-10"><a href="vis.html#cb57-10" aria-hidden="true" tabindex="-1"></a>GDAL <span class="ot">&lt;-</span> <span class="fu">GDALinfo</span>(<span class="st">&quot;./datasets/SnowGIS/OSMap.tif&quot;</span>)</span>
+<span id="cb57-11"><a href="vis.html#cb57-11" aria-hidden="true" tabindex="-1"></a>OSMap <span class="ot">&lt;-</span> <span class="fu">readGDAL</span>(<span class="st">&quot;./datasets/SnowGIS/OSMap_Grayscale.tif&quot;</span>)</span>
+<span id="cb57-12"><a href="vis.html#cb57-12" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb57-13"><a href="vis.html#cb57-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-14"><a href="vis.html#cb57-14" aria-hidden="true" tabindex="-1"></a><span class="co"># image(OSMap, col = grey(1:500/1000)) modern plot not shown here</span></span>
+<span id="cb57-15"><a href="vis.html#cb57-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-16"><a href="vis.html#cb57-16" aria-hidden="true" tabindex="-1"></a><span class="fu">getinfo.shape</span>(<span class="st">&quot;./datasets/SnowGIS/Cholera_Deaths.shp&quot;</span>)</span>
+<span id="cb57-17"><a href="vis.html#cb57-17" aria-hidden="true" tabindex="-1"></a>map1 <span class="ot">&lt;-</span> <span class="fu">get_map</span>(<span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">137</span>,<span class="fl">51.513</span>), <span class="at">zoom=</span><span class="dv">16</span>)</span>
+<span id="cb57-18"><a href="vis.html#cb57-18" aria-hidden="true" tabindex="-1"></a>london_main <span class="ot">&lt;-</span> <span class="fu">ggmap</span>(map1) <span class="sc">+</span></span>
+<span id="cb57-19"><a href="vis.html#cb57-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Modern Google style Ghost map&quot;</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="vis.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Assigning the Cordinates of Deaths &amp; Pumps Variables from the Dataset</span></span>
+<span id="cb58-2"><a href="vis.html#cb58-2" aria-hidden="true" tabindex="-1"></a>deaths <span class="ot">&lt;-</span> <span class="fu">readShapePoints</span>(<span class="st">&quot;datasets/SnowGIS/Cholera_Deaths&quot;</span>)</span></code></pre></div>
 <pre><code>## Warning: readShapePoints is deprecated; use rgdal::readOGR or sf::st_read</code></pre>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="vis.html#cb23-1" aria-hidden="true" tabindex="-1"></a>pumps <span class="ot">&lt;-</span> <span class="fu">readShapePoints</span>(<span class="st">&quot;datasets/SnowGIS/Pumps&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="vis.html#cb60-1" aria-hidden="true" tabindex="-1"></a>pumps <span class="ot">&lt;-</span> <span class="fu">readShapePoints</span>(<span class="st">&quot;datasets/SnowGIS/Pumps&quot;</span>)</span></code></pre></div>
 <pre><code>## Warning: readShapePoints is deprecated; use rgdal::readOGR or sf::st_read</code></pre>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="vis.html#cb25-1" aria-hidden="true" tabindex="-1"></a>df_deaths <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(deaths<span class="sc">@</span>coords)</span>
-<span id="cb25-2"><a href="vis.html#cb25-2" aria-hidden="true" tabindex="-1"></a>df_pumps <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(pumps<span class="sc">@</span>coords)</span>
-<span id="cb25-3"><a href="vis.html#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="vis.html#cb25-4" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(df_deaths, df_pumps)</span>
-<span id="cb25-5"><a href="vis.html#cb25-5" aria-hidden="true" tabindex="-1"></a>tmp<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&#39;death&#39;</span>, <span class="at">times=</span><span class="fu">dim</span>(df_deaths)[<span class="dv">1</span>]),</span>
-<span id="cb25-6"><a href="vis.html#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rep</span>(<span class="st">&#39;pump&#39;</span>, <span class="at">times=</span><span class="fu">dim</span>(df_pumps)[<span class="dv">1</span>]))</span>
-<span id="cb25-7"><a href="vis.html#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-8"><a href="vis.html#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="fu">coordinates</span>(df_deaths)<span class="ot">=</span><span class="er">~</span>coords.x1<span class="sc">+</span>coords.x2</span>
-<span id="cb25-9"><a href="vis.html#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="fu">proj4string</span>(df_deaths)<span class="ot">=</span><span class="fu">CRS</span>(<span class="st">&quot;+init=epsg:27700&quot;</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="vis.html#cb62-1" aria-hidden="true" tabindex="-1"></a>df_deaths <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(deaths<span class="sc">@</span>coords)</span>
+<span id="cb62-2"><a href="vis.html#cb62-2" aria-hidden="true" tabindex="-1"></a>df_pumps <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(pumps<span class="sc">@</span>coords)</span>
+<span id="cb62-3"><a href="vis.html#cb62-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-4"><a href="vis.html#cb62-4" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(df_deaths, df_pumps)</span>
+<span id="cb62-5"><a href="vis.html#cb62-5" aria-hidden="true" tabindex="-1"></a>tmp<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&#39;death&#39;</span>, <span class="at">times=</span><span class="fu">dim</span>(df_deaths)[<span class="dv">1</span>]),</span>
+<span id="cb62-6"><a href="vis.html#cb62-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rep</span>(<span class="st">&#39;pump&#39;</span>, <span class="at">times=</span><span class="fu">dim</span>(df_pumps)[<span class="dv">1</span>]))</span>
+<span id="cb62-7"><a href="vis.html#cb62-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-8"><a href="vis.html#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="fu">coordinates</span>(df_deaths)<span class="ot">=</span><span class="er">~</span>coords.x1<span class="sc">+</span>coords.x2</span>
+<span id="cb62-9"><a href="vis.html#cb62-9" aria-hidden="true" tabindex="-1"></a><span class="fu">proj4string</span>(df_deaths)<span class="ot">=</span><span class="fu">CRS</span>(<span class="st">&quot;+init=epsg:27700&quot;</span>) </span></code></pre></div>
 <pre><code>## Warning in showSRID(uprojargs, format = &quot;PROJ&quot;, multiline = &quot;NO&quot;, prefer_proj =
 ## prefer_proj): Discarded datum OSGB_1936 in Proj4 definition</code></pre>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="vis.html#cb27-1" aria-hidden="true" tabindex="-1"></a>df_deaths <span class="ot">=</span> <span class="fu">spTransform</span>(df_deaths,<span class="fu">CRS</span>(<span class="st">&quot;+proj=longlat +datum=WGS84&quot;</span>))</span>
-<span id="cb27-2"><a href="vis.html#cb27-2" aria-hidden="true" tabindex="-1"></a>df<span class="ot">=</span><span class="fu">data.frame</span>(df_deaths<span class="sc">@</span>coords)</span>
-<span id="cb27-3"><a href="vis.html#cb27-3" aria-hidden="true" tabindex="-1"></a>lng<span class="ot">=</span>df<span class="sc">$</span>coords.x1</span>
-<span id="cb27-4"><a href="vis.html#cb27-4" aria-hidden="true" tabindex="-1"></a>lat<span class="ot">=</span>df<span class="sc">$</span>coords.x2</span>
-<span id="cb27-5"><a href="vis.html#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-6"><a href="vis.html#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="fu">coordinates</span>(tmp)<span class="ot">=</span><span class="er">~</span>coords.x1<span class="sc">+</span>coords.x2</span>
-<span id="cb27-7"><a href="vis.html#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="fu">proj4string</span>(tmp)<span class="ot">=</span><span class="fu">CRS</span>(<span class="st">&quot;+init=epsg:27700&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="vis.html#cb64-1" aria-hidden="true" tabindex="-1"></a>df_deaths <span class="ot">=</span> <span class="fu">spTransform</span>(df_deaths,<span class="fu">CRS</span>(<span class="st">&quot;+proj=longlat +datum=WGS84&quot;</span>))</span>
+<span id="cb64-2"><a href="vis.html#cb64-2" aria-hidden="true" tabindex="-1"></a>df<span class="ot">=</span><span class="fu">data.frame</span>(df_deaths<span class="sc">@</span>coords)</span>
+<span id="cb64-3"><a href="vis.html#cb64-3" aria-hidden="true" tabindex="-1"></a>lng<span class="ot">=</span>df<span class="sc">$</span>coords.x1</span>
+<span id="cb64-4"><a href="vis.html#cb64-4" aria-hidden="true" tabindex="-1"></a>lat<span class="ot">=</span>df<span class="sc">$</span>coords.x2</span>
+<span id="cb64-5"><a href="vis.html#cb64-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-6"><a href="vis.html#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="fu">coordinates</span>(tmp)<span class="ot">=</span><span class="er">~</span>coords.x1<span class="sc">+</span>coords.x2</span>
+<span id="cb64-7"><a href="vis.html#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="fu">proj4string</span>(tmp)<span class="ot">=</span><span class="fu">CRS</span>(<span class="st">&quot;+init=epsg:27700&quot;</span>)</span></code></pre></div>
 <pre><code>## Warning in showSRID(uprojargs, format = &quot;PROJ&quot;, multiline = &quot;NO&quot;, prefer_proj =
 ## prefer_proj): Discarded datum OSGB_1936 in Proj4 definition</code></pre>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="vis.html#cb29-1" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">=</span> <span class="fu">spTransform</span>(tmp, <span class="fu">CRS</span>(<span class="st">&quot;+proj=longlat +datum=WGS84&quot;</span>))</span>
-<span id="cb29-2"><a href="vis.html#cb29-2" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(tmp<span class="sc">@</span>coords, <span class="at">type=</span>tmp<span class="sc">@</span>data<span class="sc">$</span>type)</span>
-<span id="cb29-3"><a href="vis.html#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-4"><a href="vis.html#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb29-5"><a href="vis.html#cb29-5" aria-hidden="true" tabindex="-1"></a>snow.plot1 <span class="ot">&lt;-</span> london_main <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">x=</span>coords.x1, <span class="at">y=</span>coords.x2, <span class="at">col=</span>type, <span class="at">size =</span> <span class="dv">1</span>), <span class="at">data=</span>tmp) <span class="sc">+</span></span>
-<span id="cb29-6"><a href="vis.html#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x =</span> <span class="sc">-</span>.<span class="dv">1361</span>, <span class="at">y =</span> <span class="fl">51.513</span>, <span class="at">label =</span> <span class="st">&quot;X</span><span class="sc">\n</span><span class="st"> Broad Street pump&quot;</span>, <span class="at">colour=</span><span class="st">&quot;black&quot;</span>,  <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb29-7"><a href="vis.html#cb29-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;Regular plot&quot;</span>)</span>
-<span id="cb29-8"><a href="vis.html#cb29-8" aria-hidden="true" tabindex="-1"></a>snow.plot1</span></code></pre></div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="vis.html#cb66-1" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">=</span> <span class="fu">spTransform</span>(tmp, <span class="fu">CRS</span>(<span class="st">&quot;+proj=longlat +datum=WGS84&quot;</span>))</span>
+<span id="cb66-2"><a href="vis.html#cb66-2" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(tmp<span class="sc">@</span>coords, <span class="at">type=</span>tmp<span class="sc">@</span>data<span class="sc">$</span>type)</span>
+<span id="cb66-3"><a href="vis.html#cb66-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-4"><a href="vis.html#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb66-5"><a href="vis.html#cb66-5" aria-hidden="true" tabindex="-1"></a>snow.plot1 <span class="ot">&lt;-</span> london_main <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">x=</span>coords.x1, <span class="at">y=</span>coords.x2, <span class="at">col=</span>type, <span class="at">size =</span> <span class="dv">1</span>), <span class="at">data=</span>tmp) <span class="sc">+</span></span>
+<span id="cb66-6"><a href="vis.html#cb66-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x =</span> <span class="sc">-</span>.<span class="dv">1361</span>, <span class="at">y =</span> <span class="fl">51.513</span>, <span class="at">label =</span> <span class="st">&quot;X</span><span class="sc">\n</span><span class="st"> Broad Street pump&quot;</span>, <span class="at">colour=</span><span class="st">&quot;black&quot;</span>,  <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb66-7"><a href="vis.html#cb66-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;Regular plot&quot;</span>)</span>
+<span id="cb66-8"><a href="vis.html#cb66-8" aria-hidden="true" tabindex="-1"></a>snow.plot1</span></code></pre></div>
 <p><img src="03-visualizations_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="vis.html#cb30-1" aria-hidden="true" tabindex="-1"></a>snow.plot2 <span class="ot">&lt;-</span> london_main <span class="sc">+</span> <span class="fu">geom_density2d</span>(<span class="at">data =</span> tmp[tmp<span class="sc">$</span>type <span class="sc">==</span><span class="st">&quot;death&quot;</span>, ], <span class="fu">aes</span>(<span class="at">x =</span> coords.x1, <span class="at">y =</span> coords.x2),</span>
-<span id="cb30-2"><a href="vis.html#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
-<span id="cb30-3"><a href="vis.html#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x =</span> <span class="sc">-</span>.<span class="dv">1361</span>, <span class="at">y =</span> <span class="fl">51.513</span>, <span class="at">label =</span> <span class="st">&quot;X</span><span class="sc">\n</span><span class="st"> Broad Street pump&quot;</span>, <span class="at">colour=</span><span class="st">&quot;black&quot;</span>,  <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
-<span id="cb30-4"><a href="vis.html#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;Density plot&quot;</span>)</span>
-<span id="cb30-5"><a href="vis.html#cb30-5" aria-hidden="true" tabindex="-1"></a>snow.plot2</span></code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="vis.html#cb67-1" aria-hidden="true" tabindex="-1"></a>snow.plot2 <span class="ot">&lt;-</span> london_main <span class="sc">+</span> <span class="fu">geom_density2d</span>(<span class="at">data =</span> tmp[tmp<span class="sc">$</span>type <span class="sc">==</span><span class="st">&quot;death&quot;</span>, ], <span class="fu">aes</span>(<span class="at">x =</span> coords.x1, <span class="at">y =</span> coords.x2),</span>
+<span id="cb67-2"><a href="vis.html#cb67-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb67-3"><a href="vis.html#cb67-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x =</span> <span class="sc">-</span>.<span class="dv">1361</span>, <span class="at">y =</span> <span class="fl">51.513</span>, <span class="at">label =</span> <span class="st">&quot;X</span><span class="sc">\n</span><span class="st"> Broad Street pump&quot;</span>, <span class="at">colour=</span><span class="st">&quot;black&quot;</span>,  <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb67-4"><a href="vis.html#cb67-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;Density plot&quot;</span>)</span>
+<span id="cb67-5"><a href="vis.html#cb67-5" aria-hidden="true" tabindex="-1"></a>snow.plot2</span></code></pre></div>
 <p><img src="03-visualizations_files/figure-html/unnamed-chunk-17-2.png" width="672" /></p>
 
 </div>

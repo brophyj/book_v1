@@ -352,7 +352,7 @@ When using RStudio, it generally most helpful to begin by creating a `New Projec
 
 ## R - More than a statistical program 
 
-`R` is  much more than a mere statistical program. It is a complete programming language which while highly advantageous does result in a non trivial learning curve. One of the most outstanding attributes of `R` is the ability to produce publication quality data visualizations with either base `R` or within the tidyverse universe by using `ggplot2` (see next chapter). Interactive graphics can also be easily produced. To appreciate the range of graphical activities possible, here is a self portrait drawn by `R`. The code for this may be found [here](https://github.com/brophyj/epi_book/blob/main/portrait.R). 
+`R` is  much more than a mere statistical program. It is a complete programming language which while highly advantageous does result in a non trivial learning curve. One of the most outstanding attributes of `R` is the ability to produce publication quality data visualizations with either base `R` or within the tidyverse universe by using `ggplot2` (see next chapter). Interactive graphics can also be easily produced. To appreciate the range of graphical activities possible, here is a self portrait drawn by `R`. The code for this may be found [here](https://github.com/brophyj/book_v1/blob/main/portrait.R). 
 
 
 <div class="figure" style="text-align: center">
