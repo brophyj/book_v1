@@ -71,11 +71,11 @@ Potential answers
 </div>
 :::
 
-Most people, who aren't already aware of the "trick" or "paradox" assume the probability is small given that a birthday may in occur on any one of 365 possible days. Given our natural tendency to egocentricity they imagine there are 59 chances of some else having the same birthday as them, or a probability of 59/365 or 16.2%. However this ignores the other 1711 (59*58) possible combinations between someone who is not you being compared to someone else who is also not you. Also as we will see, calculations involving exponentials are hardly intuitive to most people who tend to think in linearities.\
-As an easy solution, begin by considering the reverse problem what is the probability that no one has the same birthday as you. For the 2nd person, first next to you, probability of not being born on the same day as you = 364/365.\
-So the probability that 3rd person not on the same day as first 2 persons = 364/365* 363/365 and\
-The probability i th person not on the same day as 1st i-1 = 364/365 \* 363/365 \* 362/365 \* (n-1)/365 or\
-$$ \prod_{i=0}^{i-1} (1- \dfrac{i}{365}) $$\
+Most people, who aren't already aware of the "trick" or "paradox" assume the probability is small given that a birthday may in occur on any one of 365 possible days. Given our natural tendency to egocentricity they imagine there are 59 chances of some else having the same birthday as them, or a probability of 59/365 or 16.2%. However this ignores the other 1711 (59*58) possible combinations between someone who is not you being compared to someone else who is also not you. Also as we will see, calculations involving exponentials are hardly intuitive to most people who tend to think in linearities.
+As an easy solution, begin by considering the reverse problem what is the probability that no one has the same birthday as you. For the 2nd person, first next to you, probability of not being born on the same day as you = 364/365.
+So the probability that 3rd person not on the same day as first 2 persons = 364/365* 363/365 and
+The probability i th person not on the same day as 1st i-1 = 364/365 * 363/365 * 362/365 * (n-1)/365 or
+$$ \prod_{i=0}^{i-1} (1- \dfrac{i}{365}) $$
 Then the probability of being born on the same day = 1 - probability not being born on the same day. These calculations can be easily performed in `R`.
 
 
@@ -120,7 +120,7 @@ ggplot(p, aes(x,p)) +
 
 <img src="01-intro_files/figure-html/unnamed-chunk-4-1.png" width="672" />
 
-So the probability of finding 2 people in a class of 60 with the same birthday is \>99%. The graph also shows that provided there are more than 23 people in the class the probability will be \> 50%. One can alaso appreciate the non-linearity of the relationship. To give an idea about the range of functions in `R` it should be noted that you don't have to write your own `birthday` function as above but can simple call the built in `pbirthday` function. One can also verify these calculations by doing simulations as demonstrated in this [blog](http://varianceexplained.org/r/birthday-problem/).
+So the probability of finding 2 people in a class of 60 with the same birthday is >99%. The graph also shows that provided there are more than 23 people in the class the probability will be > 50%. One can also appreciate the non-linearity of the relationship. To give an idea about the range of functions in `R` it should be noted that you don't have to write your own `birthday` function as above but can simple call the built in `pbirthday` function. One can also verify these calculations by doing simulations as demonstrated in this [blog](http://varianceexplained.org/r/birthday-problem/).
 
 
 ```r
@@ -133,7 +133,7 @@ pbirthday(60))
 ## The probability of 2 people with the same bithday in a group of 23 is  0.5073  and for a group of 60 is  0.9941
 ```
 
-**2. Voter suppression**\
+**2. Voter suppression**
 Now being able to solve party games is a good, but not the only, reason to develop your quantitative skills. Consider the very current issue of voter suppression. A [news story](https://www.nbcnews.com/politics/elections/suppression-critics-charge-georgia-gop-gov-candidate-purging-voters-election-n918761) reported that in Georgia, where 32% of the population is black, the state has recently removed 670,000 voters of whom 70% were black. Is this difference likely due to the play of chance? In other words, how likely are we to observe 469,000 (.7 \* 670,000) blacks out of 670,000 if the selection probability is the same as the proportion of blacks in the general population (32%). This can be found with 1 line of code. Additional information about this function can be found with `help(binom.test`).
 
 
@@ -212,4 +212,3 @@ Future volumes are likely to include the following topics
 :::    
 
       
-```
