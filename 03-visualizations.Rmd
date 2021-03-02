@@ -276,7 +276,7 @@ Can download a zip file with GIS layers relating to John Snow's 1854 investigati
 
 ```{r echo=FALSE}
 library(ggmap)
-register_google(key = "AIzaSyDCXPA-VwaeYrKAZkABoIxU5ISr9AD7hUQ") # need to hide my API
+
 ```
 
 
