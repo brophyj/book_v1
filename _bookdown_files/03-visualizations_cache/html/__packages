@@ -1,0 +1,17 @@
+base
+readr
+ggplot2
+gganimate
+scales
+dplyr
+transformr
+gifski
+gapminder
+dslabs
+magrittr
+HistData
+ggmap
+sp
+maptools
+rgdal
+leaflet

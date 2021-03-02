@@ -1,0 +1,1589 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 1 Introduction | (Mostly Clinical) Epidemiology with R</title>
+  <meta name="description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="generator" content="bookdown 0.21.6 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 1 Introduction | (Mostly Clinical) Epidemiology with R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="github-repo" content="brophyj/epi_book" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 1 Introduction | (Mostly Clinical) Epidemiology with R" />
+  
+  <meta name="twitter:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  
+
+<meta name="author" content="James Brophy" />
+
+
+<meta name="date" content="2021-03-02" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="simple-acknowledgment-and-request.html"/>
+<link rel="next" href="vis.html"/>
+<script src="libs/header-attrs-2.6.6/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<script>
+/* ========================================================================
+ * Bootstrap: transition.js v3.3.7
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: collapse.js v3.3.7
+ * http://getbootstrap.com/javascript/#collapse
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+/* jshint latedef: false */
+
++function ($) {
+  'use strict';
+
+  // COLLAPSE PUBLIC CLASS DEFINITION
+  // ================================
+
+  var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                           '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+    this.transitioning = null
+
+    if (this.options.parent) {
+      this.$parent = this.getParent()
+    } else {
+      this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+    }
+
+    if (this.options.toggle) this.toggle()
+  }
+
+  Collapse.VERSION  = '3.3.7'
+
+  Collapse.TRANSITION_DURATION = 350
+
+  Collapse.DEFAULTS = {
+    toggle: true
+  }
+
+  Collapse.prototype.dimension = function () {
+    var hasWidth = this.$element.hasClass('width')
+    return hasWidth ? 'width' : 'height'
+  }
+
+  Collapse.prototype.show = function () {
+    if (this.transitioning || this.$element.hasClass('in')) return
+
+    var activesData
+    var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+
+    if (actives && actives.length) {
+      activesData = actives.data('bs.collapse')
+      if (activesData && activesData.transitioning) return
+    }
+
+    var startEvent = $.Event('show.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    if (actives && actives.length) {
+      Plugin.call(actives, 'hide')
+      activesData || actives.data('bs.collapse', null)
+    }
+
+    var dimension = this.dimension()
+
+    this.$element
+      .removeClass('collapse')
+      .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
+
+    this.$trigger
+      .removeClass('collapsed')
+      .attr('aria-expanded', true)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse in')[dimension]('')
+      this.transitioning = 0
+      this.$element
+        .trigger('shown.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+
+    this.$element
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+  }
+
+  Collapse.prototype.hide = function () {
+    if (this.transitioning || !this.$element.hasClass('in')) return
+
+    var startEvent = $.Event('hide.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    var dimension = this.dimension()
+
+    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+
+    this.$element
+      .addClass('collapsing')
+      .removeClass('collapse in')
+      .attr('aria-expanded', false)
+
+    this.$trigger
+      .addClass('collapsed')
+      .attr('aria-expanded', false)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.transitioning = 0
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse')
+        .trigger('hidden.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    this.$element
+      [dimension](0)
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+  }
+
+  Collapse.prototype.toggle = function () {
+    this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
+
+  Collapse.prototype.getParent = function () {
+    return $(this.options.parent)
+      .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+      .each($.proxy(function (i, element) {
+        var $element = $(element)
+        this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+      }, this))
+      .end()
+  }
+
+  Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+    var isOpen = $element.hasClass('in')
+
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
+  }
+
+  function getTargetFromTrigger($trigger) {
+    var href
+    var target = $trigger.attr('data-target')
+      || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+
+    return $(target)
+  }
+
+
+  // COLLAPSE PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.collapse')
+      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+      if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.collapse
+
+  $.fn.collapse             = Plugin
+  $.fn.collapse.Constructor = Collapse
+
+
+  // COLLAPSE NO CONFLICT
+  // ====================
+
+  $.fn.collapse.noConflict = function () {
+    $.fn.collapse = old
+    return this
+  }
+
+
+  // COLLAPSE DATA-API
+  // =================
+
+  $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+    var $this   = $(this)
+
+    if (!$this.attr('data-target')) e.preventDefault()
+
+    var $target = getTargetFromTrigger($this)
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $this.data()
+
+    Plugin.call($target, option)
+  })
+
+}(jQuery);
+</script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    // close the dropdown menu when an option is clicked
+    $("#allCodeButton").dropdown("toggle");
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    // close the dropdown menu when an option is clicked
+    $("#allCodeButton").dropdown("toggle");
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+
+    // if code block has been labeled with class `fold-show`, show the code on init!
+    var classList = $(this).attr('class').split(/\s+/);
+    for (var i = 0; i < classList.length; i++) {
+    if (classList[i] === 'fold-show') {
+        show = true;
+      }
+    }
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-target', '#' + id)
+        .attr('aria-expanded', show)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // hack: return show to false, otherwise all next codeBlocks will be shown!
+    show = false;
+
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+
+}
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.7
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.7'
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+    })
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+<style type="text/css">
+.code-folding-btn {
+  margin-bottom: 4px;
+}
+
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+.pull-right > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+.open > .dropdown-menu {
+    display: block;
+    color: #ffffff;
+    background-color: #ffffff;
+    background-image: none;
+    border-color: #92897e;
+}
+
+.dropdown-menu > li > a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #e95420;
+}
+
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #e95420;
+  outline: 0;
+}
+.dropdown-menu > .disabled > a,
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+  color: #aea79f;
+}
+
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+  text-decoration: none;
+  cursor: not-allowed;
+  background-color: transparent;
+  background-image: none;
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+.btn {
+  display: inline-block;
+  margin-bottom: 1;
+  font-weight: normal;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.btn:hover,
+.btn:focus,
+.btn.focus {
+  color: #ffffff;
+  text-decoration: none;
+}
+.btn:active,
+.btn.active {
+  background-image: none;
+  outline: 0;
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
+  cursor: not-allowed;
+  filter: alpha(opacity=65);
+  opacity: 0.65;
+  box-shadow: none;
+}
+a.btn.disabled,
+fieldset[disabled] a.btn {
+  pointer-events: none;
+}
+.btn-default {
+  color: #ffffff;
+  background-color: #aea79f; #important
+  border-color: #aea79f;
+}
+
+.btn-default:focus,
+.btn-default.focus {
+  color: #ffffff;
+  background-color: #978e83;
+  border-color: #6f675e;
+}
+
+.btn-default:hover {
+  color: #ffffff;
+  background-color: #978e83;
+  border-color: #92897e;
+}
+.btn-default:active,
+.btn-default.active,
+.btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
+  border-radius: 0;
+}
+.btn-group > .btn:first-child {
+  margin-left: 0;
+}
+.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group > .btn:last-child:not(:first-child),
+.btn-group > .dropdown-toggle:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.btn-group > .btn-group {
+  float: left;
+}
+.btn-group > .btn-group:not(:first-child):not(:last-child) > .btn {
+  border-radius: 0;
+}
+.btn-group > .btn-group:first-child:not(:last-child) > .btn:last-child,
+.btn-group > .btn-group:first-child:not(:last-child) > .dropdown-toggle {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.btn-group .dropdown-toggle:active,
+.btn-group.open .dropdown-toggle {
+  outline: 0;
+}
+.btn-group > .btn + .dropdown-toggle {
+  padding-right: 8px;
+  padding-left: 8px;
+}
+.btn-group > .btn-lg + .dropdown-toggle {
+  padding-right: 12px;
+  padding-left: 12px;
+}
+.btn-group.open .dropdown-toggle {
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.btn-group.open .dropdown-toggle.btn-link {
+  box-shadow: none;
+}
+
+</style>
+<script>
+var str = '<div class="btn-group pull-right" style="position: fixed; right: 50px; top: 10px; z-index: 200"><button type="button" class="btn btn-default btn-xs dropdown-toggle" id="allCodeButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast=""><span>Code</span> <span class="caret"></span></button><ul class="dropdown-menu" style="min-width: 50px;"><li><a id="rmd-show-all-code" href="#">Show All Code</a></li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li></ul></div>';
+document.write(str);
+</script>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "hide");
+});
+</script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">(Mostly Clinical) Epidemiology with R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="" data-path="simple-acknowledgment-and-request.html"><a href="simple-acknowledgment-and-request.html"><i class="fa fa-check"></i>Simple acknowledgment and request</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.0.1" data-path="intro.html"><a href="intro.html#r-packages-required-for-this-chapter"><i class="fa fa-check"></i><b>1.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#preface"><i class="fa fa-check"></i><b>1.1</b> Preface</a></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#pre"><i class="fa fa-check"></i><b>1.2</b> Prerequisites</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#my-general-philosophy-for-clinical-epidemiology"><i class="fa fa-check"></i><b>1.3</b> My general philosophy for clinical epidemiology</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#brief-excursions-into-quantification"><i class="fa fa-check"></i><b>1.4</b> Brief excursions into quantification</a></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#outline"><i class="fa fa-check"></i><b>1.5</b> Outline</a></li>
+<li class="chapter" data-level="1.6" data-path="intro.html"><a href="intro.html#statistical-software---r"><i class="fa fa-check"></i><b>1.6</b> Statistical software - R</a></li>
+<li class="chapter" data-level="1.7" data-path="intro.html"><a href="intro.html#r---common-data-and-variable-manipulations"><i class="fa fa-check"></i><b>1.7</b> R - Common data and variable manipulations</a></li>
+<li class="chapter" data-level="1.8" data-path="intro.html"><a href="intro.html#rstudio---the-ide-for-r"><i class="fa fa-check"></i><b>1.8</b> RStudio - <strong>The</strong> IDE for R</a></li>
+<li class="chapter" data-level="1.9" data-path="intro.html"><a href="intro.html#r---more-than-a-statistical-program"><i class="fa fa-check"></i><b>1.9</b> R - More than a statistical program</a></li>
+<li class="chapter" data-level="1.10" data-path="intro.html"><a href="intro.html#r---general-public-license"><i class="fa fa-check"></i><b>1.10</b> R - General Public License</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="vis.html"><a href="vis.html"><i class="fa fa-check"></i><b>2</b> Exploratory Data Analysis - Data visualization</a>
+<ul>
+<li class="chapter" data-level="2.0.1" data-path="vis.html"><a href="vis.html#r-packages-required-for-this-chapter-1"><i class="fa fa-check"></i><b>2.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="2.1" data-path="vis.html"><a href="vis.html#introduction"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
+<li class="chapter" data-level="2.2" data-path="vis.html"><a href="vis.html#why-is-data-visualization-important"><i class="fa fa-check"></i><b>2.2</b> Why is data visualization important?</a></li>
+<li class="chapter" data-level="2.3" data-path="vis.html"><a href="vis.html#creating-an-effective-and-professional-appearing-graph"><i class="fa fa-check"></i><b>2.3</b> Creating an effective and professional appearing graph</a></li>
+<li class="chapter" data-level="2.4" data-path="vis.html"><a href="vis.html#graphical-choices"><i class="fa fa-check"></i><b>2.4</b> Graphical choices</a></li>
+<li class="chapter" data-level="2.5" data-path="vis.html"><a href="vis.html#example---a-modern-version-of-the-ghost-map"><i class="fa fa-check"></i><b>2.5</b> Example - A modern version of the “Ghost Map”</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="vis.html"><a href="vis.html#using-modern-geographic-information-system-mapping"><i class="fa fa-check"></i><b>2.5.1</b> Using modern Geographic Information System mapping</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="meas.html"><a href="meas.html"><i class="fa fa-check"></i><b>3</b> Contingency tables, measures of association &amp; R packages</a>
+<ul>
+<li class="chapter" data-level="3.0.1" data-path="meas.html"><a href="meas.html#r-packages-required-for-this-chapter-2"><i class="fa fa-check"></i><b>3.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="3.1" data-path="meas.html"><a href="meas.html#meas1"><i class="fa fa-check"></i><b>3.1</b> Proportions - One sample <span class="math inline">\(\chi^2\)</span> tests</a></li>
+<li class="chapter" data-level="3.2" data-path="meas.html"><a href="meas.html#contingency-tables"><i class="fa fa-check"></i><b>3.2</b> Contingency tables</a></li>
+<li class="chapter" data-level="3.3" data-path="meas.html"><a href="meas.html#some-basic-defintions"><i class="fa fa-check"></i><b>3.3</b> Some basic defintions</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="meas.html"><a href="meas.html#relative-comparative-measures"><i class="fa fa-check"></i><b>3.3.1</b> Relative comparative measures</a></li>
+<li class="chapter" data-level="3.3.2" data-path="meas.html"><a href="meas.html#absolute-comparative-measures"><i class="fa fa-check"></i><b>3.3.2</b> Absolute comparative measures</a></li>
+<li class="chapter" data-level="3.3.3" data-path="meas.html"><a href="meas.html#attributal-measures"><i class="fa fa-check"></i><b>3.3.3</b> Attributal measures</a></li>
+<li class="chapter" data-level="3.3.4" data-path="meas.html"><a href="meas.html#standardization"><i class="fa fa-check"></i><b>3.3.4</b> Standardization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="meas.html"><a href="meas.html#examples-using-base-r"><i class="fa fa-check"></i><b>3.4</b> Examples using base R</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="meas.html"><a href="meas.html#example-1---basic-incidence-measures"><i class="fa fa-check"></i><b>3.4.1</b> Example 1 - basic incidence measures</a></li>
+<li class="chapter" data-level="3.4.2" data-path="meas.html"><a href="meas.html#example-2---rare-disease"><i class="fa fa-check"></i><b>3.4.2</b> Example 2 - rare disease</a></li>
+<li class="chapter" data-level="3.4.3" data-path="meas.html"><a href="meas.html#example-3---standardization"><i class="fa fa-check"></i><b>3.4.3</b> Example 3 - Standardization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="meas.html"><a href="meas.html#packages"><i class="fa fa-check"></i><b>3.5</b> Examples using R epidemiology packages</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="meas.html"><a href="meas.html#example-4-standardization"><i class="fa fa-check"></i><b>3.5.1</b> Example 4 Standardization</a></li>
+<li class="chapter" data-level="3.5.2" data-path="meas.html"><a href="meas.html#example-5---contingency-tables-with-epir-package"><i class="fa fa-check"></i><b>3.5.2</b> Example 5 - Contingency Tables with <code>epiR</code> package</a></li>
+<li class="chapter" data-level="3.5.3" data-path="meas.html"><a href="meas.html#example-6---contingency-tables-with-other-r-packages"><i class="fa fa-check"></i><b>3.5.3</b> Example 6 - Contingency Tables with other <code>R</code> packages</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="infer.html"><a href="infer.html"><i class="fa fa-check"></i><b>4</b> Statistical inference</a>
+<ul>
+<li class="chapter" data-level="4.0.1" data-path="infer.html"><a href="infer.html#r-packages-required-for-this-chapter-3"><i class="fa fa-check"></i><b>4.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="4.1" data-path="infer.html"><a href="infer.html#introduction-1"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.2" data-path="infer.html"><a href="infer.html#null-hypothesis-significance-testing"><i class="fa fa-check"></i><b>4.2</b> Null Hypothesis Significance Testing</a></li>
+<li class="chapter" data-level="4.3" data-path="infer.html"><a href="infer.html#s-values"><i class="fa fa-check"></i><b>4.3</b> S values</a></li>
+<li class="chapter" data-level="4.4" data-path="infer.html"><a href="infer.html#two-views-of-probability"><i class="fa fa-check"></i><b>4.4</b> Two views of probability</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="infer.html"><a href="infer.html#basic-rules-of-probability"><i class="fa fa-check"></i><b>4.4.1</b> Basic rules of probability</a></li>
+<li class="chapter" data-level="4.4.2" data-path="infer.html"><a href="infer.html#bayes-theorem"><i class="fa fa-check"></i><b>4.4.2</b> Bayes Theorem</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="infer.html"><a href="infer.html#bayesian-reasoning-to-understand-why-most-published-research-findings-are-false"><i class="fa fa-check"></i><b>4.5</b> Bayesian reasoning to understand “Why Most Published Research Findings are False”</a></li>
+<li class="chapter" data-level="4.6" data-path="infer.html"><a href="infer.html#bayesian-data-analysis-and-statistical-inference"><i class="fa fa-check"></i><b>4.6</b> Bayesian data analysis and statistical inference</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="infer.html"><a href="infer.html#bayes-factors"><i class="fa fa-check"></i><b>4.6.1</b> Bayes factors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="design.html"><a href="design.html"><i class="fa fa-check"></i><b>5</b> Non-experimental designs</a>
+<ul>
+<li class="chapter" data-level="5.0.1" data-path="design.html"><a href="design.html#r-packages-required-for-this-chapter-4"><i class="fa fa-check"></i><b>5.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="5.1" data-path="design.html"><a href="design.html#introduction-2"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="design.html"><a href="design.html#cohort-studies"><i class="fa fa-check"></i><b>5.2</b> Cohort studies</a></li>
+<li class="chapter" data-level="5.3" data-path="design.html"><a href="design.html#case-control"><i class="fa fa-check"></i><b>5.3</b> Case control</a></li>
+<li class="chapter" data-level="5.4" data-path="design.html"><a href="design.html#cross-sectional"><i class="fa fa-check"></i><b>5.4</b> Cross sectional</a></li>
+<li class="chapter" data-level="5.5" data-path="design.html"><a href="design.html#miscellaneous-designs"><i class="fa fa-check"></i><b>5.5</b> Miscellaneous designs</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>6</b> References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">(Mostly Clinical) Epidemiology with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="intro" class="section level1" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Introduction</h1>
+<div id="r-packages-required-for-this-chapter" class="section level3" number="1.0.1">
+<h3><span class="header-section-number">1.0.1</span> R packages required for this chapter</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="intro.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-2"><a href="intro.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
+</div>
+<div id="preface" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Preface</h2>
+<p>This is an intermediate epidemiology book that focuses on the methods most commonly encountered in problems arising in the domain of clinical epidemiology. The emphasis is on research design, quantitative analysis, critical thinking, and reproducible research methods. As it is my belief that epidemiologic principles are fundamental to high quality medical research and the learning and evaluation of these principles are best consolidated through direct application to problem solving, the text emphasizes the use of quantification, via open source software.</p>
+<p>By the end of the book students can expect to:<br />
+• Understand and critically evaluate basic study designs and statistical inferences in medical research<br />
+• Understand, identify, and quantitatively evaluate sources of bias in epidemiologic and clinical studies<br />
+• Master quantitative techniques for visualizing, cleaning, analyzing and interpreting epidemiologic and clinical data, including descriptive analyses, stratified analyses, regression analyses and meta-analyses.</p>
+</div>
+<div id="pre" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Prerequisites</h2>
+<p>There are multiple excellent introductory <span class="citation">(<a href="#ref-Gordis" role="doc-biblioref">Gordis 2014</a>)</span> <span class="citation">(<a href="#ref-Rothman" role="doc-biblioref">Rothman 2012</a>)</span>, intermediate <span class="citation">(<a href="#ref-SN" role="doc-biblioref">Szklo and Nieto 2019</a>)</span> and advanced <span class="citation">(<a href="#ref-RGL" role="doc-biblioref">Rothman, Greenland, and Lash 2008</a>)</span> epidemiology textbooks. There are no obligatory prerequisites for this book, although its use will be easier if there has been some prior exposure to basic epidemiologic concepts.</p>
+</div>
+<div id="my-general-philosophy-for-clinical-epidemiology" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> My general philosophy for clinical epidemiology</h2>
+<p>The standard definition of epidemiology is the study of the distribution and determinants of health-related states or events in specified populations, and the application of this study to the control of health problems <span class="citation">(<a href="#ref-Last" role="doc-biblioref">Last 2001</a>)</span>.</p>
+<p>This definition may be expanded as follows:<br />
+* The distribution of health-related states refers to analysis by time, place, and population.
+* The different varieties of epidemiologic study include; i) <strong>Descriptive</strong>: looking at patterns of disease within and between populations, trying to understand why disease rates go up and down, population variation ii) <strong>Etiologic</strong>: understand the causes of disease, with implications for interventions to change disease distributions iii) <strong>Predictive</strong>: predict outcomes for future patients, with implications for interventions to alter outcomes
+* The common determinants of of health-related states are biological, behavioral, social, cultural, economic, and political factors that influence health
+* The ultimate goal of epidemiology is the advancement of scientific knowledge to promote, protect, and restore health</p>
+<p>Clinical epidemiology may therefore be seen (?defined) as the application of epidemiologic principles and reasoning to improve clinical decision making and ultimately “patient” outcomes. However, I think it is preferable to interpret the term “patient” in the widest possible context, and consequently clinical epidemiology might range from the study of preventive measures in asymptomatic individuals to the evaluation of quaternary hospital interventions in large cohorts. As patient cohorts may arise not only from hospitals but also from specific neighborhoods, cities, provinces and countries the distinction between classic epidemiology and clinical epidemiology is hardly distinct. Consequently, while this book will focus on clinical applications, the underlying methods of classic epidemiology will also be presented, admittedly in a focused or condensed manner.</p>
+<p>Epidemiology is the quantitative heart of both public health &amp; clinical medicine (i.e. the science of counting within and across populations). This book will emphasize a hands-on quantitative approach to clinical epidemiology. Realizations that <em>“if you can’t measure something, you can’t improve it”</em> and <em>“intuition without quantification is often too imprecise to be useful”</em> support the importance of a rigorous quantitative approach. Epidemiology concepts may be vague, or plain hard to understand, and practical data manipulation provides opportunities to reinforce our understanding of these methods making us both better consumers and producers of medical research.</p>
+<p>While this book stresses a quantitative approach, one must be careful to avoid the <a href="https://en.wikipedia.org/wiki/McNamara_fallacy">McNamara</a> or the quantifiable fallacy “if you can’t measure what is important, make what you can measure important,” first documented during the Vietnam war, but similar erroneous uses of quantification may arise in clinical medicine. For example, progression-free survival (PFS) as a primary endpoint in many cancer trials largely because it is an endpoint which is easily measurable, but it meaningfulness compared to other metrics such as overall quality of life or overall survival is highly questionable.<span class="citation">(<a href="#ref-Prasad" role="doc-biblioref">Kim and Prasad 2015</a>)</span> Extensive quantification of biased results are also of no value. Consequently this book will also concentrate on recognizing common biases and assuring the application of methodologic rigor at all levels of study design, analysis, interpretation, and dissemination.</p>
+</div>
+<div id="brief-excursions-into-quantification" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Brief excursions into quantification</h2>
+<p>This is a brief excursions into quantification or why intuition is not good enough. Herein I offer several examples that hopefully highlight the need for careful quantification in order to reach reasonable conclusions.</p>
+<p><strong>1. Birthday problem</strong></p>
+<p>First, consider the birthday problem, a common parlor game, which shows how we may underestimate the play of chance. Imagine you are in a class of 60 people, what is the probability that at least 2 people share the same birthday?</p>
+<div style="display: flex;">
+<div>
+<p>Potential answers</p>
+<pre><code>## A. &lt; 5% 
+## B. 5 - 15% 
+## C. 15 - 25% 
+## D. &gt;99%</code></pre>
+</div>
+<div>
+<p><img src="img/balloons.png" width="35%" style="display: block; margin: auto 0 auto auto;" /></p>
+</div>
+</div>
+<p>Most people, who aren’t already aware of the “trick” or “paradox” assume the probability is small given that a birthday may in occur on any one of 365 possible days. Given our natural tendency to egocentricity they imagine there are 59 chances of some else having the same birthday as them, or a probability of 59/365 or 16.2%. However this ignores the other 1711 (59<em>58) possible combinations between someone who is not you being compared to someone else who is also not you. Also as we will see, calculations involving exponentials are hardly intuitive to most people who tend to think in linearities.<br />
+As an easy solution, begin by considering the reverse problem what is the probability that no one has the same birthday as you. For the 2nd person, first next to you, probability of not being born on the same day as you = 364/365.<br />
+So the probability that 3rd person not on the same day as first 2 persons = 364/365</em> 363/365 and<br />
+The probability i th person not on the same day as 1st i-1 = 364/365 * 363/365 * 362/365 * (n-1)/365 or<br />
+<span class="math display">\[ \prod_{i=0}^{i-1} (1- \dfrac{i}{365}) \]</span><br />
+Then the probability of being born on the same day = 1 - probability not being born on the same day. These calculations can be easily performed in <code>R</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="intro.html#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a birthday function to calculate probability of 2 people in a group  (with a default group of 23)</span></span>
+<span id="cb3-2"><a href="intro.html#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># default of 23 since that gives probbaility = 50%</span></span>
+<span id="cb3-3"><a href="intro.html#cb3-3" aria-hidden="true" tabindex="-1"></a>birthday <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n=</span><span class="dv">23</span>){</span>
+<span id="cb3-4"><a href="intro.html#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="dv">1</span><span class="sc">-</span><span class="fu">prod</span>(<span class="dv">1</span><span class="sc">-</span>(<span class="dv">0</span><span class="sc">:</span>(n<span class="dv">-1</span>))<span class="sc">/</span><span class="dv">365</span>)</span>
+<span id="cb3-5"><a href="intro.html#cb3-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-6"><a href="intro.html#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">birthday</span>(<span class="dv">60</span>)</span></code></pre></div>
+<pre><code>## [1] 0.9941</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="intro.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># see why the default is 23 -&gt; 50% probability</span></span>
+<span id="cb5-2"><a href="intro.html#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">birthday</span>()</span></code></pre></div>
+<pre><code>## [1] 0.5073</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="intro.html#cb7-1" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">numeric</span>(<span class="dv">100</span>)</span>
+<span id="cb7-2"><a href="intro.html#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>){</span>
+<span id="cb7-3"><a href="intro.html#cb7-3" aria-hidden="true" tabindex="-1"></a>     p[i] <span class="ot">&lt;-</span> <span class="fu">birthday</span>(i)</span>
+<span id="cb7-4"><a href="intro.html#cb7-4" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb7-5"><a href="intro.html#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="intro.html#cb7-6" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x=</span><span class="fu">seq</span>(<span class="dv">1</span>,<span class="dv">100</span>, <span class="dv">1</span>), <span class="at">p=</span>p)</span>
+<span id="cb7-7"><a href="intro.html#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(p, <span class="fu">aes</span>(x,p)) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="intro.html#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb7-9"><a href="intro.html#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span><span class="fu">percent_format</span>()) <span class="sc">+</span></span>
+<span id="cb7-10"><a href="intro.html#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">&quot;Probability&quot;</span>) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="intro.html#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Probability of same birthday as a function of sample size&quot;</span>) <span class="sc">+</span></span>
+<span id="cb7-12"><a href="intro.html#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">0</span>, <span class="at">y =</span> .<span class="dv">50</span>, <span class="at">xend =</span> <span class="dv">23</span>, <span class="at">yend =</span> .<span class="dv">50</span>), <span class="at">color=</span><span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
+<span id="cb7-13"><a href="intro.html#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="dv">23</span>, <span class="at">y =</span> .<span class="dv">50</span>, <span class="at">xend =</span> <span class="dv">23</span>, <span class="at">yend =</span> <span class="dv">0</span>), <span class="at">color=</span><span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
+<span id="cb7-14"><a href="intro.html#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="01-intro_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>So the probability of finding 2 people in a class of 60 with the same birthday is &gt;99%. The graph also shows that provided there are more than 23 people in the class the probability will be &gt; 50%. One can alaso appreciate the non-linearity of the relationship. To give an idea about the range of functions in <code>R</code> it should be noted that you don’t have to write your own <code>birthday</code> function as above but can simple call the built in <code>pbirthday</code> function. One can also verify these calculations by doing simulations as demonstrated in this <a href="http://varianceexplained.org/r/birthday-problem/">blog</a>.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="intro.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># using the built in R function</span></span>
+<span id="cb8-2"><a href="intro.html#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;The probability of 2 people with the same bithday in a group of 23 is &quot;</span>, <span class="fu">pbirthday</span>(<span class="dv">23</span>), <span class="st">&quot; and for a group of 60 is &quot;</span>,</span>
+<span id="cb8-3"><a href="intro.html#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">pbirthday</span>(<span class="dv">60</span>))</span></code></pre></div>
+<pre><code>## The probability of 2 people with the same bithday in a group of 23 is  0.5073  and for a group of 60 is  0.9941</code></pre>
+<p><strong>2. Voter suppression</strong><br />
+Now being able to solve party games is a good, but not the only, reason to develop your quantitative skills. Consider the very current issue of voter suppression. A <a href="https://www.nbcnews.com/politics/elections/suppression-critics-charge-georgia-gop-gov-candidate-purging-voters-election-n918761">news story</a> reported that in Georgia, where 32% of the population is black, the state has recently removed 670,000 voters of whom 70% were black. Is this difference likely due to the play of chance? In other words, how likely are we to observe 469,000 (.7 * 670,000) blacks out of 670,000 if the selection probability is the same as the proportion of blacks in the general population (32%). This can be found with 1 line of code. Additional information about this function can be found with <code>help(binom.test</code>).</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="intro.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">binom.test</span>(<span class="dv">469000</span>, <span class="dv">670000</span>, .<span class="dv">32</span>)</span></code></pre></div>
+<pre><code>## 
+##  Exact binomial test
+## 
+## data:  469000 and 670000
+## number of successes = 469000, number of trials = 670000, p-value &lt;2e-16
+## alternative hypothesis: true probability of success is not equal to 0.32
+## 95 percent confidence interval:
+##  0.6989 0.7011
+## sample estimates:
+## probability of success 
+##                    0.7</code></pre>
+<p>It appears highly unlikely to have excluded htis number of black voters if the null hypothesis is that voter suppression is independent of race.</p>
+<p><strong>3. Avoiding disasters</strong></p>
+<p>In 2018, medical researchers form John Hopkins reported a clinical trial in JAMA entitled <a href="https://jamanetwork-com.proxy3.library.mcgill.ca/journals/jama/fullarticle/2714645?resultClick=1">“Effect of a Program Combining Transitional Care and Long-term Self-management Support on Outcomes of Hospitalized Patients With Chronic Obstructive Pulmonary Disease A Randomized Clinical Trial”</a> that concluded the intervention lead to “significantly <strong>fewer</strong> COPD related hospitalizations.” The next year the authors published a retraction and a <a href="https://jamanetwork-com.proxy3.library.mcgill.ca/journals/jama/fullarticle/2752467">new article</a> that concluded the intervention lead to “significantly <strong>greater</strong> COPD related hospitalizations.”</p>
+<p>The problem was a simple miscoding of the intervention and control arms. Being able to read and follow code, can assure that extra eyes are available to catch these errors which can happen to all of us. While reviewing their code to correct this major error, the research team discovered at least two other areas of erroneous code (in the commands to impute missing values and to aggregate data into summary variables).</p>
+<p>On a broader level, sharing analytic code is increasingly the norm across many fields and provides an unambiguous record of the analytical methods used, aiding reproducibility, helping avoid duplicated effort and possibly accelerating innovation. it would be nice to see this become the norm in clinical epidemiology.</p>
+</div>
+<div id="outline" class="section level2" number="1.5">
+<h2><span class="header-section-number">1.5</span> Outline</h2>
+<p>The scientific discipline of epidemiology has greatly expanded from its origin narrow focus on communicable disease epidemics to broadly include all phenomena related to population health. The aim of this book is assist in developing the design and analytical skills to critically evaluate (and produce) medical research that avoids biases and quantitative errors. The topics to be discussed will hopefully assist healthcare personnel in reaching the goal of being better consumers and producers of an ever expanding medical literature.</p>
+<p>For a variety of reasons, not the least of which is my inexperience and lack of knowledge about publishing a html book, I have decided to make this book into two or three volumes. This will also allow me to release material more quickly and hopefully get feedback to correct the errors, incorporate suggestions, and generally improve the overall content.</p>
+<div class="blue-box">
+<table>
+<caption>Table of contents (volume 1)</caption>
+<colgroup>
+<col width="23%" />
+<col width="76%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Chapter</th>
+<th>Topic</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Chapter <a href="intro.html#intro">1</a></td>
+<td>Introduction to clinical epidemiology</td>
+</tr>
+<tr class="even">
+<td>Chapter <a href="#soft"><strong>??</strong></a></td>
+<td>Introduction to statistical software - R</td>
+</tr>
+<tr class="odd">
+<td>Chapter <a href="vis.html#vis">2</a></td>
+<td>Exploratory Data Analysis - Data visualization</td>
+</tr>
+<tr class="even">
+<td>Chapter <a href="meas.html#meas">3</a></td>
+<td>Contingency tables, measures of association &amp; R packages</td>
+</tr>
+<tr class="odd">
+<td>Chapter <a href="infer.html#infer">4</a></td>
+<td>Statistical inference</td>
+</tr>
+<tr class="even">
+<td>Chapter <a href="design.html#design">5</a></td>
+<td>Non-experimental designs &amp; incidence measures</td>
+</tr>
+<tr class="odd">
+<td>Chapter <a href="references.html#references">6</a></td>
+<td>References</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Future volumes are likely to include the following topics</p>
+<div class="blue-box">
+<ul>
+<li>Causal inference<br />
+</li>
+<li>Confounding<br />
+</li>
+<li>Effect Measure Modification &amp; interaction<br />
+</li>
+<li>Stratification &amp; adjustment<br />
+</li>
+<li>Overview of biases (selection and information)<br />
+</li>
+<li>Quantitative bias analysis<br />
+</li>
+<li>Poisson regression<br />
+</li>
+<li>Survival analysis<br />
+</li>
+<li>Propensity Scores / Instrumental variables<br />
+</li>
+<li>Randomized clinical trials<br />
+</li>
+<li>Meta-analysis<br />
+</li>
+<li>Pharmacoepidemiology<br />
+</li>
+<li>Evidence based medicine / Guidelines<br />
+</li>
+<li>Health economics / ethics</li>
+</ul>
+</div>
+<pre><code>
+&lt;!--chapter:end:01-intro.Rmd--&gt;
+
+# Introduction to statistical software - R {#soft}
+
+### R packages required for this chapter
+
+
+```r
+library(knitr)
+library(tidyverse)
+library(broom)
+library(psych)
+library(magrittr)</code></pre>
+<p>A <a href="https://twitter.com/MaartenvSmeden/status/995791001825431552">twitter post</a> has nicely summarized 10 reasons “Why should I bother learning to code”;</p>
+<ol style="list-style-type: decimal">
+<li>Encourages reproducible statistical analyses<br />
+</li>
+<li>Enables easy incorporation of “New” and “personalized” statistical methods<br />
+</li>
+<li>Code sharing - be inspired and inspiring<br />
+</li>
+<li>Career perspectives increased with this skill<br />
+</li>
+<li>Data visualization -&gt; better understanding of your data<br />
+</li>
+<li>Avoid copy / paste frustrations<br />
+</li>
+<li>Customization - get exactly what you want<br />
+</li>
+<li>Develop interactive graphs and web-apps to increase dissemination and understanding of your work<br />
+</li>
+<li>Consults with a statistician easier<br />
+</li>
+<li>Personal satisfaction (it can be fun)</li>
+</ol>
+<p>In summary, coding has the attributes of flexibility, transparency, and reproduciblity which should enhance overall research quality.</p>
+</div>
+<div id="statistical-software---r" class="section level2" number="1.6">
+<h2><span class="header-section-number">1.6</span> Statistical software - R</h2>
+<p>The most important element in clinical epidemiology is NOT which statistical software is chosen but rather an in depth understanding the basic epidemiologic and statistical concepts. Having said that, there are many advantages for <code>R</code>, largely summarized by the fact that <a href="https://www.nytimes.com/2009/01/07/technology/business-computing/07program.html?pagewanted=all">R</a> is the lingua franca of data science, used by millions of data experts.</p>
+<p><strong>Why <code>R</code>? </strong></p>
+<ul>
+<li>Free and open source software environment for statistical computing and graphics<br />
+</li>
+<li>Open source indicates the original source code is freely available, may be redistributed, and modified<br />
+</li>
+<li>Allows &amp; encourages researchers to modify, extend, and develop additions to the base program<br />
+</li>
+<li>Additions are referred to as packages<br />
+</li>
+<li>Use of scripts and Rmarkdown encourages reproducible research<br />
+</li>
+<li>Active online community facilitates formal courses, sharing of solutions to coding queries<br />
+</li>
+<li><a href="https://rstudio.com">Rstudio</a>, an integrated development environment (IDE) greatly facilitates the <code>R</code> experience<br />
+</li>
+<li>Combining with <code>Rmarkdown</code> can easily create, reproduce and share your work via html or pdf files</li>
+</ul>
+<p>This book is not intended to be first line resource for learning <code>R</code>, as there are many excellent online learning resources. It should be noted that there are at least 2 flavors or <code>R</code> - 1) standard base <code>R</code> 2) <a href="https://www.tidyverse.org">tidyverse version</a>, a collection of R packages designed with a common philosophy, grammar, and data structures especially useful for data science.</p>
+<p><strong>Learning and help resources </strong></p>
+<ul>
+<li><code>R</code> definitive online resource can be found at <a href="https://cran.r-project.org/doc/manuals/R-intro.html">CRAN</a> has a number of manuals online<br />
+</li>
+<li>Condensed <code>R</code> reference card can be found [here][<a href="https://cran.r-project.org/doc/contrib/Short-refcard.pdf" class="uri">https://cran.r-project.org/doc/contrib/Short-refcard.pdf</a>]<br />
+</li>
+<li>The <a href="http://swirlstats.com/">swirl</a> tutorial teaches R programming and data science interactively, install <code>swirl</code> with <code>install.packages("swirl")</code> and run with the <code>swirl()</code> command<br />
+</li>
+<li>Helpful cheet sheets can be found as the <a href="https://rstudio.com/resources/cheatsheets/">RStudio website</a><br />
+</li>
+<li><a href="http://statistics.ats.ucla.edu/stat/r/">UCLA</a></li>
+<li><a href="http://www.statmethods.net">Quick R</a></li>
+<li><a href="http://www.r-bloggers.com">R blogger</a>, a daily compilation of R blogs from over the interent</li>
+<li><a href="http://adv-r.had.co.nz">Advanced R</a></li>
+<li>After acquiring the basics, many questions are answered with the help of <a href="https://stackoverflow.com/questions/tagged/r">Stackoverflow</a><br />
+</li>
+<li>Good old <a href="https://www.google.com/search?sxsrf=ALeKk01Tqej0EWIEpcnxnJzIMqQG5GTjXg%3A1610916306178&amp;ei=0qEEYMWiCqqyggfTz6vYAw&amp;q=r+questions+and+answers&amp;oq=r+questions&amp;gs_lcp=CgZwc3ktYWIQARgBMgUIABDJAzICCAAyAggAMgIIADICCAAyAggAMgYIABAWEB4yBggAEBYQHjIGCAAQFhAeMgYIABAWEB46BAgjECc6CggAELEDEIMBEEM6BAgAEEM6BwgAELEDEEM6BwgjEOoCECc6CwguELEDEMcBEKMCOggIABCxAxCDAToICC4QsQMQgwE6BQguELEDOg0IABCxAxCDARDJAxBDOgoILhCxAxCDARBDOggIABDJAxCRAjoHCAAQFBCHAjoICC4QxwEQrwFQkj1YnmRgnIoBaAFwAHgAgAFuiAHIB5IBBDExLjGYAQCgAQGqAQdnd3Mtd2l6sAEKwAEB&amp;sclient=psy-ab">Google</a> using “r type your question”</li>
+</ul>
+<p>Within the <code>R</code> environment to find help for a specific function, for example <code>epi.2by2</code> in the <code>EpiR</code> package try typing<br />
+* <code>help("epi.2by2")</code><br />
+* <code>example("epi.2by2")</code><br />
+* <code>help.search("epi.2by2")</code><br />
+* RSiteSearch(“epi.2by2”) - provides online search</p>
+<p><strong>Packages </strong></p>
+<p>The capabilities of base <code>R</code> are greatly extended using “packages.” These are distributed over the Internet via <a href="https://cran.r-project.org/">CRAN</a> and can be downloaded either directly during an <code>R</code> session by typing the command <code>install.packages("pakage.name")</code>. Alternatively this can be done via RStudio which also provides a directory of all downloaded and installed packages. In 2010, there were about 2,000 packages, by 2016 there were almost 10,000 and by 2020 this has reached almost 17,000. This rapid growth of these important resources is one of the prime reasons for the ever increasing popularity of <code>R</code>. Of course, there is also a chick and egg argument that sees the increasing popularity of R as a reason why more people are contributing packages.<br />
+For epidemiologists some of the standard epidemiology packages include <code>epiR</code>, <code>epibasix</code>, <code>epitools</code>, and <code>Epi</code> but there are over 30 packages including some that are ultra specialized.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-2"></span>
+<img src="img/cran_epi.png" alt="Epi packages available on CRAN" width="847" />
+<p class="caption">
+Figure 1.1: Epi packages available on CRAN
+</p>
+</div>
+</div>
+<div id="r---common-data-and-variable-manipulations" class="section level2" number="1.7">
+<h2><span class="header-section-number">1.7</span> R - Common data and variable manipulations</h2>
+<p><code>R</code> is a programming language based on the concept of objects, which may be data or code, in the form of procedures. The data structures are a form of organizing and storing data are four basic types - vector (single dimension structure of 1 type), matrix (two dimension structure of 1 type), list (single dimensional data structure of different types), &amp; data frame (special case of a list where each component is of same length). Data frames are the most common data structure used in epidemiology analyses.<br />
+Here are some common data manipulations in R that represent the minimal knowledge or comfortable level that the reader may like to have to easily follow the code in later chapters.</p>
+<p><strong>Creating a data frame</strong></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="intro.html#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creation of a simple data frame (dat)</span></span>
+<span id="cb13-2"><a href="intro.html#cb13-2" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span>  <span class="fu">data.frame</span>(<span class="st">&#39;id&#39;</span><span class="ot">=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>, <span class="st">&#39;Age&#39;</span><span class="ot">=</span><span class="fu">c</span>(<span class="dv">21</span>,<span class="dv">15</span>,<span class="dv">14</span>,<span class="dv">18</span>), <span class="st">&#39;Gender&#39;</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">&#39;M&#39;</span>,<span class="st">&#39;F&#39;</span>,<span class="st">&#39;F&#39;</span>,<span class="st">&#39;M&#39;</span>))</span>
+<span id="cb13-3"><a href="intro.html#cb13-3" aria-hidden="true" tabindex="-1"></a>dat</span></code></pre></div>
+<pre><code>##   id Age Gender
+## 1  1  21      M
+## 2  2  15      F
+## 3  3  14      F
+## 4  4  18      M</code></pre>
+<p><strong>Read a data file</strong></p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="intro.html#cb15-1" aria-hidden="true" tabindex="-1"></a>dat1 <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/pima_db.csv&quot;</span>)</span>
+<span id="cb15-2"><a href="intro.html#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat1,<span class="dv">3</span>)</span></code></pre></div>
+<pre><code>##   Pregnancies Glucose BloodPressure SkinThickness Insulin  BMI
+## 1           6     148            72            35       0 33.6
+## 2           1      85            66            29       0 26.6
+## 3           8     183            64             0       0 23.3
+##   DiabetesPedigreeFunction Age Outcome
+## 1                    0.627  50       1
+## 2                    0.351  31       0
+## 3                    0.672  32       1</code></pre>
+<p>Other file formats including Excel, SAS, Stata, SPSS files can be read with <code>readxl::read_excel()</code>, <code>sas7bdat::read.sas7bdat()</code>, <code>Hmisc::spss.get()</code>, <code>foreign::read.dta()</code> respectively.</p>
+<p><strong>Variable manipulation</strong></p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="intro.html#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new variable based on cutoff on existing variable</span></span>
+<span id="cb17-2"><a href="intro.html#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Base R</span></span>
+<span id="cb17-3"><a href="intro.html#cb17-3" aria-hidden="true" tabindex="-1"></a>dat1<span class="sc">$</span>Glucose_hi <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
+<span id="cb17-4"><a href="intro.html#cb17-4" aria-hidden="true" tabindex="-1"></a>dat1[dat1<span class="sc">$</span>Glucose <span class="sc">&gt;</span><span class="dv">120</span>, <span class="st">&#39;Glucose_hi&#39;</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb17-5"><a href="intro.html#cb17-5" aria-hidden="true" tabindex="-1"></a>dat1[dat1<span class="sc">$</span>Glucose <span class="sc">&lt;=</span><span class="dv">120</span>, <span class="st">&#39;Glucose_hi&#39;</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb17-6"><a href="intro.html#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat1[,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">8</span><span class="sc">:</span><span class="dv">10</span>)],<span class="dv">4</span>)</span></code></pre></div>
+<pre><code>##   Pregnancies Glucose BloodPressure Age Outcome Glucose_hi
+## 1           6     148            72  50       1          1
+## 2           1      85            66  31       0          0
+## 3           8     183            64  32       1          1
+## 4           1      89            66  21       0          0</code></pre>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="intro.html#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#tidyverse</span></span>
+<span id="cb19-2"><a href="intro.html#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb19-3"><a href="intro.html#cb19-3" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> dat1 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">Age_old =</span> <span class="fu">ifelse</span>(Age <span class="sc">&gt;</span> <span class="dv">50</span>, <span class="dv">1</span>, <span class="dv">0</span>))  </span>
+<span id="cb19-4"><a href="intro.html#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat2[,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>,<span class="dv">8</span><span class="sc">:</span><span class="dv">11</span>)],<span class="dv">10</span>)</span></code></pre></div>
+<pre><code>##    Pregnancies Glucose BloodPressure Age Outcome Glucose_hi Age_old
+## 1            6     148            72  50       1          1       0
+## 2            1      85            66  31       0          0       0
+## 3            8     183            64  32       1          1       0
+## 4            1      89            66  21       0          0       0
+## 5            0     137            40  33       1          1       0
+## 6            5     116            74  30       0          0       0
+## 7            3      78            50  26       1          0       0
+## 8           10     115             0  29       0          0       0
+## 9            2     197            70  53       1          1       1
+## 10           8     125            96  54       1          1       1</code></pre>
+<p><strong>Variable and data subsetting</strong></p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="intro.html#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="do">#################</span></span>
+<span id="cb21-2"><a href="intro.html#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Variable subsetting</span></span>
+<span id="cb21-3"><a href="intro.html#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="do">#################</span></span>
+<span id="cb21-4"><a href="intro.html#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Base R</span></span>
+<span id="cb21-5"><a href="intro.html#cb21-5" aria-hidden="true" tabindex="-1"></a>dat1s <span class="ot">=</span> <span class="fu">subset</span>(dat1, <span class="at">select =</span> <span class="fu">c</span>(<span class="st">&#39;Pregnancies&#39;</span>, <span class="st">&#39;Glucose&#39;</span>))</span>
+<span id="cb21-6"><a href="intro.html#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat1s)</span></code></pre></div>
+<pre><code>##   Pregnancies Glucose
+## 1           6     148
+## 2           1      85
+## 3           8     183
+## 4           1      89
+## 5           0     137
+## 6           5     116</code></pre>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="intro.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tidyverse</span></span>
+<span id="cb23-2"><a href="intro.html#cb23-2" aria-hidden="true" tabindex="-1"></a>dat1 <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(Pregnancies, Glucose) <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code></pre></div>
+<pre><code>##   Pregnancies Glucose
+## 1           6     148
+## 2           1      85
+## 3           8     183
+## 4           1      89
+## 5           0     137
+## 6           5     116</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="intro.html#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="do">#################</span></span>
+<span id="cb25-2"><a href="intro.html#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Data subsetting</span></span>
+<span id="cb25-3"><a href="intro.html#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="do">#################</span></span>
+<span id="cb25-4"><a href="intro.html#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Base R #1</span></span>
+<span id="cb25-5"><a href="intro.html#cb25-5" aria-hidden="true" tabindex="-1"></a>dat1s <span class="ot">&lt;-</span>  <span class="fu">subset</span>(dat1, <span class="at">subset =</span> Pregnancies <span class="sc">&gt;</span><span class="dv">2</span> <span class="sc">&amp;</span> Glucose_hi <span class="sc">==</span> <span class="dv">1</span>) <span class="co"># notice need for == when looking for equality</span></span>
+<span id="cb25-6"><a href="intro.html#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat1s[,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">8</span><span class="sc">:</span><span class="dv">10</span>)])</span></code></pre></div>
+<pre><code>##    Pregnancies Glucose BloodPressure SkinThickness Age Outcome Glucose_hi
+## 1            6     148            72            35  50       1          1
+## 3            8     183            64             0  32       1          1
+## 10           8     125            96             0  54       1          1
+## 12          10     168            74             0  34       1          1
+## 13          10     139            80             0  57       0          1
+## 15           5     166            72            19  51       1          1</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="intro.html#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Base R #2</span></span>
+<span id="cb27-2"><a href="intro.html#cb27-2" aria-hidden="true" tabindex="-1"></a>dat1ss <span class="ot">=</span> dat1[<span class="fu">which</span>(dat1<span class="sc">$</span>Pregnancies <span class="sc">&gt;</span><span class="dv">2</span> <span class="sc">&amp;</span> dat1<span class="sc">$</span>Glucose_hi <span class="sc">==</span><span class="dv">1</span>),]</span>
+<span id="cb27-3"><a href="intro.html#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat1ss[,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">8</span><span class="sc">:</span><span class="dv">10</span>)])</span></code></pre></div>
+<pre><code>##    Pregnancies Glucose BloodPressure SkinThickness Age Outcome Glucose_hi
+## 1            6     148            72            35  50       1          1
+## 3            8     183            64             0  32       1          1
+## 10           8     125            96             0  54       1          1
+## 12          10     168            74             0  34       1          1
+## 13          10     139            80             0  57       0          1
+## 15           5     166            72            19  51       1          1</code></pre>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="intro.html#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># tidyverse</span></span>
+<span id="cb29-2"><a href="intro.html#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb29-3"><a href="intro.html#cb29-3" aria-hidden="true" tabindex="-1"></a>dat1 <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(Pregnancies <span class="sc">&gt;</span><span class="dv">2</span> <span class="sc">&amp;</span> Glucose_hi <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>(,<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">8</span><span class="sc">:</span><span class="dv">10</span>))</span></code></pre></div>
+<pre><code>##   Pregnancies Glucose BloodPressure SkinThickness Insulin  BMI
+## 1           6     148            72            35       0 33.6
+## 2           8     183            64             0       0 23.3
+## 3           8     125            96             0       0  0.0
+## 4          10     168            74             0       0 38.0
+## 5          10     139            80             0       0 27.1
+## 6           5     166            72            19     175 25.8
+##   DiabetesPedigreeFunction Age Outcome Glucose_hi
+## 1                    0.627  50       1          1
+## 2                    0.672  32       1          1
+## 3                    0.232  54       1          1
+## 4                    0.537  34       1          1
+## 5                    1.441  57       0          1
+## 6                    0.587  51       1          1</code></pre>
+<p><strong>Basic Data Descriptions</strong></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="intro.html#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Base R</span></span>
+<span id="cb31-2"><a href="intro.html#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(dat1)</span></code></pre></div>
+<pre><code>##   Pregnancies       Glucose    BloodPressure   SkinThickness     Insulin     
+##  Min.   : 0.00   Min.   :  0   Min.   :  0.0   Min.   : 0.0   Min.   :  0.0  
+##  1st Qu.: 1.00   1st Qu.: 99   1st Qu.: 62.0   1st Qu.: 0.0   1st Qu.:  0.0  
+##  Median : 3.00   Median :117   Median : 72.0   Median :23.0   Median : 30.5  
+##  Mean   : 3.85   Mean   :121   Mean   : 69.1   Mean   :20.5   Mean   : 79.8  
+##  3rd Qu.: 6.00   3rd Qu.:140   3rd Qu.: 80.0   3rd Qu.:32.0   3rd Qu.:127.2  
+##  Max.   :17.00   Max.   :199   Max.   :122.0   Max.   :99.0   Max.   :846.0  
+##       BMI       DiabetesPedigreeFunction      Age          Outcome     
+##  Min.   : 0.0   Min.   :0.078            Min.   :21.0   Min.   :0.000  
+##  1st Qu.:27.3   1st Qu.:0.244            1st Qu.:24.0   1st Qu.:0.000  
+##  Median :32.0   Median :0.372            Median :29.0   Median :0.000  
+##  Mean   :32.0   Mean   :0.472            Mean   :33.2   Mean   :0.349  
+##  3rd Qu.:36.6   3rd Qu.:0.626            3rd Qu.:41.0   3rd Qu.:1.000  
+##  Max.   :67.1   Max.   :2.420            Max.   :81.0   Max.   :1.000  
+##    Glucose_hi   
+##  Min.   :0.000  
+##  1st Qu.:0.000  
+##  Median :0.000  
+##  Mean   :0.454  
+##  3rd Qu.:1.000  
+##  Max.   :1.000</code></pre>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="intro.html#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Other approaches</span></span>
+<span id="cb33-2"><a href="intro.html#cb33-2" aria-hidden="true" tabindex="-1"></a>psych<span class="sc">::</span><span class="fu">describe</span>(dat1)</span></code></pre></div>
+<pre><code>##                          vars   n   mean     sd median trimmed   mad   min
+## Pregnancies                 1 768   3.85   3.37   3.00    3.46  2.97  0.00
+## Glucose                     2 768 120.89  31.97 117.00  119.38 29.65  0.00
+## BloodPressure               3 768  69.11  19.36  72.00   71.36 11.86  0.00
+## SkinThickness               4 768  20.54  15.95  23.00   19.94 17.79  0.00
+## Insulin                     5 768  79.80 115.24  30.50   56.75 45.22  0.00
+## BMI                         6 768  31.99   7.88  32.00   31.96  6.82  0.00
+## DiabetesPedigreeFunction    7 768   0.47   0.33   0.37    0.42  0.25  0.08
+## Age                         8 768  33.24  11.76  29.00   31.54 10.38 21.00
+## Outcome                     9 768   0.35   0.48   0.00    0.31  0.00  0.00
+## Glucose_hi                 10 768   0.45   0.50   0.00    0.44  0.00  0.00
+##                             max  range  skew kurtosis   se
+## Pregnancies               17.00  17.00  0.90     0.14 0.12
+## Glucose                  199.00 199.00  0.17     0.62 1.15
+## BloodPressure            122.00 122.00 -1.84     5.12 0.70
+## SkinThickness             99.00  99.00  0.11    -0.53 0.58
+## Insulin                  846.00 846.00  2.26     7.13 4.16
+## BMI                       67.10  67.10 -0.43     3.24 0.28
+## DiabetesPedigreeFunction   2.42   2.34  1.91     5.53 0.01
+## Age                       81.00  60.00  1.13     0.62 0.42
+## Outcome                    1.00   1.00  0.63    -1.60 0.02
+## Glucose_hi                 1.00   1.00  0.18    -1.97 0.02</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="intro.html#cb35-1" aria-hidden="true" tabindex="-1"></a>broom<span class="sc">::</span><span class="fu">tidy</span>(dat1)</span></code></pre></div>
+<pre><code>## # A tibble: 10 x 13
+##    column     n    mean      sd  median trimmed    mad    min    max  range
+##    &lt;chr&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1 Pregn…   768   3.85    3.37    3       3.46   2      0      17     17   
+##  2 Gluco…   768 121.     32.0   117     119.    20      0     199    199   
+##  3 Blood…   768  69.1    19.4    72      71.4    8      0     122    122   
+##  4 SkinT…   768  20.5    16.0    23      19.9   12      0      99     99   
+##  5 Insul…   768  79.8   115.     30.5    56.7   30.5    0     846    846   
+##  6 BMI      768  32.0     7.88   32      32.0    4.6    0      67.1   67.1 
+##  7 Diabe…   768   0.472   0.331   0.372   0.422  0.168  0.078   2.42   2.34
+##  8 Age      768  33.2    11.8    29      31.5    7     21      81     60   
+##  9 Outco…   768   0.349   0.477   0       0.312  0      0       1      1   
+## 10 Gluco…   768   0.454   0.498   0       0.443  0      0       1      1   
+## # … with 3 more variables: skew &lt;dbl&gt;, kurtosis &lt;dbl&gt;, se &lt;dbl&gt;</code></pre>
+</div>
+<div id="rstudio---the-ide-for-r" class="section level2" number="1.8">
+<h2><span class="header-section-number">1.8</span> RStudio - <strong>The</strong> IDE for R</h2>
+<p><a href="https://rstudio.com">RStudio</a> is an integrated development environment (IDE) for R. For overall convenience, flexibility, educational resources, and ongoing development it is in my opinion an unparalleled environment for working in R. It offers a multi-pane console, syntax-highlighting editor that supports direct code execution, as well as tools for plotting, history, project and workspace management. There are many tools within RStudio that facilitate coding including numerous shortcuts which accessed from a drop down menu within RStudio and can be found <a href="https://support.rstudio.com/hc/en-us/articles/200711853-Keyboard-Shortcuts">here</a>. Several shortcuts that I find most helpful are listed below.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb37-1"><a href="intro.html#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="an">Table:</span><span class="co"> Very useful RStudio shortcuts</span></span>
+<span id="cb37-2"><a href="intro.html#cb37-2" aria-hidden="true" tabindex="-1"></a>| Command                           | Windows                                       | Mac               |</span>
+<span id="cb37-3"><a href="intro.html#cb37-3" aria-hidden="true" tabindex="-1"></a>|---------------------------------- |---------------------------------------------  |-----------------  |</span>
+<span id="cb37-4"><a href="intro.html#cb37-4" aria-hidden="true" tabindex="-1"></a>| Assignment operator               | Alt + -                                       | Opt + -           |</span>
+<span id="cb37-5"><a href="intro.html#cb37-5" aria-hidden="true" tabindex="-1"></a>| Commenting &amp; Uncommenting Code    | Ctrl + Shift + C                              | Cmd + Shift + C   |</span>
+<span id="cb37-6"><a href="intro.html#cb37-6" aria-hidden="true" tabindex="-1"></a>| Add the Pipe %&gt;%                  | Ctrl + Shift + M                              | Cmd + Shift + M   |</span>
+<span id="cb37-7"><a href="intro.html#cb37-7" aria-hidden="true" tabindex="-1"></a>| Keyboard Shortcut Cheat Sheet     | Alt + Shift + K                               | Opt + Shift + K   |</span>
+<span id="cb37-8"><a href="intro.html#cb37-8" aria-hidden="true" tabindex="-1"></a>| Move cursor beginning of line     | Home                                          | Cmd+Left          |</span>
+<span id="cb37-9"><a href="intro.html#cb37-9" aria-hidden="true" tabindex="-1"></a>| Move cursor to end of line        | End                                           | Cmd+Right         |</span></code></pre></div>
+<p>When using RStudio, it generally most helpful to begin by creating a <code>New Project from the</code>File<code>drop down menu. As you will soon appreciate this has definitely file management advantages. For individual files, I find it most useful to create individual RMarkdown documents. For this book, each chapter is a separate</code>Rmd<code>file. These files have the advantage of being able to combine free text and</code>R<code>code chunks which via a synthesis of the</code>markdown<code>language and</code>Pandoc` allows the output to be on the format of your choice (html, LaTex/pdf, WORD).</p>
+</div>
+<div id="r---more-than-a-statistical-program" class="section level2" number="1.9">
+<h2><span class="header-section-number">1.9</span> R - More than a statistical program</h2>
+<p><code>R</code> is much more than a mere statistical program. It is a complete programming language which while highly advantageous does result in a non trivial learning curve. One of the most outstanding attributes of <code>R</code> is the ability to produce publication quality data visualizations with either base <code>R</code> or within the tidyverse universe by using <code>ggplot2</code> (see next chapter). Interactive graphics can also be easily produced. To appreciate the range of graphical activities possible, here is a self portrait drawn by <code>R</code>. The code for this may be found <a href="https://github.com/brophyj/epi_book/blob/main/portrait.R">here</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-8"></span>
+<img src="img/brophy.png" alt="Self portrait" width="33%" />
+<p class="caption">
+Figure 1.2: Self portrait
+</p>
+</div>
+<p>Some beautiful art and the accompanying <code>R</code> code can be found <a href="https://jasmines.djnavarro.net">here</a></p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-9"></span>
+<img src="img/navarro_art.png" alt="R art" width="50%" />
+<p class="caption">
+Figure 1.3: R art
+</p>
+</div>
+</div>
+<div id="r---general-public-license" class="section level2" number="1.10">
+<h2><span class="header-section-number">1.10</span> R - General Public License</h2>
+<div class="FOO">
+<p>
+R is free software and comes with ABSOLUTELY NO WARRANTY. You are welcome to redistribute it under the terms of the GNU General Public License versions 2 or 3. For more information about these matters see <a href="http://www.gnu.org/licenses/" class="uri">http://www.gnu.org/licenses/</a>.
+</p>
+</div>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Gordis" class="csl-entry">
+Gordis, Leon. 2014. <em>Epidemiology</em>. Book.
+</div>
+<div id="ref-Prasad" class="csl-entry">
+Kim, Chul, and Vinay Prasad. 2015. <span>“Cancer Drugs Approved on the Basis of a Surrogate End Point and Subsequent Overall Survival: An Analysis of 5 Years of US Food and Drug Administration Approvals.”</span> Journal Article. <em>JAMA Internal Medicine</em> 175 (12): 1992–94. <a href="https://doi.org/10.1001/jamainternmed.2015.5868">https://doi.org/10.1001/jamainternmed.2015.5868</a>.
+</div>
+<div id="ref-Last" class="csl-entry">
+Last, J. M. 2001. <span>“Dictionary of Epidemiology. 4th Ed. New York: Oxford University Press; 2001. P. 61.”</span> Journal Article.
+</div>
+<div id="ref-Rothman" class="csl-entry">
+Rothman, Kenneth J. 2012. <em>Epidemiology : An Introduction</em>. Book. New York, NY: Oxford University Press.
+</div>
+<div id="ref-RGL" class="csl-entry">
+Rothman, Kenneth J., Sander Greenland, and Timothy L. Lash. 2008. <em>Modern Epidemiology</em>. Book.
+</div>
+<div id="ref-SN" class="csl-entry">
+Szklo, M., and F. Javier Nieto. 2019. <em>Epidemiology : Beyond the Basics</em>. Book.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="simple-acknowledgment-and-request.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="vis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-clinepi.pdf", "bookdown-clinepi.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

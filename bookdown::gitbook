@@ -1,0 +1,767 @@
+  |                                                                              |                                                                      |   0%  |                                                                              |..............                                                        |  20%
+   inline R code fragments
+
+  |                                                                              |............................                                          |  40%
+label: unnamed-chunk-1 (with options) 
+List of 2
+ $ eval   : logi FALSE
+ $ include: logi FALSE
+
+  |                                                                              |..........................................                            |  60%
+  ordinary text without R code
+
+  |                                                                              |........................................................              |  80%
+label: unnamed-chunk-2 (with options) 
+List of 1
+ $ include: logi FALSE
+
+  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |                                                                      |   0%  |                                                                              |.....                                                                 |   8%
+  ordinary text without R code
+
+  |                                                                              |...........                                                           |  15%
+label: unnamed-chunk-1 (with options) 
+List of 1
+ $ message: logi FALSE
+
+  |                                                                              |................                                                      |  23%
+  ordinary text without R code
+
+  |                                                                              |......................                                                |  31%
+label: unnamed-chunk-2 (with options) 
+List of 1
+ $ echo: logi FALSE
+
+  |                                                                              |...........................                                           |  38%
+  ordinary text without R code
+
+  |                                                                              |................................                                      |  46%
+label: unnamed-chunk-3 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "35%"
+ $ fig.cap  : chr ""
+ $ fig.align: chr "right"
+
+  |                                                                              |......................................                                |  54%
+  ordinary text without R code
+
+  |                                                                              |...........................................                           |  62%
+label: unnamed-chunk-4
+  |                                                                              |................................................                      |  69%
+  ordinary text without R code
+
+  |                                                                              |......................................................                |  77%
+label: unnamed-chunk-5
+  |                                                                              |...........................................................           |  85%
+  ordinary text without R code
+
+  |                                                                              |.................................................................     |  92%
+label: unnamed-chunk-6
+  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |                                                                      |   0%  |                                                                              |...                                                                   |   5%
+  ordinary text without R code
+
+  |                                                                              |.......                                                               |  10%
+label: unnamed-chunk-1 (with options) 
+List of 1
+ $ message: logi FALSE
+
+  |                                                                              |..........                                                            |  14%
+  ordinary text without R code
+
+  |                                                                              |.............                                                         |  19%
+label: unnamed-chunk-2 (with options) 
+List of 4
+ $ echo      : logi FALSE
+ $ out.heigth: chr "75%"
+ $ fig.cap   : chr "Epi packages available on CRAN"
+ $ fig.align : chr "center"
+
+  |                                                                              |.................                                                     |  24%
+  ordinary text without R code
+
+  |                                                                              |....................                                                  |  29%
+label: unnamed-chunk-3
+  |                                                                              |.......................                                               |  33%
+  ordinary text without R code
+
+  |                                                                              |...........................                                           |  38%
+label: unnamed-chunk-4 (with options) 
+List of 2
+ $ message: logi FALSE
+ $ warning: logi FALSE
+
+  |                                                                              |..............................                                        |  43%
+  ordinary text without R code
+
+  |                                                                              |.................................                                     |  48%
+label: unnamed-chunk-5 (with options) 
+List of 2
+ $ message: logi FALSE
+ $ warning: logi FALSE
+
+  |                                                                              |.....................................                                 |  52%
+  ordinary text without R code
+
+  |                                                                              |........................................                              |  57%
+label: unnamed-chunk-6 (with options) 
+List of 2
+ $ message: logi FALSE
+ $ warning: logi FALSE
+
+  |                                                                              |...........................................                           |  62%
+  ordinary text without R code
+
+  |                                                                              |...............................................                       |  67%
+label: unnamed-chunk-7 (with options) 
+List of 2
+ $ message: logi FALSE
+ $ warning: logi FALSE
+
+  |                                                                              |..................................................                    |  71%
+  ordinary text without R code
+
+  |                                                                              |.....................................................                 |  76%
+label: unnamed-chunk-8 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "33%"
+ $ fig.cap  : chr "Self portrait"
+ $ fig.align: chr "center"
+
+  |                                                                              |.........................................................             |  81%
+  ordinary text without R code
+
+  |                                                                              |............................................................          |  86%
+label: unnamed-chunk-9 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "50%"
+ $ fig.cap  : chr "R art"
+ $ fig.align: chr "center"
+
+  |                                                                              |...............................................................       |  90%
+  ordinary text without R code
+
+  |                                                                              |...................................................................   |  95%
+label: unnamed-chunk-10 (with options) 
+List of 2
+ $ type  : chr "FOO"
+ $ engine: chr "block"
+
+  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |                                                                      |   0%  |                                                                              |..                                                                    |   2%
+  ordinary text without R code
+
+  |                                                                              |...                                                                   |   5%
+label: unnamed-chunk-1 (with options) 
+List of 1
+ $ message: logi FALSE
+
+  |                                                                              |.....                                                                 |   7%
+  ordinary text without R code
+
+  |                                                                              |.......                                                               |  10%
+label: unnamed-chunk-2 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ fig.show : chr "hold"
+ $ out.width: chr "100%"
+ $ fig.cap  : chr "Classic epidemiology visualizations - Nightingale's Rose"
+
+  |                                                                              |.........                                                             |  12%
+  ordinary text without R code
+
+  |                                                                              |..........                                                            |  15%
+label: unnamed-chunk-3 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ fig.show : chr "hold"
+ $ out.width: chr "100%"
+ $ fig.cap  : chr "Classic epidemiology visualizations - Napoleon’s Russian 1812 Campaign "
+
+  |                                                                              |............                                                          |  17%
+  ordinary text without R code
+
+  |                                                                              |..............                                                        |  20%
+label: bad (with options) 
+List of 5
+ $ echo     : logi FALSE
+ $ fig.show : chr "hold"
+ $ out.width: chr "50%"
+ $ fig.align: chr "center"
+ $ fig.cap  : chr "Poor presentation - Bar plot"
+
+  |                                                                              |...............                                                       |  22%
+  ordinary text without R code
+
+  |                                                                              |.................                                                     |  24%
+label: better (with options) 
+List of 5
+ $ echo     : logi FALSE
+ $ fig.show : chr "hold"
+ $ out.width: chr "100%"
+ $ fig.align: chr "default"
+ $ fig.cap  : chr "Improved presentation - histograms and box plots"
+
+  |                                                                              |...................                                                   |  27%
+  ordinary text without R code
+
+  |                                                                              |....................                                                  |  29%
+label: unnamed-chunk-4 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "200%"
+ $ fig.cap  : language c("Pie chart (with Steve Jobs)")
+ $ fig.align: chr "left"
+
+  |                                                                              |......................                                                |  32%
+  ordinary text without R code
+
+  |                                                                              |........................                                              |  34%
+label: unnamed-chunk-5 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "50%"
+ $ fig.cap  : chr "Bar plot (without Steve Jobs)"
+ $ fig.align: chr "right"
+
+  |                                                                              |..........................                                            |  37%
+  ordinary text without R code
+
+  |                                                                              |...........................                                           |  39%
+label: unnamed-chunk-6 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "50%"
+ $ fig.cap  : chr "Gapminder data"
+ $ fig.align: chr "center"
+
+  |                                                                              |.............................                                         |  41%
+  ordinary text without R code
+
+  |                                                                              |...............................                                       |  44%
+label: unnamed-chunk-7
+  |                                                                              |................................                                      |  46%
+  ordinary text without R code
+
+  |                                                                              |..................................                                    |  49%
+label: unnamed-chunk-8 (with options) 
+List of 1
+ $ echo: logi FALSE
+
+  |                                                                              |....................................                                  |  51%
+  ordinary text without R code
+
+  |                                                                              |......................................                                |  54%
+label: unnamed-chunk-9 (with options) 
+List of 1
+ $ eval: logi FALSE
+
+  |                                                                              |.......................................                               |  56%
+  ordinary text without R code
+
+  |                                                                              |.........................................                             |  59%
+label: unnamed-chunk-10
+  |                                                                              |...........................................                           |  61%
+  ordinary text without R code
+
+  |                                                                              |............................................                          |  63%
+label: unnamed-chunk-11
+  |                                                                              |..............................................                        |  66%
+  ordinary text without R code
+
+  |                                                                              |................................................                      |  68%
+label: unnamed-chunk-12 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "1000%"
+ $ fig.cap  : chr "Data visualization -> Quick understanding of data"
+ $ fig.align: chr "center"
+
+  |                                                                              |..................................................                    |  71%
+  ordinary text without R code
+
+  |                                                                              |...................................................                   |  73%
+label: unnamed-chunk-13 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "100%"
+ $ fig.cap  : chr "Histogram of grades"
+ $ fig.align: chr "center"
+
+  |                                                                              |.....................................................                 |  76%
+  ordinary text without R code
+
+  |                                                                              |.......................................................               |  78%
+label: unnamed-chunk-14 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "100%"
+ $ fig.cap  : chr "Murder victims"
+ $ fig.align: chr "center"
+
+  |                                                                              |........................................................              |  80%
+  ordinary text without R code
+
+  |                                                                              |..........................................................            |  83%
+label: unnamed-chunk-15 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ fig.show : chr "hold"
+ $ out.width: chr "100%"
+ $ fig.cap  : chr "Classic epidemiology visualizations - John Snow's Cholera Broad Street Ghost Map"
+
+  |                                                                              |............................................................          |  85%
+  ordinary text without R code
+
+  |                                                                              |.............................................................         |  88%
+label: unnamed-chunk-16 (with options) 
+List of 1
+ $ echo: logi FALSE
+
+  |                                                                              |...............................................................       |  90%
+  ordinary text without R code
+
+  |                                                                              |.................................................................     |  93%
+label: map_1 (with options) 
+List of 4
+ $ message: logi FALSE
+ $ warning: logi FALSE
+ $ cache  : logi TRUE
+ $ results: chr "hide"
+
+  |                                                                              |...................................................................   |  95%
+  ordinary text without R code
+
+  |                                                                              |....................................................................  |  98%
+label: unnamed-chunk-17
+  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |                                                                      |   0%  |                                                                              |..                                                                    |   2%
+  ordinary text without R code
+
+  |                                                                              |...                                                                   |   5%
+label: unnamed-chunk-1 (with options) 
+List of 1
+ $ message: logi FALSE
+
+  |                                                                              |.....                                                                 |   7%
+  ordinary text without R code
+
+  |                                                                              |.......                                                               |   9%
+label: unnamed-chunk-2
+  |                                                                              |........                                                              |  12%
+  ordinary text without R code
+
+  |                                                                              |..........                                                            |  14%
+label: unnamed-chunk-3
+  |                                                                              |...........                                                           |  16%
+  ordinary text without R code
+
+  |                                                                              |.............                                                         |  19%
+label: unnamed-chunk-4
+  |                                                                              |...............                                                       |  21%
+  ordinary text without R code
+
+  |                                                                              |................                                                      |  23%
+label: unnamed-chunk-5
+  |                                                                              |..................                                                    |  26%
+  ordinary text without R code
+
+  |                                                                              |....................                                                  |  28%
+label: unnamed-chunk-6
+  |                                                                              |.....................                                                 |  30%
+  ordinary text without R code
+
+  |                                                                              |.......................                                               |  33%
+label: unnamed-chunk-7
+  |                                                                              |........................                                              |  35%
+  ordinary text without R code
+
+  |                                                                              |..........................                                            |  37%
+label: unnamed-chunk-8
+  |                                                                              |............................                                          |  40%
+  ordinary text without R code
+
+  |                                                                              |.............................                                         |  42%
+label: unnamed-chunk-9
+  |                                                                              |...............................                                       |  44%
+   inline R code fragments
+
+  |                                                                              |.................................                                     |  47%
+label: unnamed-chunk-10
+  |                                                                              |..................................                                    |  49%
+   inline R code fragments
+
+  |                                                                              |....................................                                  |  51%
+label: unnamed-chunk-11
+  |                                                                              |.....................................                                 |  53%
+   inline R code fragments
+
+  |                                                                              |.......................................                               |  56%
+label: unnamed-chunk-12 (with options) 
+List of 1
+ $ echo: logi FALSE
+
+  |                                                                              |.........................................                             |  58%
+  ordinary text without R code
+
+  |                                                                              |..........................................                            |  60%
+label: unnamed-chunk-13
+  |                                                                              |............................................                          |  63%
+   inline R code fragments
+
+  |                                                                              |..............................................                        |  65%
+label: unnamed-chunk-14
+  |                                                                              |...............................................                       |  67%
+  ordinary text without R code
+
+  |                                                                              |.................................................                     |  70%
+label: unnamed-chunk-15
+  |                                                                              |..................................................                    |  72%
+   inline R code fragments
+
+  |                                                                              |....................................................                  |  74%
+label: unnamed-chunk-16
+  |                                                                              |......................................................                |  77%
+   inline R code fragments
+
+  |                                                                              |.......................................................               |  79%
+label: unnamed-chunk-17
+  |                                                                              |.........................................................             |  81%
+  ordinary text without R code
+
+  |                                                                              |...........................................................           |  84%
+label: unnamed-chunk-18
+  |                                                                              |............................................................          |  86%
+  ordinary text without R code
+
+  |                                                                              |..............................................................        |  88%
+label: unnamed-chunk-19 (with options) 
+List of 2
+ $ message: logi FALSE
+ $ warning: logi FALSE
+
+  |                                                                              |...............................................................       |  91%
+  ordinary text without R code
+
+  |                                                                              |.................................................................     |  93%
+label: unnamed-chunk-20 (with options) 
+List of 2
+ $ message: logi FALSE
+ $ warning: logi FALSE
+
+  |                                                                              |...................................................................   |  95%
+  ordinary text without R code
+
+  |                                                                              |....................................................................  |  98%
+label: unnamed-chunk-21 (with options) 
+List of 2
+ $ message: logi FALSE
+ $ warning: logi FALSE
+
+  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |                                                                      |   0%  |                                                                              |..                                                                    |   2%
+  ordinary text without R code
+
+  |                                                                              |...                                                                   |   5%
+label: unnamed-chunk-1 (with options) 
+List of 1
+ $ message: logi FALSE
+
+  |                                                                              |.....                                                                 |   7%
+  ordinary text without R code
+
+  |                                                                              |.......                                                               |   9%
+label: unnamed-chunk-2
+  |                                                                              |........                                                              |  12%
+  ordinary text without R code
+
+  |                                                                              |..........                                                            |  14%
+label: unnamed-chunk-3 (with options) 
+List of 2
+ $ fig.width: num 4
+ $ fig.align: chr "center"
+
+  |                                                                              |...........                                                           |  16%
+  ordinary text without R code
+
+  |                                                                              |.............                                                         |  19%
+label: unnamed-chunk-4
+  |                                                                              |...............                                                       |  21%
+  ordinary text without R code
+
+  |                                                                              |................                                                      |  23%
+label: unnamed-chunk-5 (with options) 
+List of 2
+ $ message: logi FALSE
+ $ warning: logi FALSE
+
+  |                                                                              |..................                                                    |  26%
+  ordinary text without R code
+
+  |                                                                              |....................                                                  |  28%
+label: unnamed-chunk-6
+  |                                                                              |.....................                                                 |  30%
+  ordinary text without R code
+
+  |                                                                              |.......................                                               |  33%
+label: unnamed-chunk-7 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "50%"
+ $ fig.align: chr "center"
+ $ fig.cap  : language c("Addition rule", "Multiplication rule", "Total probability rule")
+
+  |                                                                              |........................                                              |  35%
+  ordinary text without R code
+
+  |                                                                              |..........................                                            |  37%
+label: unnamed-chunk-8 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "100%"
+ $ fig.align: chr "center"
+ $ fig.cap  : language c("Analogy between diagnostic testing and research findings")
+
+  |                                                                              |............................                                          |  40%
+  ordinary text without R code
+
+  |                                                                              |.............................                                         |  42%
+label: design (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "100%"
+ $ fig.align: chr "center"
+ $ fig.cap  : language c("Positive predictive values for various research designs and parameter")
+
+  |                                                                              |...............................                                       |  44%
+  ordinary text without R code
+
+  |                                                                              |.................................                                     |  47%
+label: unnamed-chunk-9 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "75%"
+ $ fig.align: chr "center"
+ $ fig.cap  : language c("Adequately powered exploratory epidemiology study no bias", "Adequately powered xploratory epidemiology study with 30% bias")
+
+  |                                                                              |..................................                                    |  49%
+  ordinary text without R code
+
+  |                                                                              |....................................                                  |  51%
+label: unnamed-chunk-10 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "75%"
+ $ fig.align: chr "center"
+ $ fig.cap  : language c("Adequately powered exploratory epidemiology study no bias", "Adequately powered xploratory epidemiology study with 30% bias")
+
+  |                                                                              |.....................................                                 |  53%
+  ordinary text without R code
+
+  |                                                                              |.......................................                               |  56%
+label: unnamed-chunk-11 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "75%"
+ $ fig.align: chr "center"
+ $ fig.cap  : language c("General Assocation of Research Findings and True Relationships in the Presence of Bias")
+
+  |                                                                              |.........................................                             |  58%
+  ordinary text without R code
+
+  |                                                                              |..........................................                            |  60%
+label: unnamed-chunk-12
+  |                                                                              |............................................                          |  63%
+  ordinary text without R code
+
+  |                                                                              |..............................................                        |  65%
+label: unnamed-chunk-13
+  |                                                                              |...............................................                       |  67%
+  ordinary text without R code
+
+  |                                                                              |.................................................                     |  70%
+label: unnamed-chunk-14
+  |                                                                              |..................................................                    |  72%
+  ordinary text without R code
+
+  |                                                                              |....................................................                  |  74%
+label: bayes (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "100%"
+ $ fig.align: chr "center"
+ $ fig.cap  : language c("Bayes theorem")
+
+  |                                                                              |......................................................                |  77%
+  ordinary text without R code
+
+  |                                                                              |.......................................................               |  79%
+label: unnamed-chunk-15
+  |                                                                              |.........................................................             |  81%
+  ordinary text without R code
+
+  |                                                                              |...........................................................           |  84%
+label: conv (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "100%"
+ $ fig.align: chr "center"
+ $ fig.cap  : language c("P values, BF and probabilities")
+
+  |                                                                              |............................................................          |  86%
+  ordinary text without R code
+
+  |                                                                              |..............................................................        |  88%
+label: unnamed-chunk-16
+  |                                                                              |...............................................................       |  91%
+  ordinary text without R code
+
+  |                                                                              |.................................................................     |  93%
+label: unnamed-chunk-17
+  |                                                                              |...................................................................   |  95%
+  ordinary text without R code
+
+  |                                                                              |....................................................................  |  98%
+label: unnamed-chunk-18
+  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |                                                                      |   0%  |                                                                              |...                                                                   |   4%
+  ordinary text without R code
+
+  |                                                                              |......                                                                |   9%
+label: unnamed-chunk-1 (with options) 
+List of 1
+ $ message: logi FALSE
+
+  |                                                                              |.........                                                             |  13%
+  ordinary text without R code
+
+  |                                                                              |............                                                          |  17%
+label: unnamed-chunk-2 (with options) 
+List of 1
+ $ echo: logi FALSE
+
+  |                                                                              |...............                                                       |  22%
+  ordinary text without R code
+
+  |                                                                              |..................                                                    |  26%
+label: pyramid (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "50%"
+ $ fig.cap  : chr "EBM pyramid of research designs"
+ $ fig.align: chr "center"
+
+  |                                                                              |.....................                                                 |  30%
+  ordinary text without R code
+
+  |                                                                              |........................                                              |  35%
+label: unnamed-chunk-3 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "50%"
+ $ fig.cap  : chr "EBM pyramid of research designs"
+ $ fig.align: chr "center"
+
+  |                                                                              |...........................                                           |  39%
+  ordinary text without R code
+
+  |                                                                              |..............................                                        |  43%
+label: unnamed-chunk-4 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "1000%"
+ $ fig.cap  : chr "Overview of different research designs"
+ $ fig.align: chr "center"
+
+  |                                                                              |.................................                                     |  48%
+  ordinary text without R code
+
+  |                                                                              |.....................................                                 |  52%
+label: ecology (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "1000%"
+ $ fig.cap  : chr "Ecological bias"
+ $ fig.align: chr "center"
+
+  |                                                                              |........................................                              |  57%
+  ordinary text without R code
+
+  |                                                                              |...........................................                           |  61%
+label: jama (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "100%"
+ $ fig.cap  : chr "JAMA Internal Medicine Top 2019 Altmetric Articles"
+ $ fig.align: chr "center"
+
+  |                                                                              |..............................................                        |  65%
+  ordinary text without R code
+
+  |                                                                              |.................................................                     |  70%
+label: unnamed-chunk-5 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "50%"
+ $ fig.cap  : language c("Observational research design", "Experimental research design")
+ $ fig.align: chr "center"
+
+  |                                                                              |....................................................                  |  74%
+  ordinary text without R code
+
+  |                                                                              |.......................................................               |  78%
+label: unnamed-chunk-6 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "50%"
+ $ fig.cap  : language c("Case control sampling times")
+ $ fig.align: chr "center"
+
+  |                                                                              |..........................................................            |  83%
+  ordinary text without R code
+
+  |                                                                              |.............................................................         |  87%
+label: unnamed-chunk-7
+  |                                                                              |................................................................      |  91%
+   inline R code fragments
+
+  |                                                                              |...................................................................   |  96%
+label: unnamed-chunk-8 (with options) 
+List of 4
+ $ echo     : logi FALSE
+ $ out.width: chr "1000%"
+ $ fig.cap  : language c("Effect measures from case control designs")
+ $ fig.align: chr "center"
+
+  |                                                                              |......................................................................| 100%
+  ordinary text without R code
+
+
+  |                                                                              |                                                                      |   0%  |                                                                              |...................................                                   |  50%
+  ordinary text without R code
+
+  |                                                                              |......................................................................| 100%
+label: unnamed-chunk-1
+
+/Applications/RStudio.app/Contents/MacOS/pandoc/pandoc +RTS -K512m -RTS bookdown-clinepi.utf8.md --to html4 --from markdown+autolink_bare_uris+tex_math_single_backslash --output bookdown-clinepi.html --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/bookdown/rmarkdown/lua/custom-environment.lua --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmarkdown/lua/pagebreak.lua --lua-filter /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rmarkdown/rmarkdown/lua/latex-div.lua --metadata-file /var/folders/vz/g1j5pr8n7tg786zcwmv2dx8c0000gp/T//RtmptJdUKi/filed0687450f707 --wrap preserve --standalone --section-divs --table-of-contents --toc-depth 3 --template /Library/Frameworks/R.framework/Versions/4.0/Resources/library/bookdown/templates/gitbook.html --highlight-style tango --number-sections --css style.css --include-in-header /var/folders/vz/g1j5pr8n7tg786zcwmv2dx8c0000gp/T//RtmptJdUKi/rmarkdown-strd0686f8a2839.html --mathjax --include-in-header hide_code.html --citeproc 

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Clinical epidemiology with R</title>
+  <meta name="description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="generator" content="bookdown 0.21.6 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Clinical epidemiology with R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="github-repo" content="brophyj/epi_book" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Clinical epidemiology with R" />
+  
+  <meta name="twitter:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  
+
+<meta name="author" content="James Brophy" />
+
+
+<meta name="date" content="2021-01-18" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+<link rel="next" href="intro.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+p.caption {
+  color: #777;
+  margin-top: 10px;
+}
+p code {
+  white-space: inherit;
+}
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+pre code {
+  white-space: inherit;
+}
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Clinical Epidemiology with R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html"><i class="fa fa-check"></i><b>2</b> Introduction to statistical software - R</a><ul>
+<li class="chapter" data-level="2.1" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#statistical-software---r"><i class="fa fa-check"></i><b>2.1</b> Statistical software - R</a></li>
+<li class="chapter" data-level="2.2" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r---common-data-and-variable-manipulations"><i class="fa fa-check"></i><b>2.2</b> R - Common data and variable manipulations</a></li>
+<li class="chapter" data-level="2.3" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r---more-than-a-statistical-program"><i class="fa fa-check"></i><b>2.3</b> R - More than a statistical program</a></li>
+<li class="chapter" data-level="2.4" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r---general-public-license"><i class="fa fa-check"></i><b>2.4</b> R - General Public License</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="about-the-author-1.html"><a href="about-the-author-1.html"><i class="fa fa-check"></i>About the Author</a><ul>
+<li class="chapter" data-level="2.5" data-path="about-the-author-1.html"><a href="about-the-author-1.html#statistical-software---r-1"><i class="fa fa-check"></i><b>2.5</b> Statistical software - R</a></li>
+<li class="chapter" data-level="2.6" data-path="about-the-author-1.html"><a href="about-the-author-1.html#r---common-data-and-variable-manipulations-1"><i class="fa fa-check"></i><b>2.6</b> R - Common data and variable manipulations</a></li>
+<li class="chapter" data-level="2.7" data-path="about-the-author-1.html"><a href="about-the-author-1.html#r---more-than-a-statistical-program-1"><i class="fa fa-check"></i><b>2.7</b> R - More than a statistical program</a></li>
+<li class="chapter" data-level="2.8" data-path="about-the-author-1.html"><a href="about-the-author-1.html#r---general-public-license-1"><i class="fa fa-check"></i><b>2.8</b> R - General Public License</a></li>
+<li class="chapter" data-level="2.9" data-path="about-the-author-1.html"><a href="about-the-author-1.html#statistical-software---r-2"><i class="fa fa-check"></i><b>2.9</b> Statistical software - R</a></li>
+<li class="chapter" data-level="2.10" data-path="about-the-author-1.html"><a href="about-the-author-1.html#r---common-data-and-variable-manipulations-2"><i class="fa fa-check"></i><b>2.10</b> R - Common data and variable manipulations</a></li>
+<li class="chapter" data-level="2.11" data-path="about-the-author-1.html"><a href="about-the-author-1.html#r---more-than-a-statistical-program-2"><i class="fa fa-check"></i><b>2.11</b> R - More than a statistical program</a></li>
+<li class="chapter" data-level="2.12" data-path="about-the-author-1.html"><a href="about-the-author-1.html#r---general-public-license-2"><i class="fa fa-check"></i><b>2.12</b> R - General Public License</a></li>
+<li class="chapter" data-level="2.13" data-path="about-the-author-1.html"><a href="about-the-author-1.html#statistical-software---r-3"><i class="fa fa-check"></i><b>2.13</b> Statistical software - R</a></li>
+<li class="chapter" data-level="2.14" data-path="about-the-author-1.html"><a href="about-the-author-1.html#r---common-data-and-variable-manipulations-3"><i class="fa fa-check"></i><b>2.14</b> R - Common data and variable manipulations</a></li>
+<li class="chapter" data-level="2.15" data-path="about-the-author-1.html"><a href="about-the-author-1.html#r---more-than-a-statistical-program-3"><i class="fa fa-check"></i><b>2.15</b> R - More than a statistical program</a></li>
+<li class="chapter" data-level="2.16" data-path="about-the-author-1.html"><a href="about-the-author-1.html#r---general-public-license-3"><i class="fa fa-check"></i><b>2.16</b> R - General Public License</a></li>
+<li class="chapter" data-level="2.17" data-path="about-the-author-1.html"><a href="about-the-author-1.html#statistical-software---r-4"><i class="fa fa-check"></i><b>2.17</b> Statistical software - R</a></li>
+<li class="chapter" data-level="2.18" data-path="about-the-author-1.html"><a href="about-the-author-1.html#r---common-data-and-variable-manipulations-4"><i class="fa fa-check"></i><b>2.18</b> R - Common data and variable manipulations</a></li>
+<li class="chapter" data-level="2.19" data-path="about-the-author-1.html"><a href="about-the-author-1.html#r---more-than-a-statistical-program-4"><i class="fa fa-check"></i><b>2.19</b> R - More than a statistical program</a></li>
+<li class="chapter" data-level="2.20" data-path="about-the-author-1.html"><a href="about-the-author-1.html#r---general-public-license-4"><i class="fa fa-check"></i><b>2.20</b> R - General Public License</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Clinical epidemiology with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Clinical epidemiology with R</h1>
+<p class="author"><em>James Brophy</em></p>
+<p class="date"><em>2021-01-18</em></p>
+</div>
+<div id="about-the-author" class="section level1 unnumbered">
+<h1>About the Author</h1>
+<p>Jay Brophy is a full professor with a joint appointment in the Departments of Medicine and Epidemiology and Biostatistics at McGill University where he works as a clinical cardiologist and does research in cardiovascular epidemiology. His research interests are eclectic and include outcomes research, pharmacoepidemiology, health technology assessment, economic analyses and clinical research.</p>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="intro.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

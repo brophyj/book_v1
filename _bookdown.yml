@@ -1,0 +1,10 @@
+book_filename: "bookdown-clinepi"
+language:
+  ui:
+    chapter_name: "Chapter "
+delete_merged_file: true
+output_dir: docs
+rmd_files: ["index.Rmd", "01-intro.Rmd", "02-intro-R.Rmd", "03-visualizations.Rmd", "04-measures.Rmd", "05-inference.Rmd",
+  "06-designs.Rmd", "07-references.Rmd"]
+clean: [packages.bib, bookdown.bbl]
+new_session: yes

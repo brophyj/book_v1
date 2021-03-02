@@ -1,0 +1,41 @@
+---
+title: "R for epi"
+author: "Jay Brophy"
+date: "19/02/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Proportions
+
+### One and two sample $\chi^2$ tests
+
+Suppose we have the following data and want to test if the hypothesis that $\pi$ = 0.80
+
+|            | Success | Failure |
+|------------|---------|---------|
+| Population | 60      | 40      |    
+
+```{r}
+# one sample chi sq test
+x <- c(60,40)
+chisq.test(x, p = c(.8, .2))
+```
+Next suppose we want to test the hypothesis $H_o$: $\pi_1$ = $\pi_2$; that is, the proportion
+of independent patients is the same on Medical or Stroke Units.    
+
+|              | Pt indepednent | Pt dependent | Total |
+|--------------|----------------|--------------|-------|
+| Stroke unit  | 67             | 34           | 101   |
+| Medical unit | 46             | 45           |  91   |
+| Total        | 113            | 79           | 192   |    
+
+```{r}
+# two sample chi sq test
+x <- matrix(c(67, 46, 34, 45), ncol = 2)
+chisq.test(x)
+```
+

@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 2 Exploratory Data Analysis - Data visualization | (Mostly Clinical) Epidemiology with R</title>
+  <meta name="description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="generator" content="bookdown 0.21.6 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 2 Exploratory Data Analysis - Data visualization | (Mostly Clinical) Epidemiology with R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="github-repo" content="brophyj/epi_book" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 2 Exploratory Data Analysis - Data visualization | (Mostly Clinical) Epidemiology with R" />
+  
+  <meta name="twitter:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  
+
+<meta name="author" content="James Brophy" />
+
+
+<meta name="date" content="2021-03-02" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="intro.html"/>
+<link rel="next" href="meas.html"/>
+<script src="libs/header-attrs-2.6.6/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<script>
+/* ========================================================================
+ * Bootstrap: transition.js v3.3.7
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: collapse.js v3.3.7
+ * http://getbootstrap.com/javascript/#collapse
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+/* jshint latedef: false */
+
++function ($) {
+  'use strict';
+
+  // COLLAPSE PUBLIC CLASS DEFINITION
+  // ================================
+
+  var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                           '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+    this.transitioning = null
+
+    if (this.options.parent) {
+      this.$parent = this.getParent()
+    } else {
+      this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+    }
+
+    if (this.options.toggle) this.toggle()
+  }
+
+  Collapse.VERSION  = '3.3.7'
+
+  Collapse.TRANSITION_DURATION = 350
+
+  Collapse.DEFAULTS = {
+    toggle: true
+  }
+
+  Collapse.prototype.dimension = function () {
+    var hasWidth = this.$element.hasClass('width')
+    return hasWidth ? 'width' : 'height'
+  }
+
+  Collapse.prototype.show = function () {
+    if (this.transitioning || this.$element.hasClass('in')) return
+
+    var activesData
+    var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+
+    if (actives && actives.length) {
+      activesData = actives.data('bs.collapse')
+      if (activesData && activesData.transitioning) return
+    }
+
+    var startEvent = $.Event('show.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    if (actives && actives.length) {
+      Plugin.call(actives, 'hide')
+      activesData || actives.data('bs.collapse', null)
+    }
+
+    var dimension = this.dimension()
+
+    this.$element
+      .removeClass('collapse')
+      .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
+
+    this.$trigger
+      .removeClass('collapsed')
+      .attr('aria-expanded', true)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse in')[dimension]('')
+      this.transitioning = 0
+      this.$element
+        .trigger('shown.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+
+    this.$element
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+  }
+
+  Collapse.prototype.hide = function () {
+    if (this.transitioning || !this.$element.hasClass('in')) return
+
+    var startEvent = $.Event('hide.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    var dimension = this.dimension()
+
+    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+
+    this.$element
+      .addClass('collapsing')
+      .removeClass('collapse in')
+      .attr('aria-expanded', false)
+
+    this.$trigger
+      .addClass('collapsed')
+      .attr('aria-expanded', false)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.transitioning = 0
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse')
+        .trigger('hidden.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    this.$element
+      [dimension](0)
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+  }
+
+  Collapse.prototype.toggle = function () {
+    this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
+
+  Collapse.prototype.getParent = function () {
+    return $(this.options.parent)
+      .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+      .each($.proxy(function (i, element) {
+        var $element = $(element)
+        this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+      }, this))
+      .end()
+  }
+
+  Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+    var isOpen = $element.hasClass('in')
+
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
+  }
+
+  function getTargetFromTrigger($trigger) {
+    var href
+    var target = $trigger.attr('data-target')
+      || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+
+    return $(target)
+  }
+
+
+  // COLLAPSE PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.collapse')
+      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+      if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.collapse
+
+  $.fn.collapse             = Plugin
+  $.fn.collapse.Constructor = Collapse
+
+
+  // COLLAPSE NO CONFLICT
+  // ====================
+
+  $.fn.collapse.noConflict = function () {
+    $.fn.collapse = old
+    return this
+  }
+
+
+  // COLLAPSE DATA-API
+  // =================
+
+  $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+    var $this   = $(this)
+
+    if (!$this.attr('data-target')) e.preventDefault()
+
+    var $target = getTargetFromTrigger($this)
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $this.data()
+
+    Plugin.call($target, option)
+  })
+
+}(jQuery);
+</script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    // close the dropdown menu when an option is clicked
+    $("#allCodeButton").dropdown("toggle");
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    // close the dropdown menu when an option is clicked
+    $("#allCodeButton").dropdown("toggle");
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+
+    // if code block has been labeled with class `fold-show`, show the code on init!
+    var classList = $(this).attr('class').split(/\s+/);
+    for (var i = 0; i < classList.length; i++) {
+    if (classList[i] === 'fold-show') {
+        show = true;
+      }
+    }
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-target', '#' + id)
+        .attr('aria-expanded', show)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // hack: return show to false, otherwise all next codeBlocks will be shown!
+    show = false;
+
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+
+}
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.7
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.7'
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+    })
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+<style type="text/css">
+.code-folding-btn {
+  margin-bottom: 4px;
+}
+
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+.pull-right > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+.open > .dropdown-menu {
+    display: block;
+    color: #ffffff;
+    background-color: #ffffff;
+    background-image: none;
+    border-color: #92897e;
+}
+
+.dropdown-menu > li > a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #e95420;
+}
+
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #e95420;
+  outline: 0;
+}
+.dropdown-menu > .disabled > a,
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+  color: #aea79f;
+}
+
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+  text-decoration: none;
+  cursor: not-allowed;
+  background-color: transparent;
+  background-image: none;
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+.btn {
+  display: inline-block;
+  margin-bottom: 1;
+  font-weight: normal;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.btn:hover,
+.btn:focus,
+.btn.focus {
+  color: #ffffff;
+  text-decoration: none;
+}
+.btn:active,
+.btn.active {
+  background-image: none;
+  outline: 0;
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
+  cursor: not-allowed;
+  filter: alpha(opacity=65);
+  opacity: 0.65;
+  box-shadow: none;
+}
+a.btn.disabled,
+fieldset[disabled] a.btn {
+  pointer-events: none;
+}
+.btn-default {
+  color: #ffffff;
+  background-color: #aea79f; #important
+  border-color: #aea79f;
+}
+
+.btn-default:focus,
+.btn-default.focus {
+  color: #ffffff;
+  background-color: #978e83;
+  border-color: #6f675e;
+}
+
+.btn-default:hover {
+  color: #ffffff;
+  background-color: #978e83;
+  border-color: #92897e;
+}
+.btn-default:active,
+.btn-default.active,
+.btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
+  border-radius: 0;
+}
+.btn-group > .btn:first-child {
+  margin-left: 0;
+}
+.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group > .btn:last-child:not(:first-child),
+.btn-group > .dropdown-toggle:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.btn-group > .btn-group {
+  float: left;
+}
+.btn-group > .btn-group:not(:first-child):not(:last-child) > .btn {
+  border-radius: 0;
+}
+.btn-group > .btn-group:first-child:not(:last-child) > .btn:last-child,
+.btn-group > .btn-group:first-child:not(:last-child) > .dropdown-toggle {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.btn-group .dropdown-toggle:active,
+.btn-group.open .dropdown-toggle {
+  outline: 0;
+}
+.btn-group > .btn + .dropdown-toggle {
+  padding-right: 8px;
+  padding-left: 8px;
+}
+.btn-group > .btn-lg + .dropdown-toggle {
+  padding-right: 12px;
+  padding-left: 12px;
+}
+.btn-group.open .dropdown-toggle {
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.btn-group.open .dropdown-toggle.btn-link {
+  box-shadow: none;
+}
+
+</style>
+<script>
+var str = '<div class="btn-group pull-right" style="position: fixed; right: 50px; top: 10px; z-index: 200"><button type="button" class="btn btn-default btn-xs dropdown-toggle" id="allCodeButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast=""><span>Code</span> <span class="caret"></span></button><ul class="dropdown-menu" style="min-width: 50px;"><li><a id="rmd-show-all-code" href="#">Show All Code</a></li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li></ul></div>';
+document.write(str);
+</script>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "hide");
+});
+</script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">(Mostly Clinical) Epidemiology with R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="" data-path="simple-acknowledgment-and-request.html"><a href="simple-acknowledgment-and-request.html"><i class="fa fa-check"></i>Simple acknowledgment and request</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.0.1" data-path="intro.html"><a href="intro.html#r-packages-required-for-this-chapter"><i class="fa fa-check"></i><b>1.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#preface"><i class="fa fa-check"></i><b>1.1</b> Preface</a></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#pre"><i class="fa fa-check"></i><b>1.2</b> Prerequisites</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#my-general-philosophy-for-clinical-epidemiology"><i class="fa fa-check"></i><b>1.3</b> My general philosophy for clinical epidemiology</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#brief-excursions-into-quantification"><i class="fa fa-check"></i><b>1.4</b> Brief excursions into quantification</a></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#outline"><i class="fa fa-check"></i><b>1.5</b> Outline</a></li>
+<li class="chapter" data-level="1.6" data-path="intro.html"><a href="intro.html#statistical-software---r"><i class="fa fa-check"></i><b>1.6</b> Statistical software - R</a></li>
+<li class="chapter" data-level="1.7" data-path="intro.html"><a href="intro.html#r---common-data-and-variable-manipulations"><i class="fa fa-check"></i><b>1.7</b> R - Common data and variable manipulations</a></li>
+<li class="chapter" data-level="1.8" data-path="intro.html"><a href="intro.html#rstudio---the-ide-for-r"><i class="fa fa-check"></i><b>1.8</b> RStudio - <strong>The</strong> IDE for R</a></li>
+<li class="chapter" data-level="1.9" data-path="intro.html"><a href="intro.html#r---more-than-a-statistical-program"><i class="fa fa-check"></i><b>1.9</b> R - More than a statistical program</a></li>
+<li class="chapter" data-level="1.10" data-path="intro.html"><a href="intro.html#r---general-public-license"><i class="fa fa-check"></i><b>1.10</b> R - General Public License</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="vis.html"><a href="vis.html"><i class="fa fa-check"></i><b>2</b> Exploratory Data Analysis - Data visualization</a>
+<ul>
+<li class="chapter" data-level="2.0.1" data-path="vis.html"><a href="vis.html#r-packages-required-for-this-chapter-1"><i class="fa fa-check"></i><b>2.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="2.1" data-path="vis.html"><a href="vis.html#introduction"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
+<li class="chapter" data-level="2.2" data-path="vis.html"><a href="vis.html#why-is-data-visualization-important"><i class="fa fa-check"></i><b>2.2</b> Why is data visualization important?</a></li>
+<li class="chapter" data-level="2.3" data-path="vis.html"><a href="vis.html#creating-an-effective-and-professional-appearing-graph"><i class="fa fa-check"></i><b>2.3</b> Creating an effective and professional appearing graph</a></li>
+<li class="chapter" data-level="2.4" data-path="vis.html"><a href="vis.html#graphical-choices"><i class="fa fa-check"></i><b>2.4</b> Graphical choices</a></li>
+<li class="chapter" data-level="2.5" data-path="vis.html"><a href="vis.html#example---a-modern-version-of-the-ghost-map"><i class="fa fa-check"></i><b>2.5</b> Example - A modern version of the “Ghost Map”</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="vis.html"><a href="vis.html#using-modern-geographic-information-system-mapping"><i class="fa fa-check"></i><b>2.5.1</b> Using modern Geographic Information System mapping</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="meas.html"><a href="meas.html"><i class="fa fa-check"></i><b>3</b> Contingency tables, measures of association &amp; R packages</a>
+<ul>
+<li class="chapter" data-level="3.0.1" data-path="meas.html"><a href="meas.html#r-packages-required-for-this-chapter-2"><i class="fa fa-check"></i><b>3.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="3.1" data-path="meas.html"><a href="meas.html#meas1"><i class="fa fa-check"></i><b>3.1</b> Proportions - One sample <span class="math inline">\(\chi^2\)</span> tests</a></li>
+<li class="chapter" data-level="3.2" data-path="meas.html"><a href="meas.html#contingency-tables"><i class="fa fa-check"></i><b>3.2</b> Contingency tables</a></li>
+<li class="chapter" data-level="3.3" data-path="meas.html"><a href="meas.html#some-basic-defintions"><i class="fa fa-check"></i><b>3.3</b> Some basic defintions</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="meas.html"><a href="meas.html#relative-comparative-measures"><i class="fa fa-check"></i><b>3.3.1</b> Relative comparative measures</a></li>
+<li class="chapter" data-level="3.3.2" data-path="meas.html"><a href="meas.html#absolute-comparative-measures"><i class="fa fa-check"></i><b>3.3.2</b> Absolute comparative measures</a></li>
+<li class="chapter" data-level="3.3.3" data-path="meas.html"><a href="meas.html#attributal-measures"><i class="fa fa-check"></i><b>3.3.3</b> Attributal measures</a></li>
+<li class="chapter" data-level="3.3.4" data-path="meas.html"><a href="meas.html#standardization"><i class="fa fa-check"></i><b>3.3.4</b> Standardization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="meas.html"><a href="meas.html#examples-using-base-r"><i class="fa fa-check"></i><b>3.4</b> Examples using base R</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="meas.html"><a href="meas.html#example-1---basic-incidence-measures"><i class="fa fa-check"></i><b>3.4.1</b> Example 1 - basic incidence measures</a></li>
+<li class="chapter" data-level="3.4.2" data-path="meas.html"><a href="meas.html#example-2---rare-disease"><i class="fa fa-check"></i><b>3.4.2</b> Example 2 - rare disease</a></li>
+<li class="chapter" data-level="3.4.3" data-path="meas.html"><a href="meas.html#example-3---standardization"><i class="fa fa-check"></i><b>3.4.3</b> Example 3 - Standardization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="meas.html"><a href="meas.html#packages"><i class="fa fa-check"></i><b>3.5</b> Examples using R epidemiology packages</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="meas.html"><a href="meas.html#example-4-standardization"><i class="fa fa-check"></i><b>3.5.1</b> Example 4 Standardization</a></li>
+<li class="chapter" data-level="3.5.2" data-path="meas.html"><a href="meas.html#example-5---contingency-tables-with-epir-package"><i class="fa fa-check"></i><b>3.5.2</b> Example 5 - Contingency Tables with <code>epiR</code> package</a></li>
+<li class="chapter" data-level="3.5.3" data-path="meas.html"><a href="meas.html#example-6---contingency-tables-with-other-r-packages"><i class="fa fa-check"></i><b>3.5.3</b> Example 6 - Contingency Tables with other <code>R</code> packages</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="infer.html"><a href="infer.html"><i class="fa fa-check"></i><b>4</b> Statistical inference</a>
+<ul>
+<li class="chapter" data-level="4.0.1" data-path="infer.html"><a href="infer.html#r-packages-required-for-this-chapter-3"><i class="fa fa-check"></i><b>4.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="4.1" data-path="infer.html"><a href="infer.html#introduction-1"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.2" data-path="infer.html"><a href="infer.html#null-hypothesis-significance-testing"><i class="fa fa-check"></i><b>4.2</b> Null Hypothesis Significance Testing</a></li>
+<li class="chapter" data-level="4.3" data-path="infer.html"><a href="infer.html#s-values"><i class="fa fa-check"></i><b>4.3</b> S values</a></li>
+<li class="chapter" data-level="4.4" data-path="infer.html"><a href="infer.html#two-views-of-probability"><i class="fa fa-check"></i><b>4.4</b> Two views of probability</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="infer.html"><a href="infer.html#basic-rules-of-probability"><i class="fa fa-check"></i><b>4.4.1</b> Basic rules of probability</a></li>
+<li class="chapter" data-level="4.4.2" data-path="infer.html"><a href="infer.html#bayes-theorem"><i class="fa fa-check"></i><b>4.4.2</b> Bayes Theorem</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="infer.html"><a href="infer.html#bayesian-reasoning-to-understand-why-most-published-research-findings-are-false"><i class="fa fa-check"></i><b>4.5</b> Bayesian reasoning to understand “Why Most Published Research Findings are False”</a></li>
+<li class="chapter" data-level="4.6" data-path="infer.html"><a href="infer.html#bayesian-data-analysis-and-statistical-inference"><i class="fa fa-check"></i><b>4.6</b> Bayesian data analysis and statistical inference</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="infer.html"><a href="infer.html#bayes-factors"><i class="fa fa-check"></i><b>4.6.1</b> Bayes factors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="design.html"><a href="design.html"><i class="fa fa-check"></i><b>5</b> Non-experimental designs</a>
+<ul>
+<li class="chapter" data-level="5.0.1" data-path="design.html"><a href="design.html#r-packages-required-for-this-chapter-4"><i class="fa fa-check"></i><b>5.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="5.1" data-path="design.html"><a href="design.html#introduction-2"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="design.html"><a href="design.html#cohort-studies"><i class="fa fa-check"></i><b>5.2</b> Cohort studies</a></li>
+<li class="chapter" data-level="5.3" data-path="design.html"><a href="design.html#case-control"><i class="fa fa-check"></i><b>5.3</b> Case control</a></li>
+<li class="chapter" data-level="5.4" data-path="design.html"><a href="design.html#cross-sectional"><i class="fa fa-check"></i><b>5.4</b> Cross sectional</a></li>
+<li class="chapter" data-level="5.5" data-path="design.html"><a href="design.html#miscellaneous-designs"><i class="fa fa-check"></i><b>5.5</b> Miscellaneous designs</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>6</b> References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">(Mostly Clinical) Epidemiology with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="vis" class="section level1" number="2">
+<h1><span class="header-section-number">Chapter 2</span> Exploratory Data Analysis - Data visualization</h1>
+<div id="r-packages-required-for-this-chapter-1" class="section level3" number="2.0.1">
+<h3><span class="header-section-number">2.0.1</span> R packages required for this chapter</h3>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="vis.html#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dslabs)</span>
+<span id="cb38-2"><a href="vis.html#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb38-3"><a href="vis.html#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb38-4"><a href="vis.html#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magrittr)</span>
+<span id="cb38-5"><a href="vis.html#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
+<span id="cb38-6"><a href="vis.html#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb38-7"><a href="vis.html#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(transformr)</span>
+<span id="cb38-8"><a href="vis.html#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dslabs) <span class="co"># contains gapminder data set, also found in gapminder package</span></span>
+<span id="cb38-9"><a href="vis.html#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(HistData)</span>
+<span id="cb38-10"><a href="vis.html#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maptools)</span>
+<span id="cb38-11"><a href="vis.html#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rgdal)</span>
+<span id="cb38-12"><a href="vis.html#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(leaflet)</span>
+<span id="cb38-13"><a href="vis.html#cb38-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggmap)</span></code></pre></div>
+</div>
+<div id="introduction" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Introduction</h2>
+<p>There is a modern tendency for researchers to immediately present their results in the most complex and sophisticated manner. This is often seen as proof of their respectability and importance. However, a step wise approach that begins by presenting data in its rawest form of Tables and Graphs is both more logical and beneficial to understanding. In fact, there is are several historical examples of excellent visualizations involving epidemiology.</p>
+<p>Although remembered as the mother of modern nursing, Florence Nightingale was an accomplished statistician too being the first female fellow of the Statistical Society of London (now Royal Statistical Society)<span class="citation">(<a href="#ref-econ" role="doc-biblioref"><em>The Economist</em> 2013</a>)</span>. She was particularly innovative in presenting data visually as by this example published in her 1858 monograph, “Notes on matters affecting the health, efficiency and hospital administration of the British army.” The chart displays the causes of the deaths of soldiers during the Crimean war, divided into three categories: “Preventible or Mitigable Zymotic Diseases” (infectious diseases, including cholera and dysentery, coloured in blue), “wounds” (red) and “all other causes” (black). As with today’s pie charts, the area of each wedge is proportional to the figure it stands for, but it is the radius of each slice (the distance from the common centre to the outer edge) rather than the angle that is altered to achieve this. Her principal message—that even during periods of heavy fighting, such as November 1854, far more soldiers died from infection than from wounds—can be seen at a glance. It seems a fair bet that her talents as a data scientist contributed to her successful introduction of medical advances in military hospitals.</p>
+<div class="figure"><span id="fig:unnamed-chunk-2"></span>
+<img src="img/rose.png" alt="Classic epidemiology visualizations - Nightingale's Rose" width="100%" />
+<p class="caption">
+Figure 1.1: Classic epidemiology visualizations - Nightingale’s Rose
+</p>
+</div>
+<p><a href="https://en.wikipedia.org/wiki/Charles_Joseph_Minard">Charles Minard’s</a> 1869 publication of a flow map of Napoleon’s Russian 1812 campaign has been called best statistical graphic ever drawn by <a href="https://en.wikipedia.org/wiki/Edward_Tufte">Edward Tufte</a> who is a preeminent 21st century statistician and pioneer in the field of data visualization. The figure shows 6 six types of data in two dimensions: the number of Napoleon’s troops; the distance traveled; temperature; latitude and longitude; direction of travel; and location relative to specific dates. The chart tells with painful clarity the atrocious losses associated with this campaign as an initial force of 422,000 saw only only 10,000 return. On the retrurn trip 50% of the forces were lost while crossing the Bérézina river under heavy attack. “C’est la Bérézina” is a French expression used to describe a total disaster.</p>
+<div class="figure"><span id="fig:unnamed-chunk-3"></span>
+<img src="img/minard.png" alt="Classic epidemiology visualizations - Napoleon’s Russian 1812 Campaign " width="100%" />
+<p class="caption">
+Figure 2.1: Classic epidemiology visualizations - Napoleon’s Russian 1812 Campaign
+</p>
+</div>
+</div>
+<div id="why-is-data-visualization-important" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Why is data visualization important?</h2>
+<p>Specifically, data visualizations can help<br />
+* understand your data<br />
+* understand basic concepts<br />
+* emphasize a message<br />
+* build trust with your audience<br />
+* clarify your story for others<br />
+* inform / influence their decisions<br />
+* <strong>poor data visualizations can do the opposite!</strong></p>
+<p>As an example of an uninspired visualization, consider the frequently observed bar plot which is a regular item in scientific publications. Contrast the lack of information provided by the commonly used bar plot format (Figure <a href="vis.html#fig:bad">2.2</a>) (avoiding any association with inferiority simply because it was created with Excel) with the additional data insights provided by simple histograms and box plots (Figure <a href="vis.html#fig:better">2.3</a>).</p>
+<div class="figure" style="text-align: center"><span id="fig:bad"></span>
+<img src="img/viz/bad.png" alt="Poor presentation - Bar plot" width="50%" />
+<p class="caption">
+Figure 2.2: Poor presentation - Bar plot
+</p>
+</div>
+<div class="figure"><span id="fig:better"></span>
+<img src="img/viz/better.png" alt="Improved presentation - histograms and box plots" width="100%" />
+<p class="caption">
+Figure 2.3: Improved presentation - histograms and box plots
+</p>
+</div>
+<p>As another example of an uninspired plot, consider the pie chart which has been rightly criticized as being difficult to understand as we are effectively being asked to compared angles and the area subtended by them rather than simply making linear comparisons as in barplots. Notwithstanding the presence of Steve Jobs with the pie chart, which visualization is easiest to understand?</p>
+<div style="display: flex;">
+<div>
+<div class="figure" style="text-align: left"><span id="fig:unnamed-chunk-4"></span>
+<img src="img/viz/jobs.png" alt="Pie chart (with Steve Jobs)" width="200%" />
+<p class="caption">
+Figure 2.4: Pie chart (with Steve Jobs)
+</p>
+</div>
+</div>
+<div>
+<div class="figure" style="text-align: right"><span id="fig:unnamed-chunk-5"></span>
+<img src="03-visualizations_files/figure-html/unnamed-chunk-5-1.png" alt="Bar plot (without Steve Jobs)" width="50%" />
+<p class="caption">
+Figure 2.5: Bar plot (without Steve Jobs)
+</p>
+</div>
+</div>
+</div>
+<p>In contrast, if you have any doubts about the power of excellent visualizations, you <strong>must</strong> watch this <a href="https://www.youtube.com/watch?v=Z8t4k0Q8e8Y">video</a> by <a href="https://en.wikipedia.org/wiki/Hans_Rosling">Hans Rosling</a>. Leaving aside his fabulous and infectious enthusiasm, (who wouldn’t want to be a global health data scientist after watching this), the knowledge transfer from his data visualizations is simply amazing.</p>
+</div>
+<div id="creating-an-effective-and-professional-appearing-graph" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Creating an effective and professional appearing graph</h2>
+<p>Here is a static image from Rosling’s video. It certainly is of professional quality. Can we reproduce it?</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-6"></span>
+<img src="img/un_graph.png" alt="Gapminder data" width="50%" />
+<p class="caption">
+Figure 2.6: Gapminder data
+</p>
+</div>
+<p>If the first plot we produce is of this quality, it will hopefully inspire us to realize what we can accomplish with data visualizations using <code>R</code>. While this may rightly not completely dispel the notion that a definitive learning curve is associated with<code>R</code>, it is certainly suggests it can be manageable. Here is the code that reproduces the graph.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="vis.html#cb39-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> gapminder <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="dv">2007</span>)</span>
+<span id="cb39-2"><a href="vis.html#cb39-2" aria-hidden="true" tabindex="-1"></a>un_graph <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(dat, <span class="fu">aes</span>(<span class="at">x =</span> gdp<span class="sc">/</span>population, <span class="at">y =</span> life_expectancy)) <span class="sc">+</span></span>
+<span id="cb39-3"><a href="vis.html#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> population, <span class="at">color =</span> continent), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb39-4"><a href="vis.html#cb39-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_smooth</span>(<span class="at">formula =</span> y <span class="sc">~</span> <span class="fu">log10</span>(x), <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">method =</span> <span class="st">&#39;gam&#39;</span>, <span class="at">linetype=</span><span class="st">&quot;dotted&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-5"><a href="vis.html#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;GDP per capita&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-6"><a href="vis.html#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Life expectancy at birth&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-7"><a href="vis.html#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_size_area</span>(<span class="at">guide =</span> <span class="cn">FALSE</span>, <span class="at">max_size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
+<span id="cb39-8"><a href="vis.html#cb39-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">50000</span>, <span class="at">by =</span> <span class="dv">10000</span>)) <span class="sc">+</span></span>
+<span id="cb39-9"><a href="vis.html#cb39-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Gapminder data from 2007&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-10"><a href="vis.html#cb39-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">&quot;Data from dslabs library&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-11"><a href="vis.html#cb39-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_brewer</span>(<span class="at">name =</span> <span class="st">&quot;&quot;</span>, <span class="at">palette =</span> <span class="st">&quot;Dark2&quot;</span>) <span class="sc">+</span></span>
+<span id="cb39-12"><a href="vis.html#cb39-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">&quot;Georgia&quot;</span>)</span>
+<span id="cb39-13"><a href="vis.html#cb39-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-14"><a href="vis.html#cb39-14" aria-hidden="true" tabindex="-1"></a>un_graph</span></code></pre></div>
+<pre><code>## Warning: Removed 4 rows containing non-finite values (stat_smooth).</code></pre>
+<pre><code>## Warning: Removed 4 rows containing missing values (geom_point).</code></pre>
+<p><img src="03-visualizations_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="vis.html#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to save your figure</span></span>
+<span id="cb42-2"><a href="vis.html#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co"># ggsave(&quot;files/un_graph.png&quot;)</span></span></code></pre></div>
+<p>The code can be understood as follows;<br />
+1. We load the data which is available in both the <code>R</code> <code>Gapminder</code> and <code>dslabs</code> libraries (dslabs more complete).<br />
+2. As data exists every 5 years from 1952, we have selectrd only 2007 data to match the static plot<br />
+3. Graphing will use <code>ggplot</code> function from the <code>ggplot2</code> library<br />
+4. The <code>ggplot</code> function first requires a data argument (in the form of a data frame)<br />
+5. The next argument is <code>aes</code> for aesthetics and identifies the x and y variable names from the data frame<br />
+6. In R any task such as identifying variable names can usually be accomplished by several ways (e.g. <code>names(gapminder)</code>, <code>str(gapminder)</code>, <code>glimpse(gapminder)</code>, <code>head(gapminder)</code>)<br />
+7. Output is layered onto the graphical surface beginning here with the data points (<code>geom_points</code>) with color assigned according to <code>continent</code>, followed by a smoothed regression line (<code>stat_smooth</code>)<br />
+8. Next purely aesthetic details such as a title, legends and a theme are added. As a beginner, and even as a more advanced user, it is not necessary to memorize all the possible formatting options as quick and accessible online resources are available to add these final refinements to your graphs (see <a href="https://ggplot2.tidyverse.org"></a></p>
+<p>Using the <code>gganimate</code> package, a fully animated graph can be made with the code below
+<img src="img/nations.gif" /><!-- --></p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="vis.html#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="do">### animated graph</span></span>
+<span id="cb43-2"><a href="vis.html#cb43-2" aria-hidden="true" tabindex="-1"></a>un_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(gapminder, <span class="fu">aes</span>(<span class="at">x =</span> gdpPercap, <span class="at">y =</span> lifeExp)) <span class="sc">+</span></span>
+<span id="cb43-3"><a href="vis.html#cb43-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">size =</span> pop, <span class="at">color =</span> continent), <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb43-4"><a href="vis.html#cb43-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stat_smooth</span>(<span class="at">formula =</span> y <span class="sc">~</span> <span class="fu">log10</span>(x), <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">size =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">&quot;black&quot;</span>, <span class="at">method =</span> <span class="st">&#39;gam&#39;</span>, <span class="at">linetype=</span><span class="st">&quot;dotted&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-5"><a href="vis.html#cb43-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">&quot;GDP per capita&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-6"><a href="vis.html#cb43-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylab</span>(<span class="st">&quot;Life expectancy at birth&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-7"><a href="vis.html#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_size_area</span>(<span class="at">guide =</span> <span class="cn">FALSE</span>, <span class="at">max_size =</span> <span class="dv">15</span>) <span class="sc">+</span></span>
+<span id="cb43-8"><a href="vis.html#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar) <span class="sc">+</span></span>
+<span id="cb43-9"><a href="vis.html#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Gapminder data from 2007&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-10"><a href="vis.html#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">&quot;Data from gapminder library&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-11"><a href="vis.html#cb43-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_color_brewer</span>(<span class="at">name =</span> <span class="st">&quot;&quot;</span>, <span class="at">palette =</span> <span class="st">&quot;Dark2&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-12"><a href="vis.html#cb43-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">&quot;Georgia&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-13"><a href="vis.html#cb43-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># gganimate code</span></span>
+<span id="cb43-14"><a href="vis.html#cb43-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;{frame_time}&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-15"><a href="vis.html#cb43-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">transition_time</span>(year) <span class="sc">+</span></span>
+<span id="cb43-16"><a href="vis.html#cb43-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ease_aes</span>(<span class="st">&quot;linear&quot;</span>) <span class="sc">+</span></span>
+<span id="cb43-17"><a href="vis.html#cb43-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">enter_fade</span>() <span class="sc">+</span></span>
+<span id="cb43-18"><a href="vis.html#cb43-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">exit_fade</span>()</span>
+<span id="cb43-19"><a href="vis.html#cb43-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-20"><a href="vis.html#cb43-20" aria-hidden="true" tabindex="-1"></a><span class="fu">animate</span>(un_plot)</span></code></pre></div>
+<p>While we are considering this international data source, let’s see how you do with a simple quiz.<br />
+Q1. Which countries in each pair have the highest child mortality (2015)?<br />
+Q2. Which pairs of countries are most similar?<br />
+* Sri Lanka or Turkey<br />
+* Poland or South Korea<br />
+* Malaysia or Russia<br />
+* Pakistan or Vietnam<br />
+* Thailand or South Africa</p>
+<p>Now as it is unlikely that you have actual knowledge of country specific mortality data, most individuals will attempt to employ some heuristic to help answer the question. One such heuristic would say <em>“European countries lower child mortality than non-European”</em>. Following that heuristic, our answers might be: Sri Lanka, South Korea, Malaysia with Pakistan or Vietnam and Thailand or South Africa as non-European countries being the most similar. Fortunately we can do better by analyzing the <code>gapminder</code> dataset</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="vis.html#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="do">## A bit of code</span></span>
+<span id="cb44-2"><a href="vis.html#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dslabs) <span class="co">#source of gapminder data</span></span>
+<span id="cb44-3"><a href="vis.html#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="fu">data</span>(gapminder)</span>
+<span id="cb44-4"><a href="vis.html#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="vis.html#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co"># write a simple function for the comparison between 2 countries</span></span>
+<span id="cb44-6"><a href="vis.html#cb44-6" aria-hidden="true" tabindex="-1"></a>compare_2 <span class="ot">&lt;-</span> <span class="cf">function</span>(x,y){</span>
+<span id="cb44-7"><a href="vis.html#cb44-7" aria-hidden="true" tabindex="-1"></a>    gapminder <span class="sc">%&gt;%</span> <span class="fu">filter</span>(year <span class="sc">==</span> <span class="st">&quot;2015&quot;</span> <span class="sc">&amp;</span> country <span class="sc">%in%</span> <span class="fu">c</span>(x, y)) <span class="sc">%&gt;%</span></span>
+<span id="cb44-8"><a href="vis.html#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(country, infant_mortality)</span>
+<span id="cb44-9"><a href="vis.html#cb44-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-10"><a href="vis.html#cb44-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-11"><a href="vis.html#cb44-11" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Sri Lanka&quot;</span>, <span class="st">&quot;Turkey&quot;</span>)</span></code></pre></div>
+<pre><code>##     country infant_mortality
+## 1 Sri Lanka              8.4
+## 2    Turkey             11.6</code></pre>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="vis.html#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Poland&quot;</span>, <span class="st">&quot;South Korea&quot;</span>)</span></code></pre></div>
+<pre><code>##       country infant_mortality
+## 1 South Korea              2.9
+## 2      Poland              4.5</code></pre>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="vis.html#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Malaysia&quot;</span>, <span class="st">&quot;Russia&quot;</span>)</span></code></pre></div>
+<pre><code>##    country infant_mortality
+## 1 Malaysia              6.0
+## 2   Russia              8.2</code></pre>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="vis.html#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Pakistan&quot;</span>, <span class="st">&quot;Vietnam&quot;</span>)</span></code></pre></div>
+<pre><code>##    country infant_mortality
+## 1 Pakistan             65.8
+## 2  Vietnam             17.3</code></pre>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="vis.html#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_2</span>(<span class="st">&quot;Thailand&quot;</span>, <span class="st">&quot;South Africa&quot;</span>)</span></code></pre></div>
+<pre><code>##        country infant_mortality
+## 1 South Africa             33.6
+## 2     Thailand             10.5</code></pre>
+<p>If we were merely ignorant we might have expected to get 2.5 answers right but it seems if we followed our heuristic we would have got 0 right answers implying we are more than simply ignorant but actually misinformed! We can use the same dataset to query our heuristic about better survival in European countries.</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="vis.html#cb54-1" aria-hidden="true" tabindex="-1"></a>gapminder <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">&quot;Asia&quot;</span> <span class="sc">|</span> continent <span class="sc">==</span> <span class="st">&quot;Europe&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-2"><a href="vis.html#cb54-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1962</span>, <span class="dv">1980</span>, <span class="dv">1990</span>, <span class="dv">2012</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb54-3"><a href="vis.html#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(fertility, infant_mortality, <span class="at">color=</span> continent)) <span class="sc">+</span> </span>
+<span id="cb54-4"><a href="vis.html#cb54-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="at">cols =</span> <span class="fu">vars</span>(year)) <span class="sc">+</span></span>
+<span id="cb54-5"><a href="vis.html#cb54-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb54-6"><a href="vis.html#cb54-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">200</span>) <span class="sc">+</span></span>
+<span id="cb54-7"><a href="vis.html#cb54-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Infant mortality over time&quot;</span>) <span class="sc">+</span></span>
+<span id="cb54-8"><a href="vis.html#cb54-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span></code></pre></div>
+<pre><code>## Warning: Removed 53 rows containing missing values (geom_point).</code></pre>
+<p><img src="03-visualizations_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="vis.html#cb56-1" aria-hidden="true" tabindex="-1"></a>gapminder <span class="sc">%&gt;%</span> <span class="fu">filter</span>(continent <span class="sc">==</span> <span class="st">&quot;Asia&quot;</span> <span class="sc">|</span> continent <span class="sc">==</span> <span class="st">&quot;Europe&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-2"><a href="vis.html#cb56-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(year <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1962</span>, <span class="dv">1980</span>, <span class="dv">1990</span>, <span class="dv">2012</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb56-3"><a href="vis.html#cb56-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(fertility, life_expectancy, <span class="at">color=</span> continent)) <span class="sc">+</span> </span>
+<span id="cb56-4"><a href="vis.html#cb56-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_grid</span>(<span class="at">cols =</span> <span class="fu">vars</span>(year)) <span class="sc">+</span></span>
+<span id="cb56-5"><a href="vis.html#cb56-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb56-6"><a href="vis.html#cb56-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Life expectancy over time&quot;</span>) <span class="sc">+</span></span>
+<span id="cb56-7"><a href="vis.html#cb56-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="03-visualizations_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+<p>These graphs show that the heuristic of improved infant and overall life expectancy among European countries was true 60 years ago but is no longer today’s truth. This underlines the need to continually question our baseline assumptions.</p>
+</div>
+<div id="graphical-choices" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Graphical choices</h2>
+<p>Visualizations play an important role in understanding the data, exploring the data, and interpreting the data.<br />
+The most common visualization methods are:<br />
+* Histograms<br />
+* Scatterplots<br />
+* Boxplots<br />
+* Survival curves (Kaplan Meier)<br />
+* Heatmaps and many more</p>
+<p>A graph can provide a quick interpretation of the data and orient more in depth analyses.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-12"></span>
+<img src="img/graphs.png" alt="Data visualization -&gt; Quick understanding of data" width="1000%" />
+<p class="caption">
+Figure 2.7: Data visualization -&gt; Quick understanding of data
+</p>
+</div>
+<p>Consider this story from the <a href="https://www.nytimes.com/2011/02/19/nyregion/19schools.html?searchResultPosition=1">New York Times</a> about the scoring of high school leaving exams where 65 is the passing grade. A histogram of the grades shows important abnormalities with 5 times more students scoring exactly 65 than those scoring between 61-64, leaving a suspicion that grading may not be completely unbiased. Simply reporting the mean, median, standard deviations, percentage passing or any other numerical summary would not have detected the strangeness of the data.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-13"></span>
+<img src="img/hs_grades.png" alt="Histogram of grades" width="100%" />
+<p class="caption">
+Figure 2.8: Histogram of grades
+</p>
+</div>
+<p>Graphs can also be combined to provide further insights into the data. The following is a graph from the excellent book <a href="https://github.com/dspiegel29/ArtofStatistics">The Art of Statistics</a> by David Speigelhalter that shows the gender and timing of the 215 confirmed victims of the mass murderer, Dr. Harold Shipman.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-14"></span>
+<img src="img/shipman.png" alt="Murder victims" width="100%" />
+<p class="caption">
+Figure 2.9: Murder victims
+</p>
+</div>
+<p>Here a basic scatter plot has been combined with marginal histograms. This enables a quick appreciation that the victims were<br />
+1. more often women<br />
+2. mostly older but some younger victims in more recent times<br />
+3. a gap occured around 1992<br />
+4. there were increased murders in later years</p>
+<p>Fortunately, most datasets that we will examine are not this gruesome.</p>
+</div>
+<div id="example---a-modern-version-of-the-ghost-map" class="section level2" number="2.5">
+<h2><span class="header-section-number">2.5</span> Example - A modern version of the “Ghost Map”</h2>
+<p>Dr. John Snow (1813-1858) was a famous British physician and is widely recognized as a legendary figure in the history of public health and a leading pioneer in the development of anesthesia. As a leading advocate of both anesthesia and hygienic practices in medicine, he not only experimented with ether and chloroform but also designed a mask and method how to administer it. He personally administered chloroform to Queen Victoria during the births of her eighth and ninth children, in 1853 and 1857, which assured a growing public acceptance of the use of anesthetics during childbirth. In the realm of public health, Snow is especially known for his work on the transmission of cholera during the cholera epidemics that occurred regularly in 19th century London, generally believed to be brought in by merchant marine trade, exacerbated by overcrowding (London 1850 population exceeded 2 million) and unsanitary streets.</p>
+<p>An excellent book covering Snow’s actions in identifying the source of the 1854 Soho cholera outbreak is masterfully told in <a href="https://www.amazon.ca/Ghost-Map-Londons-Terrifying-Epidemic/dp/1594482691?language=en_CA">The Ghost Map</a> by Steven Johnson. The book illustrates the importance of “shoe leather” epidemiology in establishing the water transmission theory of cholera and the difficulties in overcoming the <a href="https://en.wikipedia.org/wiki/Confirmation_bias">confirmation bias</a> supporting the prevalent miasma theory of transmission. Final recognition of the correctness of Snow’s theory was hard earned as his initial research on cholera had been criticized in medical reviews, including the Lancet. A philistine might say this is but an early example of an ongoing problem with peer review publishing in august medical journals (more on modern contemporary examples will be forthcoming in later chapters).</p>
+<p>John Snow is now recognized as one of the founders of modern epidemiology and in later publications Snow made use of data visualization to strengthen his message. Snow’s original geographical mapping of the data is not available but one that he drew about a year later in 1855 depicts the deaths and is referred to as The Ghost Map. More details on the history of the 1854 Broad Street cholera outbreak are found <a href="https://en.wikipedia.org/wiki/1854_Broad_Street_cholera_outbreak">here</a>.</p>
+<p>Here is an initial plot as displayed on John Snow’s original map.</p>
+<div class="figure"><span id="fig:unnamed-chunk-15"></span>
+<img src="img/ghost_map.png" alt="Classic epidemiology visualizations - John Snow's Cholera Broad Street Ghost Map" width="100%" />
+<p class="caption">
+Figure 2.10: Classic epidemiology visualizations - John Snow’s Cholera Broad Street Ghost Map
+</p>
+</div>
+<p>When many points are associated with a single street address, they are “stacked” in a line away from the street so that they are more easily visualized. This dataset is found in the <code>HistData</code> package and has 578 observations on the following 3 variables, giving the address of a person who died from cholera.</p>
+<div id="using-modern-geographic-information-system-mapping" class="section level3" number="2.5.1">
+<h3><span class="header-section-number">2.5.1</span> Using modern Geographic Information System mapping</h3>
+<p>Can download a zip file with GIS layers relating to John Snow’s 1854 investigation of the Cholera outbreak in London. This file contains a number of GIS layers created from Snow’s original map which allow analyses to be conducted on the data in modern GIS systems.</p>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="vis.html#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Download the zip archive of geographical information</span></span>
+<span id="cb57-2"><a href="vis.html#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="at">url      =</span> <span class="st">&quot;http://www.rtwilson.com/downloads/SnowGIS_v2.zip&quot;</span>,</span>
+<span id="cb57-3"><a href="vis.html#cb57-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">destfile =</span> <span class="st">&quot;datasets/SnowGIS_v2.zip&quot;</span>)</span>
+<span id="cb57-4"><a href="vis.html#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="vis.html#cb57-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Unzip</span></span>
+<span id="cb57-6"><a href="vis.html#cb57-6" aria-hidden="true" tabindex="-1"></a><span class="fu">unzip</span>(<span class="at">zipfile =</span> <span class="st">&quot;datasets/SnowGIS_v2.zip&quot;</span>, <span class="at">exdir =</span><span class="st">&quot;datasets&quot;</span>)</span>
+<span id="cb57-7"><a href="vis.html#cb57-7" aria-hidden="true" tabindex="-1"></a><span class="do">## List files in the unzipped folder -&gt; dir(path = &quot;./datasets/SnowGIS&quot;) </span></span>
+<span id="cb57-8"><a href="vis.html#cb57-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-9"><a href="vis.html#cb57-9" aria-hidden="true" tabindex="-1"></a><span class="co"># register_google(key = &quot;Put your API key here&quot;) # my API is hidden</span></span>
+<span id="cb57-10"><a href="vis.html#cb57-10" aria-hidden="true" tabindex="-1"></a>GDAL <span class="ot">&lt;-</span> <span class="fu">GDALinfo</span>(<span class="st">&quot;./datasets/SnowGIS/OSMap.tif&quot;</span>)</span>
+<span id="cb57-11"><a href="vis.html#cb57-11" aria-hidden="true" tabindex="-1"></a>OSMap <span class="ot">&lt;-</span> <span class="fu">readGDAL</span>(<span class="st">&quot;./datasets/SnowGIS/OSMap_Grayscale.tif&quot;</span>)</span>
+<span id="cb57-12"><a href="vis.html#cb57-12" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
+<span id="cb57-13"><a href="vis.html#cb57-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-14"><a href="vis.html#cb57-14" aria-hidden="true" tabindex="-1"></a><span class="co"># image(OSMap, col = grey(1:500/1000)) modern plot not shown here</span></span>
+<span id="cb57-15"><a href="vis.html#cb57-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-16"><a href="vis.html#cb57-16" aria-hidden="true" tabindex="-1"></a><span class="fu">getinfo.shape</span>(<span class="st">&quot;./datasets/SnowGIS/Cholera_Deaths.shp&quot;</span>)</span>
+<span id="cb57-17"><a href="vis.html#cb57-17" aria-hidden="true" tabindex="-1"></a>map1 <span class="ot">&lt;-</span> <span class="fu">get_map</span>(<span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">137</span>,<span class="fl">51.513</span>), <span class="at">zoom=</span><span class="dv">16</span>)</span>
+<span id="cb57-18"><a href="vis.html#cb57-18" aria-hidden="true" tabindex="-1"></a>london_main <span class="ot">&lt;-</span> <span class="fu">ggmap</span>(map1) <span class="sc">+</span></span>
+<span id="cb57-19"><a href="vis.html#cb57-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Modern Google style Ghost map&quot;</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="vis.html#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="do">### Assigning the Cordinates of Deaths &amp; Pumps Variables from the Dataset</span></span>
+<span id="cb58-2"><a href="vis.html#cb58-2" aria-hidden="true" tabindex="-1"></a>deaths <span class="ot">&lt;-</span> <span class="fu">readShapePoints</span>(<span class="st">&quot;datasets/SnowGIS/Cholera_Deaths&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: readShapePoints is deprecated; use rgdal::readOGR or sf::st_read</code></pre>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="vis.html#cb60-1" aria-hidden="true" tabindex="-1"></a>pumps <span class="ot">&lt;-</span> <span class="fu">readShapePoints</span>(<span class="st">&quot;datasets/SnowGIS/Pumps&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning: readShapePoints is deprecated; use rgdal::readOGR or sf::st_read</code></pre>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="vis.html#cb62-1" aria-hidden="true" tabindex="-1"></a>df_deaths <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(deaths<span class="sc">@</span>coords)</span>
+<span id="cb62-2"><a href="vis.html#cb62-2" aria-hidden="true" tabindex="-1"></a>df_pumps <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(pumps<span class="sc">@</span>coords)</span>
+<span id="cb62-3"><a href="vis.html#cb62-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-4"><a href="vis.html#cb62-4" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">rbind</span>(df_deaths, df_pumps)</span>
+<span id="cb62-5"><a href="vis.html#cb62-5" aria-hidden="true" tabindex="-1"></a>tmp<span class="sc">$</span>type <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="st">&#39;death&#39;</span>, <span class="at">times=</span><span class="fu">dim</span>(df_deaths)[<span class="dv">1</span>]),</span>
+<span id="cb62-6"><a href="vis.html#cb62-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rep</span>(<span class="st">&#39;pump&#39;</span>, <span class="at">times=</span><span class="fu">dim</span>(df_pumps)[<span class="dv">1</span>]))</span>
+<span id="cb62-7"><a href="vis.html#cb62-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-8"><a href="vis.html#cb62-8" aria-hidden="true" tabindex="-1"></a><span class="fu">coordinates</span>(df_deaths)<span class="ot">=</span><span class="er">~</span>coords.x1<span class="sc">+</span>coords.x2</span>
+<span id="cb62-9"><a href="vis.html#cb62-9" aria-hidden="true" tabindex="-1"></a><span class="fu">proj4string</span>(df_deaths)<span class="ot">=</span><span class="fu">CRS</span>(<span class="st">&quot;+init=epsg:27700&quot;</span>) </span></code></pre></div>
+<pre><code>## Warning in showSRID(uprojargs, format = &quot;PROJ&quot;, multiline = &quot;NO&quot;, prefer_proj =
+## prefer_proj): Discarded datum OSGB_1936 in Proj4 definition</code></pre>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="vis.html#cb64-1" aria-hidden="true" tabindex="-1"></a>df_deaths <span class="ot">=</span> <span class="fu">spTransform</span>(df_deaths,<span class="fu">CRS</span>(<span class="st">&quot;+proj=longlat +datum=WGS84&quot;</span>))</span>
+<span id="cb64-2"><a href="vis.html#cb64-2" aria-hidden="true" tabindex="-1"></a>df<span class="ot">=</span><span class="fu">data.frame</span>(df_deaths<span class="sc">@</span>coords)</span>
+<span id="cb64-3"><a href="vis.html#cb64-3" aria-hidden="true" tabindex="-1"></a>lng<span class="ot">=</span>df<span class="sc">$</span>coords.x1</span>
+<span id="cb64-4"><a href="vis.html#cb64-4" aria-hidden="true" tabindex="-1"></a>lat<span class="ot">=</span>df<span class="sc">$</span>coords.x2</span>
+<span id="cb64-5"><a href="vis.html#cb64-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-6"><a href="vis.html#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="fu">coordinates</span>(tmp)<span class="ot">=</span><span class="er">~</span>coords.x1<span class="sc">+</span>coords.x2</span>
+<span id="cb64-7"><a href="vis.html#cb64-7" aria-hidden="true" tabindex="-1"></a><span class="fu">proj4string</span>(tmp)<span class="ot">=</span><span class="fu">CRS</span>(<span class="st">&quot;+init=epsg:27700&quot;</span>)</span></code></pre></div>
+<pre><code>## Warning in showSRID(uprojargs, format = &quot;PROJ&quot;, multiline = &quot;NO&quot;, prefer_proj =
+## prefer_proj): Discarded datum OSGB_1936 in Proj4 definition</code></pre>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb66-1"><a href="vis.html#cb66-1" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">=</span> <span class="fu">spTransform</span>(tmp, <span class="fu">CRS</span>(<span class="st">&quot;+proj=longlat +datum=WGS84&quot;</span>))</span>
+<span id="cb66-2"><a href="vis.html#cb66-2" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(tmp<span class="sc">@</span>coords, <span class="at">type=</span>tmp<span class="sc">@</span>data<span class="sc">$</span>type)</span>
+<span id="cb66-3"><a href="vis.html#cb66-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-4"><a href="vis.html#cb66-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb66-5"><a href="vis.html#cb66-5" aria-hidden="true" tabindex="-1"></a>snow.plot1 <span class="ot">&lt;-</span> london_main <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">mapping=</span><span class="fu">aes</span>(<span class="at">x=</span>coords.x1, <span class="at">y=</span>coords.x2, <span class="at">col=</span>type, <span class="at">size =</span> <span class="dv">1</span>), <span class="at">data=</span>tmp) <span class="sc">+</span></span>
+<span id="cb66-6"><a href="vis.html#cb66-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x =</span> <span class="sc">-</span>.<span class="dv">1361</span>, <span class="at">y =</span> <span class="fl">51.513</span>, <span class="at">label =</span> <span class="st">&quot;X</span><span class="sc">\n</span><span class="st"> Broad Street pump&quot;</span>, <span class="at">colour=</span><span class="st">&quot;black&quot;</span>,  <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb66-7"><a href="vis.html#cb66-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;Regular plot&quot;</span>)</span>
+<span id="cb66-8"><a href="vis.html#cb66-8" aria-hidden="true" tabindex="-1"></a>snow.plot1</span></code></pre></div>
+<p><img src="03-visualizations_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb67-1"><a href="vis.html#cb67-1" aria-hidden="true" tabindex="-1"></a>snow.plot2 <span class="ot">&lt;-</span> london_main <span class="sc">+</span> <span class="fu">geom_density2d</span>(<span class="at">data =</span> tmp[tmp<span class="sc">$</span>type <span class="sc">==</span><span class="st">&quot;death&quot;</span>, ], <span class="fu">aes</span>(<span class="at">x =</span> coords.x1, <span class="at">y =</span> coords.x2),</span>
+<span id="cb67-2"><a href="vis.html#cb67-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="fl">0.6</span>) <span class="sc">+</span></span>
+<span id="cb67-3"><a href="vis.html#cb67-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x =</span> <span class="sc">-</span>.<span class="dv">1361</span>, <span class="at">y =</span> <span class="fl">51.513</span>, <span class="at">label =</span> <span class="st">&quot;X</span><span class="sc">\n</span><span class="st"> Broad Street pump&quot;</span>, <span class="at">colour=</span><span class="st">&quot;black&quot;</span>,  <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb67-4"><a href="vis.html#cb67-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">subtitle =</span> <span class="st">&quot;Density plot&quot;</span>)</span>
+<span id="cb67-5"><a href="vis.html#cb67-5" aria-hidden="true" tabindex="-1"></a>snow.plot2</span></code></pre></div>
+<p><img src="03-visualizations_files/figure-html/unnamed-chunk-17-2.png" width="672" /></p>
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-econ" class="csl-entry">
+<em>The Economist</em>. 2013. <span>“Worth a Thousand Words,”</span> October 7, 2013. <a href="https://www.economist.com/christmas-specials/2013/10/07/worth-a-thousand-words">https://www.economist.com/christmas-specials/2013/10/07/worth-a-thousand-words</a>.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="intro.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="meas.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-clinepi.pdf", "bookdown-clinepi.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

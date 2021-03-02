@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Statistical inference | (Mostly Clinical) Epidemiology with R</title>
+  <meta name="description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="generator" content="bookdown 0.21.6 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Statistical inference | (Mostly Clinical) Epidemiology with R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="github-repo" content="brophyj/epi_book" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Statistical inference | (Mostly Clinical) Epidemiology with R" />
+  
+  <meta name="twitter:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  
+
+<meta name="author" content="James Brophy" />
+
+
+<meta name="date" content="2021-02-19" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="meas.html"/>
+<link rel="next" href="design.html"/>
+<script src="libs/header-attrs-2.6.6/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<script>
+/* ========================================================================
+ * Bootstrap: transition.js v3.3.7
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: collapse.js v3.3.7
+ * http://getbootstrap.com/javascript/#collapse
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+/* jshint latedef: false */
+
++function ($) {
+  'use strict';
+
+  // COLLAPSE PUBLIC CLASS DEFINITION
+  // ================================
+
+  var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                           '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+    this.transitioning = null
+
+    if (this.options.parent) {
+      this.$parent = this.getParent()
+    } else {
+      this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+    }
+
+    if (this.options.toggle) this.toggle()
+  }
+
+  Collapse.VERSION  = '3.3.7'
+
+  Collapse.TRANSITION_DURATION = 350
+
+  Collapse.DEFAULTS = {
+    toggle: true
+  }
+
+  Collapse.prototype.dimension = function () {
+    var hasWidth = this.$element.hasClass('width')
+    return hasWidth ? 'width' : 'height'
+  }
+
+  Collapse.prototype.show = function () {
+    if (this.transitioning || this.$element.hasClass('in')) return
+
+    var activesData
+    var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+
+    if (actives && actives.length) {
+      activesData = actives.data('bs.collapse')
+      if (activesData && activesData.transitioning) return
+    }
+
+    var startEvent = $.Event('show.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    if (actives && actives.length) {
+      Plugin.call(actives, 'hide')
+      activesData || actives.data('bs.collapse', null)
+    }
+
+    var dimension = this.dimension()
+
+    this.$element
+      .removeClass('collapse')
+      .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
+
+    this.$trigger
+      .removeClass('collapsed')
+      .attr('aria-expanded', true)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse in')[dimension]('')
+      this.transitioning = 0
+      this.$element
+        .trigger('shown.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+
+    this.$element
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+  }
+
+  Collapse.prototype.hide = function () {
+    if (this.transitioning || !this.$element.hasClass('in')) return
+
+    var startEvent = $.Event('hide.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    var dimension = this.dimension()
+
+    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+
+    this.$element
+      .addClass('collapsing')
+      .removeClass('collapse in')
+      .attr('aria-expanded', false)
+
+    this.$trigger
+      .addClass('collapsed')
+      .attr('aria-expanded', false)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.transitioning = 0
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse')
+        .trigger('hidden.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    this.$element
+      [dimension](0)
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+  }
+
+  Collapse.prototype.toggle = function () {
+    this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
+
+  Collapse.prototype.getParent = function () {
+    return $(this.options.parent)
+      .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+      .each($.proxy(function (i, element) {
+        var $element = $(element)
+        this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+      }, this))
+      .end()
+  }
+
+  Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+    var isOpen = $element.hasClass('in')
+
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
+  }
+
+  function getTargetFromTrigger($trigger) {
+    var href
+    var target = $trigger.attr('data-target')
+      || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+
+    return $(target)
+  }
+
+
+  // COLLAPSE PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.collapse')
+      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+      if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.collapse
+
+  $.fn.collapse             = Plugin
+  $.fn.collapse.Constructor = Collapse
+
+
+  // COLLAPSE NO CONFLICT
+  // ====================
+
+  $.fn.collapse.noConflict = function () {
+    $.fn.collapse = old
+    return this
+  }
+
+
+  // COLLAPSE DATA-API
+  // =================
+
+  $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+    var $this   = $(this)
+
+    if (!$this.attr('data-target')) e.preventDefault()
+
+    var $target = getTargetFromTrigger($this)
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $this.data()
+
+    Plugin.call($target, option)
+  })
+
+}(jQuery);
+</script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    // close the dropdown menu when an option is clicked
+    $("#allCodeButton").dropdown("toggle");
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    // close the dropdown menu when an option is clicked
+    $("#allCodeButton").dropdown("toggle");
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+
+    // if code block has been labeled with class `fold-show`, show the code on init!
+    var classList = $(this).attr('class').split(/\s+/);
+    for (var i = 0; i < classList.length; i++) {
+    if (classList[i] === 'fold-show') {
+        show = true;
+      }
+    }
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-target', '#' + id)
+        .attr('aria-expanded', show)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // hack: return show to false, otherwise all next codeBlocks will be shown!
+    show = false;
+
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+
+}
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.7
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.7'
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+    })
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+<style type="text/css">
+.code-folding-btn {
+  margin-bottom: 4px;
+}
+
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+.pull-right > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+.open > .dropdown-menu {
+    display: block;
+    color: #ffffff;
+    background-color: #ffffff;
+    background-image: none;
+    border-color: #92897e;
+}
+
+.dropdown-menu > li > a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #e95420;
+}
+
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #e95420;
+  outline: 0;
+}
+.dropdown-menu > .disabled > a,
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+  color: #aea79f;
+}
+
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+  text-decoration: none;
+  cursor: not-allowed;
+  background-color: transparent;
+  background-image: none;
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+.btn {
+  display: inline-block;
+  margin-bottom: 1;
+  font-weight: normal;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.btn:hover,
+.btn:focus,
+.btn.focus {
+  color: #ffffff;
+  text-decoration: none;
+}
+.btn:active,
+.btn.active {
+  background-image: none;
+  outline: 0;
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
+  cursor: not-allowed;
+  filter: alpha(opacity=65);
+  opacity: 0.65;
+  box-shadow: none;
+}
+a.btn.disabled,
+fieldset[disabled] a.btn {
+  pointer-events: none;
+}
+.btn-default {
+  color: #ffffff;
+  background-color: #aea79f; #important
+  border-color: #aea79f;
+}
+
+.btn-default:focus,
+.btn-default.focus {
+  color: #ffffff;
+  background-color: #978e83;
+  border-color: #6f675e;
+}
+
+.btn-default:hover {
+  color: #ffffff;
+  background-color: #978e83;
+  border-color: #92897e;
+}
+.btn-default:active,
+.btn-default.active,
+.btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
+  border-radius: 0;
+}
+.btn-group > .btn:first-child {
+  margin-left: 0;
+}
+.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group > .btn:last-child:not(:first-child),
+.btn-group > .dropdown-toggle:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.btn-group > .btn-group {
+  float: left;
+}
+.btn-group > .btn-group:not(:first-child):not(:last-child) > .btn {
+  border-radius: 0;
+}
+.btn-group > .btn-group:first-child:not(:last-child) > .btn:last-child,
+.btn-group > .btn-group:first-child:not(:last-child) > .dropdown-toggle {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.btn-group .dropdown-toggle:active,
+.btn-group.open .dropdown-toggle {
+  outline: 0;
+}
+.btn-group > .btn + .dropdown-toggle {
+  padding-right: 8px;
+  padding-left: 8px;
+}
+.btn-group > .btn-lg + .dropdown-toggle {
+  padding-right: 12px;
+  padding-left: 12px;
+}
+.btn-group.open .dropdown-toggle {
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.btn-group.open .dropdown-toggle.btn-link {
+  box-shadow: none;
+}
+
+</style>
+<script>
+var str = '<div class="btn-group pull-right" style="position: fixed; right: 50px; top: 10px; z-index: 200"><button type="button" class="btn btn-default btn-xs dropdown-toggle" id="allCodeButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast=""><span>Code</span> <span class="caret"></span></button><ul class="dropdown-menu" style="min-width: 50px;"><li><a id="rmd-show-all-code" href="#">Show All Code</a></li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li></ul></div>';
+document.write(str);
+</script>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "hide");
+});
+</script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">(Mostly Clinical) Epidemiology with R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.0.1" data-path="intro.html"><a href="intro.html#r-packages-required-for-this-chapter"><i class="fa fa-check"></i><b>1.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#preface"><i class="fa fa-check"></i><b>1.1</b> Preface</a></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#pre"><i class="fa fa-check"></i><b>1.2</b> Prerequisites</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#my-general-philosophy-for-clinical-epidemiology"><i class="fa fa-check"></i><b>1.3</b> My general philosophy for clinical epidemiology</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#brief-excursions-into-quantification"><i class="fa fa-check"></i><b>1.4</b> Brief excursions into quantification</a></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#outline"><i class="fa fa-check"></i><b>1.5</b> Outline</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html"><i class="fa fa-check"></i><b>2</b> Introduction to statistical software - R</a>
+<ul>
+<li class="chapter" data-level="2.0.1" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r-packages-required-for-this-chapter-1"><i class="fa fa-check"></i><b>2.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="2.1" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#statistical-software---r"><i class="fa fa-check"></i><b>2.1</b> Statistical software - R</a></li>
+<li class="chapter" data-level="2.2" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r---common-data-and-variable-manipulations"><i class="fa fa-check"></i><b>2.2</b> R - Common data and variable manipulations</a></li>
+<li class="chapter" data-level="2.3" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#rstudio---the-ide-for-r"><i class="fa fa-check"></i><b>2.3</b> RStudio - <strong>The</strong> IDE for R</a></li>
+<li class="chapter" data-level="2.4" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r---more-than-a-statistical-program"><i class="fa fa-check"></i><b>2.4</b> R - More than a statistical program</a></li>
+<li class="chapter" data-level="2.5" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r---general-public-license"><i class="fa fa-check"></i><b>2.5</b> R - General Public License</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="vis.html"><a href="vis.html"><i class="fa fa-check"></i><b>3</b> Data visualizations</a>
+<ul>
+<li class="chapter" data-level="3.0.1" data-path="vis.html"><a href="vis.html#r-packages-required-for-this-chapter-2"><i class="fa fa-check"></i><b>3.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="3.1" data-path="vis.html"><a href="vis.html#introduction"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2" data-path="vis.html"><a href="vis.html#why-is-data-visualization-important"><i class="fa fa-check"></i><b>3.2</b> Why is data visualization important?</a></li>
+<li class="chapter" data-level="3.3" data-path="vis.html"><a href="vis.html#creating-an-effective-and-professional-appearing-graph"><i class="fa fa-check"></i><b>3.3</b> Creating an effective and professional appearing graph</a></li>
+<li class="chapter" data-level="3.4" data-path="vis.html"><a href="vis.html#graphical-choices"><i class="fa fa-check"></i><b>3.4</b> Graphical choices</a></li>
+<li class="chapter" data-level="3.5" data-path="vis.html"><a href="vis.html#example---a-modern-version-of-the-ghost-map"><i class="fa fa-check"></i><b>3.5</b> Example - A modern version of the “Ghost Map”</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="vis.html"><a href="vis.html#using-modern-geographic-information-system-mapping"><i class="fa fa-check"></i><b>3.5.1</b> Using modern Geographic Information System mapping</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="meas.html"><a href="meas.html"><i class="fa fa-check"></i><b>4</b> Contingency tables, measures of association &amp; R packages</a>
+<ul>
+<li class="chapter" data-level="4.0.1" data-path="meas.html"><a href="meas.html#r-packages-required-for-this-chapter-3"><i class="fa fa-check"></i><b>4.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="4.1" data-path="meas.html"><a href="meas.html#meas1"><i class="fa fa-check"></i><b>4.1</b> Proportions - One sample <span class="math inline">\(\chi^2\)</span> tests</a></li>
+<li class="chapter" data-level="4.2" data-path="meas.html"><a href="meas.html#contingency-tables"><i class="fa fa-check"></i><b>4.2</b> Contingency tables</a></li>
+<li class="chapter" data-level="4.3" data-path="meas.html"><a href="meas.html#some-basic-defintions"><i class="fa fa-check"></i><b>4.3</b> Some basic defintions</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="meas.html"><a href="meas.html#relative-comparative-measures"><i class="fa fa-check"></i><b>4.3.1</b> Relative comparative measures</a></li>
+<li class="chapter" data-level="4.3.2" data-path="meas.html"><a href="meas.html#absolute-comparative-measures"><i class="fa fa-check"></i><b>4.3.2</b> Absolute comparative measures</a></li>
+<li class="chapter" data-level="4.3.3" data-path="meas.html"><a href="meas.html#attributal-measures"><i class="fa fa-check"></i><b>4.3.3</b> Attributal measures</a></li>
+<li class="chapter" data-level="4.3.4" data-path="meas.html"><a href="meas.html#standardization"><i class="fa fa-check"></i><b>4.3.4</b> Standardization</a></li>
+</ul></li>
+<li class="chapter" data-level="4.4" data-path="meas.html"><a href="meas.html#examples-using-base-r"><i class="fa fa-check"></i><b>4.4</b> Examples using base R</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="meas.html"><a href="meas.html#example-1---basic-incidence-measures"><i class="fa fa-check"></i><b>4.4.1</b> Example 1 - basic incidence measures</a></li>
+<li class="chapter" data-level="4.4.2" data-path="meas.html"><a href="meas.html#example-2---rare-disease"><i class="fa fa-check"></i><b>4.4.2</b> Example 2 - rare disease</a></li>
+<li class="chapter" data-level="4.4.3" data-path="meas.html"><a href="meas.html#example-3---standardization"><i class="fa fa-check"></i><b>4.4.3</b> Example 3 - Standardization</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="meas.html"><a href="meas.html#packages"><i class="fa fa-check"></i><b>4.5</b> Examples using R epidemiology packages</a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="meas.html"><a href="meas.html#example-4-standardization"><i class="fa fa-check"></i><b>4.5.1</b> Example 4 Standardization</a></li>
+<li class="chapter" data-level="4.5.2" data-path="meas.html"><a href="meas.html#example-5---contingency-tables-with-epir-package"><i class="fa fa-check"></i><b>4.5.2</b> Example 5 - Contingency Tables with <code>epiR</code> package</a></li>
+<li class="chapter" data-level="4.5.3" data-path="meas.html"><a href="meas.html#example-6---contingency-tables-with-other-r-packages"><i class="fa fa-check"></i><b>4.5.3</b> Example 6 - Contingency Tables with other <code>R</code> packages</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="statistical-inference.html"><a href="statistical-inference.html"><i class="fa fa-check"></i><b>5</b> Statistical inference</a>
+<ul>
+<li class="chapter" data-level="5.0.1" data-path="statistical-inference.html"><a href="statistical-inference.html#r-packages-required-for-this-chapter-4"><i class="fa fa-check"></i><b>5.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="5.1" data-path="statistical-inference.html"><a href="statistical-inference.html#introduction-1"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="statistical-inference.html"><a href="statistical-inference.html#null-hypothesis-significance-testing"><i class="fa fa-check"></i><b>5.2</b> Null Hypothesis Significance Testing</a></li>
+<li class="chapter" data-level="5.3" data-path="statistical-inference.html"><a href="statistical-inference.html#s-values"><i class="fa fa-check"></i><b>5.3</b> S values</a></li>
+<li class="chapter" data-level="5.4" data-path="statistical-inference.html"><a href="statistical-inference.html#two-views-of-probability"><i class="fa fa-check"></i><b>5.4</b> Two views of probability</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="statistical-inference.html"><a href="statistical-inference.html#basic-rules-of-probability"><i class="fa fa-check"></i><b>5.4.1</b> Basic rules of probability</a></li>
+<li class="chapter" data-level="5.4.2" data-path="statistical-inference.html"><a href="statistical-inference.html#bayes-theorem"><i class="fa fa-check"></i><b>5.4.2</b> Bayes Theorem</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="statistical-inference.html"><a href="statistical-inference.html#bayesian-reasoning-to-understand-why-most-published-research-findings-are-false"><i class="fa fa-check"></i><b>5.5</b> Bayesian reasoning to understand “Why Most Published Research Findings are False”</a></li>
+<li class="chapter" data-level="5.6" data-path="statistical-inference.html"><a href="statistical-inference.html#bayesian-data-analysis-and-statistical-inference"><i class="fa fa-check"></i><b>5.6</b> Bayesian data analysis and statistical inference</a>
+<ul>
+<li class="chapter" data-level="5.6.1" data-path="statistical-inference.html"><a href="statistical-inference.html#bayes-factors"><i class="fa fa-check"></i><b>5.6.1</b> Bayes factors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="design.html"><a href="design.html"><i class="fa fa-check"></i><b>6</b> Non-experimental designs</a>
+<ul>
+<li class="chapter" data-level="6.0.1" data-path="design.html"><a href="design.html#r-packages-required-for-this-chapter-5"><i class="fa fa-check"></i><b>6.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="6.1" data-path="design.html"><a href="design.html#introduction-2"><i class="fa fa-check"></i><b>6.1</b> Introduction</a></li>
+<li class="chapter" data-level="6.2" data-path="design.html"><a href="design.html#cohort-studies"><i class="fa fa-check"></i><b>6.2</b> Cohort studies</a></li>
+<li class="chapter" data-level="6.3" data-path="design.html"><a href="design.html#case-control"><i class="fa fa-check"></i><b>6.3</b> Case control</a></li>
+<li class="chapter" data-level="6.4" data-path="design.html"><a href="design.html#cross-sectional"><i class="fa fa-check"></i><b>6.4</b> Cross sectional</a></li>
+<li class="chapter" data-level="6.5" data-path="design.html"><a href="design.html#miscellaneous-designs"><i class="fa fa-check"></i><b>6.5</b> Miscellaneous designs</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>7</b> References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">(Mostly Clinical) Epidemiology with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="statistical-inference" class="section level1" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Statistical inference</h1>
+<div id="r-packages-required-for-this-chapter-4" class="section level3" number="5.0.1">
+<h3><span class="header-section-number">5.0.1</span> R packages required for this chapter</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="statistical-inference.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-2"><a href="statistical-inference.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="statistical-inference.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb1-4"><a href="statistical-inference.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
+<span id="cb1-5"><a href="statistical-inference.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forestplot)</span></code></pre></div>
+</div>
+<div id="introduction-1" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Introduction</h2>
+<p>It should be remembered that quality study design and data collection are required before any meaningful statistical inference can take place. In other words, there are plenty of places for a study to go wrong before statistical inference is performed and these design topics will be discussed in later chapters.</p>
+<p>For example, it is important to establish if<br />
+- the sample representative of the population that we’d like to draw inferences about?<br />
+- there systematic bias created by selection, misclassification or missing data at the design or during conduct of the study?<br />
+- there are known and observed, known and unobserved or unknown and unobserved variables that contaminate our conclusions?</p>
+<p>Adoption of many research findings, by individual researchers, clinicians, public health experts, professional societies, guideline writers and regulatory agencies, are often unequivocally determined by a deification of p &lt; 0.05. While the many limitations and large potential for misinterpretations with this approach have long been appreciated in the statistical literature, these issues are considered somewhat esoteric and of lesser importance in the clinical literature.</p>
+<div class="blue-box">
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Common and important statistical inference misconceptions</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><ul>
+<li><p>Biological understanding and previous  research have little formal role in the interpretation of quantitative results.</p></li>
+<li><p>Statistical methods alone can provide a number that by itself reflects a probability of reaching true / erroneous  conclusions </p></li>
+<li><p>Standard statistical approach implies that conclusions can be produced with certain “random error rates,” without consideration of internal biases and external information </p></li>
+<li><p>p values and hypothesis tests, are a mathematically coherent approach to inference</p></li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Statistical inference is the process of generating conclusions about a population from a sample, without it we’re left simply within our data. As samples are inherently noisy, this is an essential process in going from data -&gt; knowledge. Probability models connect sample data and populations and are therefore an essential element of statistical inference. In probability theory, the model is known, but the data are not. In statistics we have the data, not the data generating model and want to learn the underlying “truth.”</p>
+<div class="orange-box">
+<p><strong>Example - The wrong probability model leading to the wrong inference</strong></p>
+<p>Consider this well known and tragic case of a <a href="https://en.wikipedia.org/wiki/Sally_Clark#References">British mother and lawyer</a> who had 2 children die of sudden infant death syndrome (SIDS). From this data we would like to infer whether or not this occurence is beyond the play of chance or whether Ms. Clark should be tried for infanticide.</p>
+<p>An expert testified that the probability of SIDS = 1 / 8,500 and therefore the probability of 2 deaths in 1 family was (1 / 8,500)<span class="math inline">\(^2\)</span> or 1 in 72 million. The inference from this argument is that the probability of this occurring by chance, or “naturally,” was vanishingly small. The mother was convicted, undoubtedly in part based on this expert testimony.</p>
+<p>Do you agree with this inference?</p>
+<p>The expert has assumed an underlying probability model that views these 2 deaths as being independent and identical distributed (iid). But these 2 SIDS deaths are not independent events, rather they have a strong family occurrence, possibly related to both genetic and common environmental factors. In fact, the risk of a 2nd SDIS death in the same family is not 1 in 8500 but about 1 in 300.</p>
+<p>There are about 700,000 annual UK births and therefore approximately 82 first SIDS deaths. If SIDS families decide to have a 2nd child then it is expected that a 2nd death will occur in a little less than 4 years (4 * 82 = 320 2nd births in a SIDS family). This more “informed” probability model predicts a 2nd SIDS death in the same family far more frequently than that implied by a 1 in 72 million chance.</p>
+<p>It is impossible to say exactly how much damage the choice of the original probability model and the subsequent incorrect inference made to the conviction and the ensuing unfortunate circumstances (prison and eventual maternal death) but it seems likely to have been far from trivial.</p>
+</div>
+<p>In addition to discussion of the advantages and limitations of the various statistical inference paradigms, this chapter will provide several examples illustrating how even landmark trials in prestigious journals can present statistical problems that substantially undermine their conclusions or even make them unreliable. The goal of this chapter is to encourage a more critical assessment and appraisal of the underpinnings of statistical inference in contemporary medical research.</p>
+</div>
+<div id="null-hypothesis-significance-testing" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Null Hypothesis Significance Testing</h2>
+<p>The standard scientific approach to statistical inference depends on the two key components of p values and null hypothesis significance testing (NHST). Despite well recognized limitations<span class="citation">(<a href="#ref-retire" role="doc-biblioref">Amrhein, Greenland, and McShane 2019</a>)</span><span class="citation">(<a href="#ref-pvalue" role="doc-biblioref">Wasserstein, Schirm, and Lazar 2019</a>)</span>, NHST was an important advancement in scientific reasoning as it attempted to codify scientific decision making and elevated it above the historical subjective decision-making process. The NHST framework is summarized in <a href="#Table1">Table 1</a>. </p>
+<div class="{.{.{.#Table1}}}">
+<p><strong>NHST framework presented in a 2 X 2 table</strong></p>
+</div>
+<p><img src="img/5_stats/table2x2.png" /></p>
+<p>The archetypal NHST roadmap is to set the α or type I (false positive) error rate typically to 5% and the β or type II (false negative) error rate 20% at the design level. While this approach will limit the number of errors made in the long run, hence the term “frequentist” methods, it fails to provide an inferential measure of the evidence for a given experiment. This problem has seen the development of an ersatz solution, the (in)famous p value<span class="citation">(<a href="#ref-Goodman1" role="doc-biblioref">S. N. Goodman 1999a</a>)</span>. The p value is the probability of getting a result (specifically, a test statistic) at least as extreme as what was observed if every model assumption, in addition to the targeted test hypothesis (usually a null hypothesis), used to compute it were correct. As test statistics are composed of an effect size divided by a standard error, a small p value may occur when there is a trivial effect size but a very large sample size leading to a small standard errors. Given that these characteristics don’t reflect what most consumers of medical research want, it is perhaps not surprising that misinterpretations of the p value abound.</p>
+<div class="blue-box">
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Common and egregious misinterpretations of p values</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><ul>
+<li><p>The p-value is the probability that the null hypothesis is true</p></li>
+<li><p>The p-value is the probability that a finding was due to chance</p></li>
+<li><p>The p-value is the probability of falsely ejecting the null hypothesis</p></li>
+<li><p>The significance level, such as 0.05, is determined by the p-value</p></li>
+<li><p>The p-value indicates the size or importance of the observed effect</p></li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>While these misinterpretations are increasingly acknowledged and the use of confidence intervals encouraged, it is important to understand that confidence intervals are not a complete panacea. It is easiest to begin with what the CI is not telling us. It does not mean there is a 95% probability that the true effect size lies in this interval. While that is what we might like the 95% CI to provide, such an interpretation would require a Bayesian mindset that considers prior probabilities and assumes that the true effect is not a fixed but unknown quantity but rather a random variable.</p>
+<p>Moreover, the problems with p values are not limited to misinterpretations of its definition.</p>
+<div class="blue-box">
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Interpretative issues from the combined p values and NHST paradigm</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><ul>
+<li><p>Misunderstanding that p value can simultaneous measure the evidential meaning of a single result and the long-run outcomes of a repeated experiment</p></li>
+<li><p>Favors dichotomized / binary thinking (statistically significant or not) with a loss of information</p></li>
+<li><p>Attaches excessive weight to the null hypothesis</p></li>
+<li><p>Discourages estimation of effect size and its uncertainty such that statistical and clinical significance are often confused (e.g. trivial differences in the presence of large small sizes may lead to statistical significance)</p></li>
+<li><p>Conventional p values &lt; 0.05 don’t provide strong evidence to reject the null hypothesis (approximately equivalent to 4-5 successive heads from a fair coin)</p></li>
+<li><p>P &gt; 0.05 does not necessarily equate to no effect, possibly arising from inadequate power (“Absence of evidence is not evidence of absence”)</p></li>
+<li><p>Does not allow the incorporation of prior knowledge or evidence</p></li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>One reason for the popularity of the NHST paradigm, despite its these limitations, is that it appears to avoid the conundrum of inductive reasoning and apparently represents the deductive <a href="https://en.wikipedia.org/wiki/Karl_Popper">Popperian</a> view of scientific learning through falsification. However, this is more illusory than real as typically the researcher believes the alternative hypothesis is true and then constructs a straw man null hypothesis which (s)he doesn’t believe and hopes it is proven false. The alternative hypothesis is then accepted without any further attempt at falsification. The reality therefore resembles more a confirmationist than falsificastionist approach<span class="citation">(<a href="#ref-Gelman_false" role="doc-biblioref">Gelman 2014</a>)</span>. Other major NHST limitations are the excessive weight given to the null hypothesis, as known as nullism<span class="citation">(<a href="#ref-Greenland_17" role="doc-biblioref">Greenland 2017</a>)</span>, the non-specific nature of the accepted alternative hypothesis and a forced dichotomized decisional process<span class="citation">(<a href="#ref-Wasserstein_16" role="doc-biblioref">Wasserstein and Lazar 2016</a>)</span>. The institutionalized bias of nullism can result in a blunting of scientific discovery process, an endorsement of an artifical certainty of no effect and an aversion to the existence and uncertainty surrounding non-null hypotheses. While NHST describes a deductive behavior to limit mistakes for repeated experiments in the long run, its biggest limitation as mentioned above is a lack of an inductive measure of the evidence for a given experiment. The incorporation of the p value into the NHST paradigm attempts to address this shortcoming but the presentation of these two concepts don’t represent a unified theory, but actually are separate, and perhaps irreconcilable schools<span class="citation">(<a href="#ref-Goodman1" role="doc-biblioref">S. N. Goodman 1999a</a>)</span>. In short, p values can’t be expected to provide both a “short run” perspective, which is evidential and inductive and a long-run perspective, which is error-based and deductive.</p>
+<div class="orange-box">
+<p><strong>Example 1 - Incorrect p value interpretation - Don’t compare p values</strong> A <a href="https://www.bmj.com/content/343/bmj.d3450">2011 study</a> reported that selective COX-2 inhibitors (NSAIDs) were associated with atrial fibrillation (RR 1.20, 95% CI 1.09 - 1.33, p&lt;0.01) A later <a href="https://pubmed.ncbi.nlm.nih.gov/23046591/">2013 study</a> concluded “use of selective COX-2 inhibitors was not significantly related to atrial fibrillation occurrence” (RR 1.20, 95% CI 0.97 - 1.47, p=.23). These authors went on to elaborate why the results were different - slightly different populations, etc. The fundamental question is " Are the 2 results are really different?" While one study reached statistical significance and the other didn’t, making statistical inference based on comparing P values from separate analyses is incorrect. The correct approach is discussed by Altman and Bland and involves a formal <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1125071/pdf/219.pdf">test for interaction</a>. The calculations comparing relative risks or odds ratios are analyzed on the log scale because the distributions of the log ratios tend to be those closer to normal than of the ratios themselves. The comparison of these two summary statistics is well described in the Altman and Bland article and can be operationalized in R as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="statistical-inference.html#cb2-1" aria-hidden="true" tabindex="-1"></a>inter <span class="ot">&lt;-</span> <span class="cf">function</span>(RR, lci, uci){ <span class="co">#enter RR, lci, uci as vectors of length 2</span></span>
+<span id="cb2-2"><a href="statistical-inference.html#cb2-2" aria-hidden="true" tabindex="-1"></a>  RR <span class="ot">&lt;-</span> <span class="fu">log</span>(RR)</span>
+<span id="cb2-3"><a href="statistical-inference.html#cb2-3" aria-hidden="true" tabindex="-1"></a>  lci <span class="ot">&lt;-</span> <span class="fu">log</span>(lci)</span>
+<span id="cb2-4"><a href="statistical-inference.html#cb2-4" aria-hidden="true" tabindex="-1"></a>  uci <span class="ot">&lt;-</span> <span class="fu">log</span>(uci)</span>
+<span id="cb2-5"><a href="statistical-inference.html#cb2-5" aria-hidden="true" tabindex="-1"></a>  width <span class="ot">&lt;-</span> <span class="fu">abs</span>(lci <span class="sc">-</span>uci)</span>
+<span id="cb2-6"><a href="statistical-inference.html#cb2-6" aria-hidden="true" tabindex="-1"></a>  se <span class="ot">&lt;-</span> width <span class="sc">/</span> <span class="fl">3.92</span></span>
+<span id="cb2-7"><a href="statistical-inference.html#cb2-7" aria-hidden="true" tabindex="-1"></a>  delta <span class="ot">&lt;-</span> RR[<span class="dv">1</span>] <span class="sc">-</span> RR[<span class="dv">2</span>]</span>
+<span id="cb2-8"><a href="statistical-inference.html#cb2-8" aria-hidden="true" tabindex="-1"></a>  se_delta <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(se[<span class="dv">1</span>]<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> se[<span class="dv">2</span>]<span class="sc">^</span><span class="dv">2</span>) <span class="co">#variance of a difference = sum of individual variances</span></span>
+<span id="cb2-9"><a href="statistical-inference.html#cb2-9" aria-hidden="true" tabindex="-1"></a>  ci_delta <span class="ot">&lt;-</span> delta <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>) <span class="sc">*</span> <span class="fl">1.96</span> <span class="sc">*</span> se_delta</span>
+<span id="cb2-10"><a href="statistical-inference.html#cb2-10" aria-hidden="true" tabindex="-1"></a>  z <span class="ot">&lt;-</span> delta <span class="sc">/</span> se_delta</span>
+<span id="cb2-11"><a href="statistical-inference.html#cb2-11" aria-hidden="true" tabindex="-1"></a>  pvalue <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span> <span class="fu">pnorm</span>(z)</span>
+<span id="cb2-12"><a href="statistical-inference.html#cb2-12" aria-hidden="true" tabindex="-1"></a>  RRR <span class="ot">&lt;-</span> <span class="fu">exp</span>(delta)</span>
+<span id="cb2-13"><a href="statistical-inference.html#cb2-13" aria-hidden="true" tabindex="-1"></a>  ci_RRR <span class="ot">&lt;-</span> <span class="fu">exp</span>(ci_delta)</span>
+<span id="cb2-14"><a href="statistical-inference.html#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (<span class="fu">list</span>(<span class="st">&quot;z value for interaction test&quot;</span> <span class="ot">=</span> z, <span class="st">&quot; associated p value&quot;</span> <span class="ot">=</span> pvalue, </span>
+<span id="cb2-15"><a href="statistical-inference.html#cb2-15" aria-hidden="true" tabindex="-1"></a>               <span class="st">&quot;Relative risk ratio&quot;</span> <span class="ot">=</span> RRR, <span class="st">&quot;95% CI&quot;</span> <span class="ot">=</span> ci_RRR))</span>
+<span id="cb2-16"><a href="statistical-inference.html#cb2-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-17"><a href="statistical-inference.html#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="statistical-inference.html#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="fu">inter</span>(<span class="fu">c</span>(<span class="fl">1.27</span>,<span class="fl">1.20</span>), <span class="fu">c</span>(<span class="fl">1.20</span>,<span class="fl">0.92</span>), <span class="fu">c</span>(<span class="fl">1.34</span>,<span class="fl">1.48</span>))</span></code></pre></div>
+<pre><code>## $`z value for interaction test`
+## [1] 0.4554
+## 
+## $` associated p value`
+## [1] 1.351
+## 
+## $`Relative risk ratio`
+## [1] 1.058
+## 
+## $`95% CI`
+## [1] 0.8292 1.3508</code></pre>
+<p>From this analysis, it is obvious that there is no statistically significant difference between the 2 results and rather than trying to explain non-existent differences, the authors should have concluded that their results, while under powered, were entirely compatible with the previous results.<br />
+Data visualization rather simply but elegantly and convincingly demonstrates the consistency of these two results,</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="statistical-inference.html#cb4-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fl">1.27</span>, <span class="fl">1.20</span>, <span class="fl">1.34</span>, <span class="fl">1.20</span>, <span class="fl">0.92</span>, <span class="fl">1.48</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-2"><a href="statistical-inference.html#cb4-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;2011 study&quot;</span>,<span class="st">&quot;2013 study&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;coef&quot;</span>, <span class="st">&quot;lower&quot;</span>, <span class="st">&quot;upper&quot;</span>)))</span>
+<span id="cb4-3"><a href="statistical-inference.html#cb4-3" aria-hidden="true" tabindex="-1"></a>clrs <span class="ot">&lt;-</span> <span class="fu">fpColors</span>(<span class="at">box =</span> <span class="st">&quot;royalblue&quot;</span>,<span class="at">line =</span> <span class="st">&quot;darkblue&quot;</span>, <span class="at">summary =</span> <span class="st">&quot;royalblue&quot;</span>)</span>
+<span id="cb4-4"><a href="statistical-inference.html#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="statistical-inference.html#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">forestplot</span>(<span class="fu">rownames</span>(dat), <span class="at">mean=</span>dat[,<span class="dv">1</span>], <span class="at">lower=</span>dat[,<span class="dv">2</span>], <span class="at">upper=</span>dat[,<span class="dv">3</span>],</span>
+<span id="cb4-6"><a href="statistical-inference.html#cb4-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">col =</span> clrs,</span>
+<span id="cb4-7"><a href="statistical-inference.html#cb4-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">grid =</span> <span class="fu">structure</span>(<span class="fu">c</span>(<span class="dv">1</span>), <span class="at">gp =</span> <span class="fu">gpar</span>(<span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">&quot;#CCCCFF&quot;</span>)), </span>
+<span id="cb4-8"><a href="statistical-inference.html#cb4-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">xlab =</span> <span class="st">&quot;RR&quot;</span>)</span></code></pre></div>
+<p><img src="05-inference_files/figure-html/unnamed-chunk-3-1.png" width="384" style="display: block; margin: auto;" /></p>
+</div>
+<div class="orange-box">
+<p><strong>Example 2 - Incorrect p value interpretation - p &gt; 0.05</strong> <span class="math inline">\(\neq\)</span> no effect</p>
+<p>In the <a href="https://www.nejm.org/doi/full/10.1056/nejmoa1100356">STICH trial</a>, a total of 1212 patients with an ejection fraction &lt; 35% and coronary artery disease amenable to coronary artery bypass surgery (CABG) were randomly assigned to medical therapy alone (602 patients) or medical therapy plus CABG (610 patients). The primary outcome was death from any cause. The primary outcome occurred in 244 patients (41%) in the medical-therapy group and 218 (36%) in the CABG group (hazard ratio with CABG, 0.86; 95% CI, 0.72 to 1.04; P = 0.12). The abstract conclusion stated “In this randomized trial, there was no significant difference between medical therapy alone and medical therapy plus CABG with respect to the primary end point of death from any cause.”</p>
+<p>With a p value &gt; 0.05, the authors have interpreted this as a “negative” study and concluded “no significant difference between medical therapy alone and medical therapy plus CABG.” However, this is only a negative study when viewed through the artificially dichotomized lens of significance testing. Although confidence intervals have been reported in addition to the p value, they have been interpreted in the same restricted dichotomized manner as p values, namely that inclusion of a HR = 1 in the confidence interval equates to a non-significant finding.</p>
+<p>In fact, these results actually support the opposite conclusion, that a difference between the two treatments exists, and it favors CABG! To help appreciate this new interpretation, remember the choice of p &lt; 0.05 as the definition of statistical significance is arbitrary and merely chosen on a tradition borrowed from agricultural research in the 1920’s. Different thresholds (p values) for statistical significance could be chosen and they will directly impact the width of the confidence intervals. This relationship can be shown graphically and this p value graph underscores that decision making is better appreciated as a continuous rather than binary process. For example, accepting an 83% CI provides a statistically significant interval since it excludes the null value of HR=1.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="statistical-inference.html#cb5-1" aria-hidden="true" tabindex="-1"></a>pv_graph <span class="ot">&lt;-</span> <span class="cf">function</span>(hr, uci, lci) {</span>
+<span id="cb5-2"><a href="statistical-inference.html#cb5-2" aria-hidden="true" tabindex="-1"></a>    se <span class="ot">&lt;-</span> (<span class="fu">log</span>(uci)<span class="sc">-</span><span class="fu">log</span>(lci))<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span><span class="fl">1.65</span>)         </span>
+<span id="cb5-3"><a href="statistical-inference.html#cb5-3" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.01</span>, <span class="fl">0.50</span>,<span class="at">by =</span> .<span class="dv">005</span>)</span>
+<span id="cb5-4"><a href="statistical-inference.html#cb5-4" aria-hidden="true" tabindex="-1"></a>    p1 <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">log</span>(hr) <span class="sc">-</span> (<span class="fu">qnorm</span>(x) <span class="sc">*</span> se))</span>
+<span id="cb5-5"><a href="statistical-inference.html#cb5-5" aria-hidden="true" tabindex="-1"></a>    p2 <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">log</span>(hr) <span class="sc">+</span> (<span class="fu">qnorm</span>(x) <span class="sc">*</span> se))</span>
+<span id="cb5-6"><a href="statistical-inference.html#cb5-6" aria-hidden="true" tabindex="-1"></a>    p <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x, p2, p1)</span>
+<span id="cb5-7"><a href="statistical-inference.html#cb5-7" aria-hidden="true" tabindex="-1"></a>    g <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(p, <span class="fu">aes</span>( p2, x)) <span class="sc">+</span></span>
+<span id="cb5-8"><a href="statistical-inference.html#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb5-9"><a href="statistical-inference.html#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_line</span>(<span class="fu">aes</span>(p1, x)) <span class="sc">+</span></span>
+<span id="cb5-10"><a href="statistical-inference.html#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scale_x_continuous</span>(<span class="at">trans=</span><span class="st">&#39;log10&#39;</span>) <span class="sc">+</span></span>
+<span id="cb5-11"><a href="statistical-inference.html#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ylab</span>(<span class="st">&quot;p value </span><span class="sc">\n</span><span class="st"> one sided&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-12"><a href="statistical-inference.html#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">xlab</span>(<span class="st">&quot;Hazard ratio (Log scale)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-13"><a href="statistical-inference.html#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">labs</span> (<span class="at">title=</span><span class="st">&quot;P value function&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-14"><a href="statistical-inference.html#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_hline</span>(<span class="at">yintercept=</span><span class="fu">c</span>(.<span class="dv">005</span>,.<span class="dv">025</span>,<span class="fl">0.05</span>,<span class="fl">0.10</span>), <span class="at">color =</span> <span class="st">&quot;red&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-15"><a href="statistical-inference.html#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x=</span>.<span class="dv">7</span>,<span class="at">y=</span>.<span class="dv">01</span>, <span class="at">label=</span><span class="st">&quot;99% CI&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-16"><a href="statistical-inference.html#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x=</span><span class="fl">0.74</span>,<span class="at">y=</span>.<span class="dv">04</span>, <span class="at">label=</span><span class="st">&quot;95% CI&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-17"><a href="statistical-inference.html#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x=</span><span class="fl">0.78</span>,<span class="at">y=</span>.<span class="dv">06</span>, <span class="at">label=</span><span class="st">&quot;90% CI&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-18"><a href="statistical-inference.html#cb5-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x=</span>.<span class="dv">82</span>,<span class="at">y=</span>.<span class="dv">11</span>, <span class="at">label=</span><span class="st">&quot;80% CI&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-19"><a href="statistical-inference.html#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="fl">1.0</span>, <span class="at">color =</span> <span class="st">&quot;green&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-20"><a href="statistical-inference.html#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x=</span><span class="dv">1</span>,<span class="at">y=</span>.<span class="dv">4</span>, <span class="at">label=</span><span class="st">&quot;null hypothesis&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-21"><a href="statistical-inference.html#cb5-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme_bw</span>()</span>
+<span id="cb5-22"><a href="statistical-inference.html#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(g)</span>
+<span id="cb5-23"><a href="statistical-inference.html#cb5-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-24"><a href="statistical-inference.html#cb5-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-25"><a href="statistical-inference.html#cb5-25" aria-hidden="true" tabindex="-1"></a>stich_pv_5 <span class="ot">&lt;-</span> <span class="fu">pv_graph</span>(<span class="fl">0.86</span>, <span class="fl">1.04</span>, <span class="fl">0.72</span>) <span class="sc">+</span></span>
+<span id="cb5-26"><a href="statistical-inference.html#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span> (<span class="at">title=</span><span class="st">&quot;Stich trial results 2011&quot;</span>, </span>
+<span id="cb5-27"><a href="statistical-inference.html#cb5-27" aria-hidden="true" tabindex="-1"></a>          <span class="at">subtitle =</span> <span class="st">&quot;P value function for HR = 0.86, 95% CI 0.72 to 1.04&quot;</span>) </span>
+<span id="cb5-28"><a href="statistical-inference.html#cb5-28" aria-hidden="true" tabindex="-1"></a>stich_pv_5</span></code></pre></div>
+<p><img src="05-inference_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>This figure shows that accepting an 83% CI provides a statistically significant interval since it excludes the null value of HR=1. Of course, this doesn’t supply conclusive evidence for the superiority of CABG but does show the presence of some weight in its favor in contrast to the typical interpretation of a dichotomized p value &gt; 0.05. A more nuanced conclusion would be that due to the limited statistical power, definitive evidence for the superiority of either technique is not available. However the best estimate is a 14% reduction in mortality with CABG, with sampling variability such that the benefit may be as large 28% or even a 4% increased risk.</p>
+<p>Perhaps this figure of a cultural icon will help avoiding this error.<br />
+<img src="img/5_stats/bart.png" /></p>
+</div>
+</div>
+<div id="s-values" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> S values</h2>
+<p>Even when p values are correctly understood, their scaling can make an appreciation of their strength of evidence against the null hypothesis problematic. As seen in the figure below from <span class="citation">(<a href="#ref-Rafi" role="doc-biblioref">Rafi and Greenland 2020</a>)</span><br />
+<img src="img/5_stats/s_value.png" /></p>
+<p>the same absolute change in p value is associated with vastly different meanings for differences in pvalues near 1 compared to those near 0. Enhanced understanding of the strength of the evidence against not only the null hypothesis but against any specific alternative hypotheses can be more easily appreciated by considering p values not on their natural probability scale from 0 to 1 but on a scale that reflects the probability of successive tosses, S, of an unbiased coin showing only heads, p = (1/2)<sup>s</sup>. This is known as the binary Shannon information, surprisal or S value which can be rearranged as S = log<sub>2</sub>(1/p) = −log<sub>2</sub>(p) and is a measure of the evidence against the test (null) hypothesis.</p>
+<div class="orange-box">
+<p><strong>STICH example continued</strong></p>
+<p>Returning to the STICH example, A graph of S versus the HR reveals that evidence against any hypothesis is minimized at the point estimate (S=0 at HR =0.86).</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="statistical-inference.html#cb6-1" aria-hidden="true" tabindex="-1"></a>s_graph <span class="ot">&lt;-</span> <span class="cf">function</span>(hr, uci, lci){</span>
+<span id="cb6-2"><a href="statistical-inference.html#cb6-2" aria-hidden="true" tabindex="-1"></a>    se <span class="ot">&lt;-</span> (<span class="fu">log</span>(uci)<span class="sc">-</span><span class="fu">log</span>(lci))<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span><span class="fl">1.65</span>)         <span class="co">#.86 0.72 to 1.04 (log se)</span></span>
+<span id="cb6-3"><a href="statistical-inference.html#cb6-3" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">0.01</span>, <span class="fl">0.50</span>,<span class="at">by =</span> .<span class="dv">005</span>)</span>
+<span id="cb6-4"><a href="statistical-inference.html#cb6-4" aria-hidden="true" tabindex="-1"></a>    lci <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">log</span>(hr) <span class="sc">-</span> (<span class="fu">qnorm</span>(x) <span class="sc">*</span> se))</span>
+<span id="cb6-5"><a href="statistical-inference.html#cb6-5" aria-hidden="true" tabindex="-1"></a>    uci <span class="ot">&lt;-</span> <span class="fu">exp</span>(<span class="fu">log</span>(hr) <span class="sc">+</span> (<span class="fu">qnorm</span>(x) <span class="sc">*</span> se))</span>
+<span id="cb6-6"><a href="statistical-inference.html#cb6-6" aria-hidden="true" tabindex="-1"></a>    lci <span class="ot">&lt;-</span> <span class="fu">rev</span>(lci)</span>
+<span id="cb6-7"><a href="statistical-inference.html#cb6-7" aria-hidden="true" tabindex="-1"></a>    hr <span class="ot">&lt;-</span> <span class="fu">rev</span>(<span class="fu">c</span>(uci, lci))</span>
+<span id="cb6-8"><a href="statistical-inference.html#cb6-8" aria-hidden="true" tabindex="-1"></a>    yy <span class="ot">&lt;-</span> <span class="dv">2</span><span class="sc">*</span>x</span>
+<span id="cb6-9"><a href="statistical-inference.html#cb6-9" aria-hidden="true" tabindex="-1"></a>    yy <span class="ot">&lt;-</span> <span class="fu">c</span>(yy,<span class="fu">rev</span>(yy))</span>
+<span id="cb6-10"><a href="statistical-inference.html#cb6-10" aria-hidden="true" tabindex="-1"></a>    ss <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fu">log</span>(yy, <span class="at">base=</span><span class="dv">2</span>)</span>
+<span id="cb6-11"><a href="statistical-inference.html#cb6-11" aria-hidden="true" tabindex="-1"></a>    df1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(hr,ss)</span>
+<span id="cb6-12"><a href="statistical-inference.html#cb6-12" aria-hidden="true" tabindex="-1"></a>    df1 <span class="ot">&lt;-</span> df1[<span class="sc">-</span><span class="dv">297</span>,]</span>
+<span id="cb6-13"><a href="statistical-inference.html#cb6-13" aria-hidden="true" tabindex="-1"></a>    s <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(df1, <span class="fu">aes</span>( hr,ss)) <span class="sc">+</span></span>
+<span id="cb6-14"><a href="statistical-inference.html#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb6-15"><a href="statistical-inference.html#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">xlim</span>(<span class="fl">0.01</span>,<span class="fl">1.2</span>) <span class="sc">+</span></span>
+<span id="cb6-16"><a href="statistical-inference.html#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scale_x_continuous</span>(<span class="at">trans=</span><span class="st">&#39;log10&#39;</span>) <span class="sc">+</span></span>
+<span id="cb6-17"><a href="statistical-inference.html#cb6-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ylab</span>(<span class="st">&quot;Bits of information against HR (binary S value)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-18"><a href="statistical-inference.html#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">xlab</span>(<span class="st">&quot;Hazard ratio (Log scale)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-19"><a href="statistical-inference.html#cb6-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">labs</span> (<span class="at">subtitle =</span> <span class="st">&quot;S-Values (surprisals) for a range of hazard ratios (HR)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-20"><a href="statistical-inference.html#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_vline</span>(<span class="at">xintercept=</span><span class="fl">1.0</span>, <span class="at">color =</span> <span class="st">&quot;green&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-21"><a href="statistical-inference.html#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x=</span><span class="dv">1</span>,<span class="at">y=</span>.<span class="dv">4</span>, <span class="at">label=</span><span class="st">&quot;null hypothesis&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-22"><a href="statistical-inference.html#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">theme_bw</span>()</span>
+<span id="cb6-23"><a href="statistical-inference.html#cb6-23" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(s)</span>
+<span id="cb6-24"><a href="statistical-inference.html#cb6-24" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-25"><a href="statistical-inference.html#cb6-25" aria-hidden="true" tabindex="-1"></a>stich_s_5 <span class="ot">&lt;-</span> <span class="fu">s_graph</span>(<span class="fl">0.86</span>, <span class="fl">1.04</span>, <span class="fl">0.72</span>) <span class="sc">+</span></span>
+<span id="cb6-26"><a href="statistical-inference.html#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Stich trial results 2011&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-27"><a href="statistical-inference.html#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x=</span>.<span class="dv">8</span>,<span class="at">y=</span><span class="dv">1</span>, <span class="at">label=</span><span class="st">&quot;Maximum likelihood estimate (HR=0.86)</span><span class="sc">\n</span><span class="st"> has the least refutational evidence </span><span class="sc">\n</span><span class="st"> against it (0 bits)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb6-28"><a href="statistical-inference.html#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">86</span>, <span class="at">y =</span> <span class="fl">0.8</span>, <span class="at">xend =</span> .<span class="dv">86</span>, <span class="at">yend =</span> <span class="fl">0.015</span>),</span>
+<span id="cb6-29"><a href="statistical-inference.html#cb6-29" aria-hidden="true" tabindex="-1"></a>               <span class="at">arrow =</span> <span class="fu">arrow</span>(<span class="at">length =</span> <span class="fu">unit</span>(<span class="fl">0.5</span>, <span class="st">&quot;cm&quot;</span>)),<span class="at">color=</span><span class="st">&quot;red&quot;</span>)</span>
+<span id="cb6-30"><a href="statistical-inference.html#cb6-30" aria-hidden="true" tabindex="-1"></a>stich_s_5</span></code></pre></div>
+<p><img src="05-inference_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>There is also very little evidence against a 10% decrease with CABG. Surprisingly, there is even less evidence against the hypothesis of a 25% decrease with CABG than there is against the null hypothesis which we have been told we should accept! The graph also shows a clinically meaningful increased risk (arbitrarily defined as HR =1.15 with CABG is unlikely, equating to getting about 6 heads in a row from a fair coin. In fact, a putative 32% benefit has the same amount of refutational evidence against it as a 10% increased risk. This example speaks again to the observation that the difference between “significant” and “not significant” is not itself statistically significant<span class="citation">(<a href="#ref-Gelman06" role="doc-biblioref">Gelman and Stern 2006</a>)</span>. Examined from this perspective, despite the authors’ interpretation of the STICH study as negative, it would have been eminently reasonable, based on these results, to have offered offer CABG to eligible patients while awaiting the accumulation of additional evidence.</p>
+<p>The confirmation of this approach was provided by a 2016 <a href="https://www.nejm.org/doi/full/10.1056/nejmoa1602001">STCIH publication</a> which had increased power due to a longer follow-up and showed that the rates of death from any cause, death from cardiovascular causes, and death from any cause or hospitalization for cardiovascular causes were significantly lower over 10 years among patients who underwent CABG in addition to receiving medical therapy than among those who received medical therapy alone (HR 0.84; 95% CI 0.73 to 0.97).</p>
+</div>
+</div>
+<div id="two-views-of-probability" class="section level2" number="5.4">
+<h2><span class="header-section-number">5.4</span> Two views of probability</h2>
+<div class="blue-box">
+<p><strong>Two views of probability</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>In the NHST paradigm, since parameters considered as fixed but unknown quantities, we can’t make probability statements about them. In this context, probability is limited to sampling variability, i..e. in the long run proportion of times an event occurs in independent, identically distributed (iid) repetitions. Answers questions like “What should I decide given my data controlling the long run proportion of mistakes I make at a tolerable level.”</p></li>
+<li><p>In the Bayesian paradigm, parameters are random variables that follow the rules of probability. In this context, probability is a calculus of beliefs that answer questions like “Given my subjective beliefs and the objective information from the data, what should I believe now?”</p></li>
+</ol>
+</div>
+<div class="orange-box">
+<p><strong>Basic Probability Example Using R</strong></p>
+<p>Background: During an exam suspected that one student is copying answers from another student. There is a choice of 4 answers for each question.<br />
+The Evidence: On the 16 questions missed by both students, 13 of the answers were the same.<br />
+Question: Is this data beyond the play of chance? Did the student cheat?<br />
+Answer: There is a 1 in 4 probability that the students will randomly choose the same answer. For 16 questions, one would expect 4 answers to be the same but there is obviously variability in this expected value. One could use <code>chisq.test</code> as in section <a href="meas.html#meas1">4.1</a> but with small sample using the binomial distribution describes more fully this scenario and help can be found with <code>help(rbinom)</code>.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="statistical-inference.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># chi sq test</span></span>
+<span id="cb7-2"><a href="statistical-inference.html#cb7-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">13</span>,<span class="dv">3</span>)</span>
+<span id="cb7-3"><a href="statistical-inference.html#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(x, <span class="at">p =</span> <span class="fu">c</span>(.<span class="dv">25</span>,.<span class="dv">75</span>))</span></code></pre></div>
+<pre><code>## Warning in chisq.test(x, p = c(0.25, 0.75)): Chi-squared approximation may be
+## incorrect</code></pre>
+<pre><code>## 
+##  Chi-squared test for given probabilities
+## 
+## data:  x
+## X-squared = 27, df = 1, p-value = 2e-07</code></pre>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="statistical-inference.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># to see the variability draw 10000 times from a sample of 16 with a probability = 1/4 </span></span>
+<span id="cb10-2"><a href="statistical-inference.html#cb10-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">10000</span>,<span class="dv">16</span>,.<span class="dv">25</span>)<span class="sc">/</span><span class="dv">16</span></span>
+<span id="cb10-3"><a href="statistical-inference.html#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#plot the histogram</span></span>
+<span id="cb10-4"><a href="statistical-inference.html#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">as.data.frame</span>(df), <span class="fu">aes</span>(df)) <span class="sc">+</span></span>
+<span id="cb10-5"><a href="statistical-inference.html#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_histogram</span>(<span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">0</span>, .<span class="dv">45</span>, <span class="at">by =</span> .<span class="dv">006</span>)) <span class="sc">+</span></span>
+<span id="cb10-6"><a href="statistical-inference.html#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlim</span> (<span class="fu">c</span>(.<span class="dv">0</span>,.<span class="dv">85</span>)) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="statistical-inference.html#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="st">&quot;Histogram of same responses by chance&quot;</span>) <span class="sc">+</span></span>
+<span id="cb10-8"><a href="statistical-inference.html#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_vline</span>(<span class="at">xintercept=</span>.<span class="dv">8125</span>, <span class="at">color =</span> <span class="st">&quot;green&quot;</span>) <span class="sc">+</span></span>
+<span id="cb10-9"><a href="statistical-inference.html#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">x=</span>.<span class="dv">8125</span>,<span class="at">y=</span>.<span class="dv">50</span>, <span class="at">label=</span><span class="st">&quot;observed value&quot;</span>) <span class="sc">+</span></span>
+<span id="cb10-10"><a href="statistical-inference.html#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="05-inference_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Based on probabilities,a proportion of 0.8125 agreement would be very unusual if second student was simply guessing, so we conclude that second student was not guessing. However, we can’t extrapolate this to conclude there was cheating. If you don’t know the answer to a question on an exam, you rarely guess completely at random. Hopefully you will make an educated guess &amp; some wrong answers might be more logical than others. This could explain the large proportion of matches on wrong answers between the two students. So this evidence is not convincing evidence that the student cheated, but we know that he did not just guess.</p>
+</div>
+<div id="basic-rules-of-probability" class="section level3" number="5.4.1">
+<h3><span class="header-section-number">5.4.1</span> Basic rules of probability</h3>
+<p>As the rules of probability are the basic building block for Bayesian inference, let’s quickly review them.</p>
+<div class="blue-box">
+<ol style="list-style-type: decimal">
+<li>By definition, probabilities must be between 0 and 1<br />
+</li>
+<li>If an event occurred then P = 1<br />
+</li>
+<li>If an event can’t occur then P = 0<br />
+</li>
+<li>P(A) + P(<span class="math inline">\(\overline{A}\)</span>) = 1 where P(<span class="math inline">\(\overline{A}\)</span>) is the compliment of P(A)<br />
+</li>
+<li>If 2 events are mutually exclusive then p(A U B) = p(A) + p(B) U = union<br />
+</li>
+<li>If 2 events are not mutually exclusive then P(A U B) = P(A) + P(B) - P(A ∩ B) n = intersection (addition rule)<br />
+</li>
+<li>P(A ∩ B) = P(A|B) * p(B) (multiplication rule)<br />
+</li>
+<li>P(A) = P(A n B) + P(A n <span class="math inline">\(\overline{B}\)</span>) (total probability rule)</li>
+</ol>
+</div>
+<p>The addition, multiplication and total probability rules are easily understood with the use of <a href="https://en.wikipedia.org/wiki/Venn_diagram">Venn diagrams</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-7-1"></span>
+<img src="img/5_stats/addition1.png" alt="Addition rule" width="50%" />
+<p class="caption">
+Figure 5.1: Addition rule
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-7-2"></span>
+<img src="img/5_stats/cond_venn1.png" alt="Multiplication rule" width="50%" />
+<p class="caption">
+Figure 5.2: Multiplication rule
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-7-3"></span>
+<img src="img/5_stats/total_p1.png" alt="Total probability rule" width="50%" />
+<p class="caption">
+Figure 5.3: Total probability rule
+</p>
+</div>
+</div>
+<div id="bayes-theorem" class="section level3" number="5.4.2">
+<h3><span class="header-section-number">5.4.2</span> Bayes Theorem</h3>
+<p>From these rules of probability, it is easy to develop the basic form of Bayes Theorem.<br />
+1st application of multiplication rule:<br />
+<span class="math display" id="eq:mult">\[\begin{equation}
+P(A ∩ B) = P(A|B)*P(B)
+\tag{5.1}
+\end{equation}\]</span></p>
+<p>2nd application of multiplication rule:<br />
+<span class="math display" id="eq:mult1">\[\begin{equation}
+P(B ∩ A) = P(B|A)*P(A)
+\tag{5.2}
+\end{equation}\]</span></p>
+<p>From <a href="statistical-inference.html#eq:mult">(5.1)</a> and <a href="statistical-inference.html#eq:mult1">(5.2)</a>:<br />
+<span class="math display" id="eq:mult2">\[\begin{equation}
+P(A|B)*P(B) = P(B|A)*P(A)
+\tag{5.3}
+\end{equation}\]</span></p>
+<p>or</p>
+<p><span class="math display" id="eq:mult3">\[\begin{equation}
+P(A|B) = \frac{P(B|A)*P(A)}{P(B)}
+\tag{5.4}
+\end{equation}\]</span> which is Bayes Theorem where occasionally the denominator is expanded using the rule of total probability</p>
+<p><span class="math display" id="eq:mult4">\[\begin{equation} 
+ P(A|B)   = \frac{P(B|A)*P(A)}{P(B|A)*P(A)+P(B|\overline{A})*P(\overline{A})}
+  \tag{5.5}
+\end{equation}\]</span></p>
+<div class="orange-box">
+<p><strong>Example 1 Bayes Theorem</strong><br />
+This example comes from the excellent book by Daniel Kahneman “Thinking fast, thinking slow”<span class="citation">(<a href="#ref-thinking" role="doc-biblioref">Kahneman 2011</a>)</span> which explores cognitive biases. Steve is described by his neighbor as a shy individual, very helpful but he has little interest in people. He likes things in their proper order, and is very detailed about his work. Do you think Steve is more likely to be a librarian or a farmer?</p>
+<p>It may seem that Steve is more likely to be a librarian and most people would agree with this conclusion but that’s ignoring the background distribution of librarians and farmers. Bayes theorem with its form of updating a prior probability intrinsically avoids this error of ignoring the baseline context or probability.</p>
+<p>Before considering Steve’s characteristics, the odds of male farmers to male librarians may be assumed to be in the order of 20 to 1. So based on this information, Steve is statistically more likely to be a farmer. Let us explore this is in more detail with Bayes Theorem.</p>
+<p>Let A = probability that Steve is a librarian.
+Recall odds = P(event) / P(<span class="math inline">\(\overline{event}\)</span>) or probability = odds / (odds +1) so P(A) = 1/21 and P(<span class="math inline">\(\overline{A}\)</span>) = 20/21<br />
+Let B = Steve’s characteristics<br />
+What is P(B |A)? This is the probability that the neighbor would describe Steve in these terms if he was indeed a librarian. This is unknown but is presumably close to 1. Let’s assume 0.95. Looking at equation <a href="statistical-inference.html#eq:mult4">(5.5)</a>, the only term missing on the left of the equation is P(B |<span class="math inline">\(\overline{A}\)</span>), the probability that Steve would have these characteristics if he was not a librarian. Again this is unknown but presumably this would be less than P(B |A), let’s assume 0.3.<br />
+We may now substitute into <a href="statistical-inference.html#eq:mult4">(5.5)</a> and calculate our updated probability that Steve is a librarian given his characteristics.
+P(A | B) = <span class="math inline">\(\frac{(0.95) * (1 /21)}{(0.95) * (1 /21) + (0.3) * (20/21)}\)</span> = 0.136</p>
+<p>Bayes Theorem has obliged us to consider the importance of the baseline rate, or context, which in this case is that farmers are a much more common vocation among males. However Steve’s characteristics have shifted our probability that he is a librarian from 4.8% to 13.6% but it is still much more likely that he is a farmer.</p>
+<p>This is at the essence of diagnostic testing where a positive test is unlikely to mean that disease is present if the baseline disease prevalence is low in the population being studied. Hence why diagnostic testing may be sometimes be inappropriate.</p>
+</div>
+<div class="orange-box">
+<p><strong>Example 2 Bayes Theorem and Diagnostic Testing</strong></p>
+<p>25 year old MSc epi student got a tattoo on spring vacation in Cancun. Asymptomatic but is screened for Hepatitis C for an insurance policy. Test positive (sensitivity = 95%, specificity = 98%). Assuming the prevalence of HepC in this population is 0.1%. What is the probability (s)he truly has HepC?</p>
+<p>This problem can often be most easily understood by completing a 2X2 table as follow</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Disease +</th>
+<th>Disease -</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Test +</td>
+<td>95</td>
+<td>1998</td>
+<td>2093</td>
+</tr>
+<tr class="even">
+<td>Test -</td>
+<td>5</td>
+<td>97902</td>
+<td>97907</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td>100</td>
+<td>99900</td>
+<td>100000</td>
+</tr>
+</tbody>
+</table>
+<p>and then calculating the positive predictive value, P( D | T), calculated from the horizontal e first line of the above 2X2 table, = 95 / 2093 = 0.045.</p>
+<p>Alternatively one could directly apply Bayes rule as expressed in equation <a href="statistical-inference.html#eq:mult4">(5.5)</a>,<br />
+<span class="math display">\[\begin{equation}
+P(D|T) = \frac{P(T|D)*P(D)}{P(T|D)\*P(D)+P(T|\overline{D})*P(\overline{D})} = \frac{.95*.001}{.95*.001 + .02*.999} = 0.045
+\end{equation}\]</span></p>
+<p>It can be appreciated that even though the test has good sensitivity and specificity, the very low prevalence means that a positive test is most likely a false positive as the probability of a having disease given the positive test is only 4.5%.</p>
+<p>It is key to remember the distinction between test sensitivity (P(T|D)) and positive predictive value (P(D|T)) and that P(T|D) ≠ P(D|T). The confusion between these two probabilities is the source of a common bias known as the <a href="https://en.wikipedia.org/wiki/Prosecutor%27s_fallacy">prosecutor’s fallacy</a> in which the probability of the evidence given innocence is confused with the probability of innocence given the evidence (P(E|I) ≠ P(I|E))</p>
+<p>In an analogous manner, it may be appreciated that the p value = P(Data | Ho is true) does <strong>NOT</strong> provide what most clinicians are looking for which is instead P(Ho is true | Data).</p>
+</div>
+</div>
+</div>
+<div id="bayesian-reasoning-to-understand-why-most-published-research-findings-are-false" class="section level2" number="5.5">
+<h2><span class="header-section-number">5.5</span> Bayesian reasoning to understand “Why Most Published Research Findings are False”</h2>
+<p><a href="https://scholar.google.ca/scholar?hl=en&amp;as_sdt=0%2C5&amp;q=john+ioannidis&amp;oq=john+i">John Ioannidis</a> is one of the world’s most cited authors (&gt;325,000 citations) and his 2005 paper “[Why Most Published Research Findings are False]” (<a href="https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124&amp;xid=17259,15700019,15700186,15700190,15700248" class="uri">https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124&amp;xid=17259,15700019,15700186,15700190,15700248</a>) has been cited almost 10,000 times and viewed online over 3 million times. The interpretation of the number of false conclusions in medical literature can be seen as analogous to the examination of diagnostic tests and this approach will be used to understand how Ioannidis reached his conclusions about the lack of veracity of many published research papers.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-8"></span>
+<img src="img/5_stats/dx_res.png" alt="Analogy between diagnostic testing and research findings" width="100%" />
+<p class="caption">
+Figure 5.4: Analogy between diagnostic testing and research findings
+</p>
+</div>
+<p>Based on the diagnostic example above, it can be appreciated that a key determinant of the number of false findings will depend greatly on our beliefs concerning the prevalence of positive studies. It is only a minority of studies which will have positive results and this undoubtedly varies function of the research design. Even for the highest quality pre-selected studies, phase III RCTs, there is not more than a 50:50 chance that a study will ultimately yield a positive results. With other designs, the ratio of positive to negative studies may be considerably lower. The number of true positive studies will be a function not only of the baseline prevalence positivity, but also power (sensitivity) and significance level (specificity) characteristics, along with possible study biases.</p>
+<div class="figure" style="text-align: center"><span id="fig:design"></span>
+<img src="img/5_stats/design_R.png" alt="Positive predictive values for various research designs and parameter" width="100%" />
+<p class="caption">
+Figure 5.5: Positive predictive values for various research designs and parameter
+</p>
+</div>
+<p>In Figure <a href="statistical-inference.html#fig:design">5.5</a>, Ioannidis proposes some relationships between the odds (R) of a true (alternative hypothesis) to not true relationship according to study design, bias (u) and power (1 - <span class="math inline">\(\beta\)</span>) where PPV = positive predictive value. Before examining the general formula, let’s numerically reproduce one of the PPVs, for example consider the adequately powered exploratory epidemiology study. Imagine there are 1,000 such studies and R = 1 / 10, therefore the probability of a positive study = R / (R+1) = 91 and 73 will discovered (80% power). The probability of a negaitve study = 1 /(R +1) and in this case there are 909 negative studies but 45 (5%) will be false positive. This is shown in the following figure and the PPV = 73 / 128.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-9"></span>
+<img src="img/5_stats/ex1.png" alt="Adequately powered exploratory epidemiology study no bias" width="75%" />
+<p class="caption">
+Figure 5.6: Adequately powered exploratory epidemiology study no bias
+</p>
+</div>
+<p>Now imagine, as in most studies there is a bias and assume as in Figure <a href="statistical-inference.html#fig:design">5.5</a> that is 30%. Bias most often leads to increased positive study results. This will result in a shift of 30% of studies from cells C and D to A and B, respectively as shown in the following figure.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-10"></span>
+<img src="img/5_stats/ex2.png" alt="Adequately powered exploratory epidemiology study no bias" width="75%" />
+<p class="caption">
+Figure 5.7: Adequately powered exploratory epidemiology study no bias
+</p>
+</div>
+<p>The PPV is now = 78 /382 = 0.20 as in Figure <a href="statistical-inference.html#fig:design">5.5</a>. from Ioannidis’ original publication. Ioannidis gives the general formula to calculate PPV as a function of R, power, <span class="math inline">\(\alpha\)</span> and bias as follows</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-11"></span>
+<img src="img/5_stats/general.png" alt="General Assocation of Research Findings and True Relationships in the Presence of Bias" width="75%" />
+<p class="caption">
+Figure 5.8: General Assocation of Research Findings and True Relationships in the Presence of Bias
+</p>
+</div>
+<p>While some of the assumptions and corollaries that Ioannidis has made have been the subject of criticisms <span class="citation">(<a href="#ref-GG" role="doc-biblioref">S. Goodman and Greenland 2007</a>)</span>, the overarching usefulness of his approach and its basic premise built on Bayesian reasoning is, in my opinion, both sound and useful. Here is a simple <code>R</code> function that will calculate the positive predictive value for a positive study finding given a particular research design. Here we calculate the PPV for the above epidemiologic study with 30% bias as above.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="statistical-inference.html#cb11-1" aria-hidden="true" tabindex="-1"></a>study_ppv <span class="ot">&lt;-</span> <span class="cf">function</span>(R, u, beta, <span class="at">alpha=</span><span class="fl">0.05</span>, <span class="at">c=</span><span class="dv">1000</span>){</span>
+<span id="cb11-2"><a href="statistical-inference.html#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># R = odds of true relationship</span></span>
+<span id="cb11-3"><a href="statistical-inference.html#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># u = bias</span></span>
+<span id="cb11-4"><a href="statistical-inference.html#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># beta = type II error</span></span>
+<span id="cb11-5"><a href="statistical-inference.html#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># alpha = type II error</span></span>
+<span id="cb11-6"><a href="statistical-inference.html#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># enter data as decimals</span></span>
+<span id="cb11-7"><a href="statistical-inference.html#cb11-7" aria-hidden="true" tabindex="-1"></a>  pD <span class="ot">&lt;-</span> R<span class="sc">/</span>(R<span class="sc">+</span><span class="dv">1</span>)</span>
+<span id="cb11-8"><a href="statistical-inference.html#cb11-8" aria-hidden="true" tabindex="-1"></a>  p_noD <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">/</span>(R<span class="sc">+</span><span class="dv">1</span>)</span>
+<span id="cb11-9"><a href="statistical-inference.html#cb11-9" aria-hidden="true" tabindex="-1"></a>  A <span class="ot">&lt;-</span> (c<span class="sc">*</span>(<span class="dv">1</span> <span class="sc">-</span> beta)<span class="sc">*</span>R <span class="sc">+</span> u<span class="sc">*</span>c<span class="sc">*</span>beta<span class="sc">*</span>R)<span class="sc">/</span>(R <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb11-10"><a href="statistical-inference.html#cb11-10" aria-hidden="true" tabindex="-1"></a>  C <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span> <span class="sc">-</span> u)<span class="sc">*</span>c<span class="sc">*</span>beta<span class="sc">*</span>R<span class="sc">/</span>(R <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb11-11"><a href="statistical-inference.html#cb11-11" aria-hidden="true" tabindex="-1"></a>  B <span class="ot">&lt;-</span> (c<span class="sc">*</span>alpha <span class="sc">+</span> u<span class="sc">*</span>c<span class="sc">*</span>(<span class="dv">1</span> <span class="sc">-</span> alpha))<span class="sc">/</span>(R <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb11-12"><a href="statistical-inference.html#cb11-12" aria-hidden="true" tabindex="-1"></a>  D <span class="ot">&lt;-</span> (<span class="dv">1</span> <span class="sc">-</span> u)<span class="sc">*</span>c<span class="sc">*</span>(<span class="dv">1</span> <span class="sc">-</span> alpha)<span class="sc">/</span>(R <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb11-13"><a href="statistical-inference.html#cb11-13" aria-hidden="true" tabindex="-1"></a>  ppv <span class="ot">&lt;-</span> A <span class="sc">/</span> (A <span class="sc">+</span> B)</span>
+<span id="cb11-14"><a href="statistical-inference.html#cb11-14" aria-hidden="true" tabindex="-1"></a>  t <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;Based on Ioannidis&#39; 2005 paper, the positive predicted value of a true relationship is&quot;</span>, <span class="fu">round</span>(ppv,<span class="dv">3</span>))</span>
+<span id="cb11-15"><a href="statistical-inference.html#cb11-15" aria-hidden="true" tabindex="-1"></a>  t1 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">round</span>(<span class="fu">c</span>(A,B,C,D),<span class="dv">0</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb11-16"><a href="statistical-inference.html#cb11-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">Result =</span> t, <span class="at">Table=</span>t1)</span>
+<span id="cb11-17"><a href="statistical-inference.html#cb11-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-18"><a href="statistical-inference.html#cb11-18" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-19"><a href="statistical-inference.html#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="fu">study_ppv</span>(.<span class="dv">1</span>,.<span class="dv">3</span>,.<span class="dv">2</span>)  </span></code></pre></div>
+<pre><code>## $Result
+## [1] &quot;Based on Ioannidis&#39; 2005 paper, the positive predicted value of a true relationship is 0.204&quot;
+## 
+## $Table
+##      [,1] [,2]
+## [1,]   78  305
+## [2,]   13  605</code></pre>
+<p>Can also reproduce the accompanying plot</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="statistical-inference.html#cb13-1" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
+<span id="cb13-2"><a href="statistical-inference.html#cb13-2" aria-hidden="true" tabindex="-1"></a>beta <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
+<span id="cb13-3"><a href="statistical-inference.html#cb13-3" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb13-4"><a href="statistical-inference.html#cb13-4" aria-hidden="true" tabindex="-1"></a>u <span class="ot">&lt;-</span> <span class="fl">0.3</span></span>
+<span id="cb13-5"><a href="statistical-inference.html#cb13-5" aria-hidden="true" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="fu">seq</span> (<span class="dv">0</span>,<span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">21</span>)</span>
+<span id="cb13-6"><a href="statistical-inference.html#cb13-6" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> (c<span class="sc">*</span>(<span class="dv">1</span> <span class="sc">-</span> beta)<span class="sc">*</span>R <span class="sc">+</span> u<span class="sc">*</span>c<span class="sc">*</span>beta<span class="sc">*</span>R)<span class="sc">/</span>(R <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb13-7"><a href="statistical-inference.html#cb13-7" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> (c<span class="sc">*</span>alpha <span class="sc">+</span> u<span class="sc">*</span>c<span class="sc">*</span>(<span class="dv">1</span> <span class="sc">-</span> alpha))<span class="sc">/</span>(R <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb13-8"><a href="statistical-inference.html#cb13-8" aria-hidden="true" tabindex="-1"></a>ppv <span class="ot">&lt;-</span> A <span class="sc">/</span> (A <span class="sc">+</span> B)</span>
+<span id="cb13-9"><a href="statistical-inference.html#cb13-9" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x=</span>R, <span class="at">y=</span>ppv) </span>
+<span id="cb13-10"><a href="statistical-inference.html#cb13-10" aria-hidden="true" tabindex="-1"></a>df <span class="sc">%&gt;%</span> </span>
+<span id="cb13-11"><a href="statistical-inference.html#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x,y)) <span class="sc">+</span></span>
+<span id="cb13-12"><a href="statistical-inference.html#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb13-13"><a href="statistical-inference.html#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> .<span class="dv">1</span> , <span class="at">y =</span> <span class="dv">0</span>, <span class="at">xend =</span> .<span class="dv">1</span>, <span class="at">yend =</span> .<span class="dv">204</span>)) <span class="sc">+</span></span>
+<span id="cb13-14"><a href="statistical-inference.html#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Pre study odds&quot;</span>, <span class="at">y=</span><span class="st">&quot;Post study probability (PPV)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb13-15"><a href="statistical-inference.html#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Probability Research Finding Is True as a Function of the Pre-Study Odds&quot;</span>, <span class="at">subtitle =</span> <span class="st">&quot;(Bias =0.2)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb13-16"><a href="statistical-inference.html#cb13-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="05-inference_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p>Finally, we can also reproduce Ioannidis’ <a href="https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124&amp;xid=17259,15700019,15700186,15700190,15700248">Figure 1a</a> which displays post study probability as a function of pre study odds and the degree of bias.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="statistical-inference.html#cb14-1" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">rerun</span>(<span class="dv">4</span>, df) <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="statistical-inference.html#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_df</span>( <span class="sc">~</span> <span class="fu">tibble</span>(.), <span class="at">.id =</span> <span class="st">&quot;dist&quot;</span>, <span class="at">x.x =</span><span class="st">&quot;x&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-3"><a href="statistical-inference.html#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bias =</span> <span class="fu">ifelse</span>(dist <span class="sc">==</span> <span class="st">&quot;1&quot;</span>, .<span class="dv">05</span>,</span>
+<span id="cb14-4"><a href="statistical-inference.html#cb14-4" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">ifelse</span>(dist <span class="sc">==</span> <span class="st">&quot;2&quot;</span>, .<span class="dv">2</span>,</span>
+<span id="cb14-5"><a href="statistical-inference.html#cb14-5" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">ifelse</span>(dist <span class="sc">==</span> <span class="st">&quot;3&quot;</span>, .<span class="dv">5</span>,</span>
+<span id="cb14-6"><a href="statistical-inference.html#cb14-6" aria-hidden="true" tabindex="-1"></a>                                        <span class="fu">ifelse</span>(dist <span class="sc">==</span> <span class="st">&quot;4&quot;</span>, .<span class="dv">8</span>, <span class="st">&quot;NA&quot;</span>))))) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-7"><a href="statistical-inference.html#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">alpha=</span><span class="fl">0.05</span>, <span class="at">beta=</span><span class="fl">0.2</span>, <span class="at">c=</span><span class="dv">1000</span>, <span class="at">bias=</span><span class="fu">as.numeric</span>(bias)) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-8"><a href="statistical-inference.html#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">A =</span> (c<span class="sc">*</span>(<span class="dv">1</span> <span class="sc">-</span> beta)<span class="sc">*</span>x <span class="sc">+</span> bias<span class="sc">*</span>c<span class="sc">*</span>beta<span class="sc">*</span>x)<span class="sc">/</span>(x <span class="sc">+</span> <span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-9"><a href="statistical-inference.html#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">B =</span> (c<span class="sc">*</span>alpha <span class="sc">+</span> bias<span class="sc">*</span>c<span class="sc">*</span>(<span class="dv">1</span> <span class="sc">-</span> alpha))<span class="sc">/</span>(x <span class="sc">+</span> <span class="dv">1</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb14-10"><a href="statistical-inference.html#cb14-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ppv =</span> A <span class="sc">/</span> (A <span class="sc">+</span> B))</span>
+<span id="cb14-11"><a href="statistical-inference.html#cb14-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb14-12"><a href="statistical-inference.html#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(t, <span class="fu">aes</span>(x,ppv,<span class="at">color =</span> <span class="fu">as.factor</span>(bias))) <span class="sc">+</span></span>
+<span id="cb14-13"><a href="statistical-inference.html#cb14-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb14-14"><a href="statistical-inference.html#cb14-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Pre study odds&quot;</span>, <span class="at">y=</span><span class="st">&quot;Post study probability (PPV)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb14-15"><a href="statistical-inference.html#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color=</span><span class="st">&#39;Level of bias&#39;</span>) <span class="sc">+</span></span>
+<span id="cb14-16"><a href="statistical-inference.html#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">caption =</span> <span class="st">&quot;power = 80%&quot;</span>) <span class="sc">+</span></span>
+<span id="cb14-17"><a href="statistical-inference.html#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Probability Research Finding Is True as a Function of the Pre-Study Odds&quot;</span>, <span class="at">subtitle =</span> <span class="st">&quot;Varying levels of bias (alpha = 0.05, beta = 0.2)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb14-18"><a href="statistical-inference.html#cb14-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="05-inference_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="bayesian-data-analysis-and-statistical-inference" class="section level2" number="5.6">
+<h2><span class="header-section-number">5.6</span> Bayesian data analysis and statistical inference</h2>
+<p>Unlike the standard frequentist approach described above, Bayesian inference is not based on statistical significance testing, where effects are compared to a “null hypothesis.” Standard (frequentist) procedures fix the working hypotheses and, by deduction, make inference on the observed <a href="data:\" class="uri">data:\</a>
+– If my hypothesis is true, what is the probability of randomly selecting the data that I actually observed? If small, then deduce weak support of the evidence to the hypothesis<br />
+– Assess Pr(Observed data | Hypothesis)</p>
+<p>On the contrary, the Bayesian philosophy proceeds fixing the value of the observed data and, by induction, makes inference on the unobservable hypotheses, which is ultimately what both clinicians and researchers are most interested in.<br />
+- What is the probability of my hypothesis, given the data I observed? If less than the probability of other competing hypotheses, then weak support of the evidence for the hypothesis<br />
+- Assess Pr(Hypothesis | Observed data)</p>
+<p>Advantage of inductive reasoning: conclusions about unobserved states of nature are broader than the observations on which they are based; using this reasoning will generate new hypotheses and learning new things. The drawback is cannot be sure that what we conclude is actually true, a conundrum known as the <a href="https://en.wikipedia.org/wiki/Problem_of_induction">problem of induction</a>. Bayesian reasoning combines a belief calculus (prior) and an evidential calculus (likelihood ratio) where each individual is entitled to their own, subjective evaluation. According to the evidence that is sequentially available, individuals tend to update their beliefs. In identifiable problems as more data accumulates the subjective component diminishes and divergent opinions converge. In non-identifiable problems (missing data, measurement error, unmeasured confounders) priors remain important even as more data accumulates.</p>
+<p>There are two essential defining characteristics of the Bayesian paradigm. First, the Bayesian framework treats unknown parameters as random variables, thereby offering a probabilistic view of their assessment and of the associated uncertainty. The other crucial aspect of the Bayesian paradigm is the formalism of past knowledge that is incorporated with current data via Bayes Theorem, thereby providing a coherent approach to updating scientific knowledge that mirrors our normal sequential learning process.</p>
+<div class="figure" style="text-align: center"><span id="fig:bayes"></span>
+<img src="img/5_stats/bayes.png" alt="Bayes theorem" width="100%" />
+<p class="caption">
+Figure 5.9: Bayes theorem
+</p>
+</div>
+<p>This prime advantage of Bayesian reasoning is summarized by the following pithy aphorism</p>
+<div class="blue-box">
+<p style="text-align: center;">
+<p><span style="color:red"><strong>“Today’s posterior is tomorrow’s prior”</strong></span></p>
+</p>
+</div>
+<p>which reflects the sequential learning process of the method.</p>
+<p>Typically, the integration of the study data, known as the likelihood function, over the prior distribution space requires the use of numerical methods, most often Monte Carlo Markov Chain techniques. However in special situations, such as when both the prior and the likelihood are assumed to be normally distributed, closed form analytical solutions, known as Bayesian normal conjugate analyses are possible. In a closed-form analysis, the final (posterior) mean is simply a weighted average of both the prior mean and the sample mean with the weights being directly proportional to the respective precisions (inverse variance).<span class="citation">(<a href="#ref-Gelman_book" role="doc-biblioref">Gelman et al. 2014</a>)</span></p>
+<p>The flexibility of Bayesian analyses permits a straightforward calculation of the posterior probability of the measured effect size exceeding any given threshold by a calculation of the area under the curve (AUC) to the right of the selected threshold. The visualization of these posterior probability functions greatly assists data interpretation.</p>
+<p>Other advantages of a Bayesian approach are greater flexibility in modeling complex processes, including hierarchical modeling, handling of missing data, and evaluating and comparing competing models. From the perspective of randomized clinical trials (RCTs), these advantages may translate into concrete benefits at the design, monitoring, analytical and interpretative phases. Concretely, these benefits may include possible sample size reduction via the inclusion of prior information and possible adaptive trial designs, enhanced monitoring for possible early terminations, direct user-friendly probability statements probability statements about predictive probabilities and a decision theory environment that incorporates both benefits and loss functions for enhanced clinical decision making.</p>
+<p>Against these benefits, several limitations of the Bayesian method have been raised. Initially, the evaluation of these high-dimensional posterior distributions was previously difficult and involved approximations and numerical methods but more recently the process has been simplified by high speed simulation methods allowing a wide expansion of its clinical applicability. The remaining major objection to the Bayesian approach is its reputed subjectivity due its incorporation of prior information. In fact, this is not always a bona fide deterrent. As priors must be transparently presented and are often based on pre-existing objective research findings, completely inappropriate and arbitrary priors are easily identified and excluded from consideration. Moreover, a range of priors can be tested that will permit an assessment of the robustness of the final (posterior) inferences. By comparison, there are multiple assumptions in frequentist analyses which are neither transparent nor properly tested including an assumption of the data generating process that in theory needs to be infinitely replicated to allow p-values and confidence limits to be computed. A rather unflattering comparison of the frequentist and Bayesian paradigms and assumptions has been <a href="https://www.fharrell.com/post/journey/">proposed</a> and is summarized below.</p>
+<div class="blue-box">
+<p><strong>Comparisons of underlying assumptions</strong></p>
+<p>• Frequentist = subjectivity1 + subjectivity2 + objectivity + data + endless arguments about everything<br />
+• Bayesian = subjectivity1 + subjectivity3 + objectivity + data + endless arguments about one thing (the prior)</p>
+<p>where<br />
+• subjectivity1 = choice of the data model<br />
+• subjectivity2 = sample space and how repetitions of the experiment are envisioned, choice of the stopping rule, 1-tailed vs. 2-tailed tests, multiplicity adjustments, …<br />
+• subjectivity3 = prior distribution</p>
+</div>
+<div id="bayes-factors" class="section level3" number="5.6.1">
+<h3><span class="header-section-number">5.6.1</span> Bayes factors</h3>
+<p>As shown with the S values above, the evidential value of p values is often overestimated and may be further compromised in the presence of large sample sizes as small p values can be observed with trivial clinical differences. Recall that there are two components to the Bayesian paradigm, on the left of Figure <a href="statistical-inference.html#fig:bayes">5.9</a> is an evidential calculus based on the likelihood ratio and on the right of Figure <a href="statistical-inference.html#fig:bayes">5.9</a>, the belief calculus that incorporates our prior beliefs. Concentrating initially uniquely on the evidential arm, the likelihood ratio, also known as the <a href="https://en.wikipedia.org/wiki/Bayes_factor">Bayes factor</a>, provides a probabilistically justified measure of the strength of the evidence in support of competing hypotheses.</p>
+<p><span class="math display" id="eq:bf">\[\begin{equation}
+Bayes  Factors = \frac{Prob(Data | null hypothesis)}{Prob(Data | alternative hypothesis)}
+\tag{5.6}
+\end{equation}\]</span></p>
+<p>Equation <a href="statistical-inference.html#eq:bf">(5.6)</a> demonstrates that Bayes factors 1) are ratios, and not individual probabilities, of comparative evidential support for the observed data 2) provide varying degrees of support for every possible hypothesis and 3) provide maximum support (minimal Bayes factor) for the hypothesis compatible the observed data. Unlike p values, Bayes factors are therefore not simply measures against a specific null hypothesis but also measure support for a competing hypothesis. Also, in contrast to p values, Bayes factors depend only on the observed data and not on long-term unobserved data. It has been shown[<span class="citation">(<a href="#ref-Goodman2" role="doc-biblioref">S. N. Goodman 1999b</a>)</span> that the conversion rate between a p value and the minimum Bayes factor, where the denominator of Equation <a href="statistical-inference.html#eq:bf">(5.6)</a> is Prob(Data | best supporting hypothesis), is given as</p>
+<p><span class="math display" id="eq:exp">\[\begin{equation}
+Minimum  Bayes  Factor = \exp^{\frac{-Z^2}{2}}
+\tag{5.7}
+\end{equation}\]</span></p>
+<p>where z, the number of standardized errors from the null. Qualitative correlations between Bayes factors and the strength of the evidence have been proposed and one such scheme is presented in the following table</p>
+<table>
+<thead>
+<tr class="header">
+<th>Bayes Factor</th>
+<th>Label</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>&gt; 100</td>
+<td>Extremely strong evidence for Ho</td>
+</tr>
+<tr class="even">
+<td>30 - 100</td>
+<td>Very strong evidence for Ho</td>
+</tr>
+<tr class="odd">
+<td>10 - 30</td>
+<td>Strong evidence for Ho</td>
+</tr>
+<tr class="even">
+<td>3 - 10</td>
+<td>Moderate evidence for Ho</td>
+</tr>
+<tr class="odd">
+<td>1 -3</td>
+<td>Anecdotal evidence for Ho</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td>No evidence</td>
+</tr>
+<tr class="odd">
+<td>1/3 - 1</td>
+<td>Anecdotal evidence for Ha</td>
+</tr>
+<tr class="even">
+<td>1/3 - 1/10</td>
+<td>Moderate evidence for Ha</td>
+</tr>
+<tr class="odd">
+<td>1/10 - 1/30</td>
+<td>Strong evidence for Ha</td>
+</tr>
+<tr class="even">
+<td>1/30 - 1/100</td>
+<td>Very strong evidence for Ha</td>
+</tr>
+<tr class="odd">
+<td>&lt;1/100</td>
+<td>Extremely strong evidence for Ha</td>
+</tr>
+</tbody>
+</table>
+<p>Bayes factors are not merely a recalibration of p values but also allows the extension of statistical results to inductive inferences. Given that <span class="math inline">\(posterior odds = bayes factor * prior odds\)</span>, if we have a Bayes factor equal to 1/10, it means that these study results have decreased the relative odds of
+the null hypothesis by 10-fold. For example, if the initial odds of the null were 1 (ie, a probability of 50%), then the odds after the study would be 1/10 (a probability of 9%).</p>
+<div class="orange-box">
+<p><strong>Bayes factors - simple example</strong><br />
+Suppose the prior probability of a given hypothesis is 50%, estimated from previous studies, theoretical considerations or simply experet opinion and an experimetn testing that hypothesis generates a p value = 0.05. What is the new (posterior) probability of the hypothesis?</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="statistical-inference.html#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create simple function to calculate the minimum BF</span></span>
+<span id="cb15-2"><a href="statistical-inference.html#cb15-2" aria-hidden="true" tabindex="-1"></a>min_bf <span class="ot">&lt;-</span> <span class="cf">function</span>(z){</span>
+<span id="cb15-3"><a href="statistical-inference.html#cb15-3" aria-hidden="true" tabindex="-1"></a>  bf <span class="ot">&lt;-</span> <span class="fu">exp</span>((<span class="sc">-</span>z<span class="sc">^</span><span class="dv">2</span>)<span class="sc">/</span><span class="dv">2</span>)</span>
+<span id="cb15-4"><a href="statistical-inference.html#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">&quot;Minimum Bayes Factor = &quot;</span>, <span class="fu">round</span>(bf,<span class="dv">2</span>), <span class="st">&quot;so there is &quot;</span>, <span class="fu">round</span>(<span class="dv">1</span><span class="sc">/</span>bf,<span class="dv">2</span>), <span class="st">&quot;times more evidence supporting the alternative hypothesis of the observed data than for the null of no benefit&quot;</span>)</span>
+<span id="cb15-5"><a href="statistical-inference.html#cb15-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-6"><a href="statistical-inference.html#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="statistical-inference.html#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Z for p = 0.05 is 1.96</span></span>
+<span id="cb15-8"><a href="statistical-inference.html#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="fu">min_bf</span>(<span class="fl">1.96</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Minimum Bayes Factor =  0.15 so there is  6.83 times more evidence supporting the alternative hypothesis of the observed data than for the null of no benefit&quot;</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="statistical-inference.html#cb17-1" aria-hidden="true" tabindex="-1"></a>post_prob <span class="ot">&lt;-</span> <span class="cf">function</span>(prior,bf){</span>
+<span id="cb17-2"><a href="statistical-inference.html#cb17-2" aria-hidden="true" tabindex="-1"></a>  odds <span class="ot">&lt;-</span> prior<span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>prior)</span>
+<span id="cb17-3"><a href="statistical-inference.html#cb17-3" aria-hidden="true" tabindex="-1"></a>  post_odds <span class="ot">&lt;-</span> odds <span class="sc">*</span> bf</span>
+<span id="cb17-4"><a href="statistical-inference.html#cb17-4" aria-hidden="true" tabindex="-1"></a>  post_prob <span class="ot">&lt;-</span> post_odds <span class="sc">/</span> (<span class="dv">1</span><span class="sc">+</span> post_odds)</span>
+<span id="cb17-5"><a href="statistical-inference.html#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="st">&quot;If Bayes Factor = &quot;</span>, <span class="fu">round</span>(bf,<span class="dv">2</span>), <span class="st">&quot;and the prior probability = &quot;</span>, <span class="fu">round</span>(<span class="dv">100</span><span class="sc">*</span>prior,<span class="dv">2</span>), <span class="st">&quot;%, the posterior probability = &quot;</span>,<span class="fu">round</span>(<span class="dv">100</span><span class="sc">*</span>post_prob,<span class="dv">0</span>), <span class="st">&quot;%&quot;</span>)</span>
+<span id="cb17-6"><a href="statistical-inference.html#cb17-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-7"><a href="statistical-inference.html#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="statistical-inference.html#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="fu">post_prob</span>(.<span class="dv">5</span>, <span class="fl">0.15</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;If Bayes Factor =  0.15 and the prior probability =  50 %, the posterior probability =  13 %&quot;</code></pre>
+<p>Goodman <span class="citation">(<a href="#ref-Goodman2" role="doc-biblioref">S. N. Goodman 1999b</a>)</span> has produced this table which connects prior and posterior probabilities and Bayes Factors.</p>
+<div class="figure" style="text-align: center"><span id="fig:conv"></span>
+<img src="img/5_stats/conv.png" alt="P values, BF and probabilities" width="100%" />
+<p class="caption">
+Figure 5.10: P values, BF and probabilities
+</p>
+</div>
+<p>A graphical form of this table can be constructed.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="statistical-inference.html#cb19-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">data.frame</span> (<span class="at">prior_prob=</span><span class="fu">seq</span>(<span class="dv">0</span>,.<span class="dv">99</span>, <span class="at">length.out =</span> <span class="dv">99</span>), <span class="at">post =</span> <span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>, <span class="at">length.out =</span> <span class="dv">99</span>))</span>
+<span id="cb19-2"><a href="statistical-inference.html#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="statistical-inference.html#cb19-3" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">rerun</span>(<span class="dv">4</span>, df) <span class="sc">%&gt;%</span></span>
+<span id="cb19-4"><a href="statistical-inference.html#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_df</span>( <span class="sc">~</span> <span class="fu">tibble</span>(.), <span class="at">.id =</span> <span class="st">&quot;dist&quot;</span>, <span class="at">x.x =</span><span class="st">&quot;x&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-5"><a href="statistical-inference.html#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bf =</span> <span class="fu">ifelse</span>(dist <span class="sc">==</span> <span class="st">&quot;1&quot;</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">5</span>,</span>
+<span id="cb19-6"><a href="statistical-inference.html#cb19-6" aria-hidden="true" tabindex="-1"></a>                       <span class="fu">ifelse</span>(dist <span class="sc">==</span> <span class="st">&quot;2&quot;</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">10</span>,</span>
+<span id="cb19-7"><a href="statistical-inference.html#cb19-7" aria-hidden="true" tabindex="-1"></a>                              <span class="fu">ifelse</span>(dist <span class="sc">==</span> <span class="st">&quot;3&quot;</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">20</span>,</span>
+<span id="cb19-8"><a href="statistical-inference.html#cb19-8" aria-hidden="true" tabindex="-1"></a>                                     <span class="fu">ifelse</span>(dist <span class="sc">==</span> <span class="st">&quot;4&quot;</span>, <span class="dv">1</span><span class="sc">/</span><span class="dv">100</span>, <span class="st">&quot;NA&quot;</span>))))) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-9"><a href="statistical-inference.html#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">bf=</span><span class="fu">as.numeric</span>(bf), <span class="at">prior_odds =</span> prior_prob<span class="sc">/</span>(<span class="dv">1</span><span class="sc">-</span>prior_prob)) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-10"><a href="statistical-inference.html#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">post_odds =</span> bf <span class="sc">*</span> prior_odds) <span class="sc">%&gt;%</span> </span>
+<span id="cb19-11"><a href="statistical-inference.html#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">post_prob =</span> post_odds <span class="sc">/</span> (<span class="dv">1</span><span class="sc">+</span> post_odds)) </span>
+<span id="cb19-12"><a href="statistical-inference.html#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-13"><a href="statistical-inference.html#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(t, <span class="fu">aes</span>(prior_prob,post_prob,<span class="at">color =</span> <span class="fu">as.factor</span>(bf))) <span class="sc">+</span></span>
+<span id="cb19-14"><a href="statistical-inference.html#cb19-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb19-15"><a href="statistical-inference.html#cb19-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="st">&quot;Prior probability Ho true&quot;</span>, <span class="at">y=</span><span class="st">&quot;Posterior probability Ho true&quot;</span>) <span class="sc">+</span></span>
+<span id="cb19-16"><a href="statistical-inference.html#cb19-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color=</span><span class="st">&#39;Bayes factor&#39;</span>) <span class="sc">+</span></span>
+<span id="cb19-17"><a href="statistical-inference.html#cb19-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.05</span>, <span class="at">color=</span><span class="st">&quot;blue&quot;</span>) <span class="sc">+</span></span>
+<span id="cb19-18"><a href="statistical-inference.html#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">&quot;text&quot;</span>, <span class="at">label =</span><span class="st">&quot;Blue horizontal line = posterior probability Ho = 0.05&quot;</span>, <span class="at">x=</span><span class="dv">0</span>, <span class="at">y=</span>.<span class="dv">1</span>, <span class="at">hjust=</span><span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb19-19"><a href="statistical-inference.html#cb19-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Posterior probability Ho is true&quot;</span>, <span class="at">subtitle =</span> <span class="st">&quot;Varying levels of Bayes factors from weak (0.2) to strong (0.01))&quot;</span>) <span class="sc">+</span></span>
+<span id="cb19-20"><a href="statistical-inference.html#cb19-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="05-inference_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>This graph demonstrates that p = 0.05 (Bayes factor = 0.15) tend to lead to an overestimation of the effect. As calculated above, if the prior probability = 50%, then p = 0.05 leads to a posterior probability of approximately 13%. Alternatively, if one observes a p value = 0.05, and desires assurance that the posterior probability &lt; 5% then the prior probability of Ho being true must not be greater than 27%.</p>
+</div>
+<p>Let us apply to these concepts to a real life research finding that was published in the <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa1208200">NEJM</a> concerning door to balloon time and mortality among patients undergoing primary percutaneous coronary intervention (PCI).</p>
+<div class="orange-box">
+<p><strong>Bayes factors - real life clinical example</strong></p>
+<p>Past studies have repeatedly and consistently shown that reducing treatment times (“time is muscle”) improves outcomes for patients with ST elevation myocardial infarction with no previous notion of a threshold time where further improvements with decreasing time are no longer realizable.<br />
+These NEJM authors analyzed trends in door-to-balloon times and in-hospital mortality using data from 96,738 admissions for patients undergoing primary PCI for ST-segment elevation myocardial infarction from July 2005 through June 2009 at 515 hospitals. The authors report median door-to-balloon times declined significantly, from 83 minutes in 2005 to 67 minutes in 2008 (P&lt;0.001) but no significant overall change in in risk-adjusted in-hospital mortality (5.0% in 2005–2006 and 4.7% in 2008–2009, P=0.34). The authors conclude “Although national door-to-balloon times have improved significantly for patients undergoing primary PCI for ST-segment elevation myocardial infarction, in-hospital mortality has remained virtually unchanged. These data suggest that additional strategies are needed to reduce in-hospital mortality in this population.”</p>
+<p>First let’s see if we can reproduce the original results and then re-analyze the data using Bayes Factors. As our purpose here is to demonstrate the evidential benefits of Bayes factors, we will be ignoring a large amount of prior information that decreasing time to treatment improves outcomes.</p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="statistical-inference.html#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># enter the NEJM raw data</span></span>
+<span id="cb20-2"><a href="statistical-inference.html#cb20-2" aria-hidden="true" tabindex="-1"></a>mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">938</span>,<span class="dv">1238</span>,<span class="dv">17822</span>,<span class="dv">25102</span>), <span class="at">nrow=</span><span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb20-3"><a href="statistical-inference.html#cb20-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="at">Outcome =</span> <span class="fu">c</span>(<span class="st">&quot;Dead&quot;</span>, <span class="st">&quot;Alive&quot;</span>), <span class="at">Year =</span> <span class="fu">c</span>(<span class="st">&quot;2005&quot;</span>, <span class="st">&quot;2008&quot;</span>)))</span>
+<span id="cb20-4"><a href="statistical-inference.html#cb20-4" aria-hidden="true" tabindex="-1"></a>mat</span></code></pre></div>
+<pre><code>##        Year
+## Outcome  2005  2008
+##   Dead    938  1238
+##   Alive 17822 25102</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="statistical-inference.html#cb22-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">prop.test</span>(mat[<span class="dv">1</span>,],mat[<span class="dv">2</span>,]<span class="sc">+</span>mat[<span class="dv">1</span>,])</span>
+<span id="cb22-2"><a href="statistical-inference.html#cb22-2" aria-hidden="true" tabindex="-1"></a>result</span></code></pre></div>
+<pre><code>## 
+##  2-sample test for equality of proportions with continuity correction
+## 
+## data:  mat[1, ] out of mat[2, ] + mat[1, ]
+## X-squared = 2.1, df = 1, p-value = 0.1
+## alternative hypothesis: two.sided
+## 95 percent confidence interval:
+##  -0.001079  0.007077
+## sample estimates:
+## prop 1 prop 2 
+##  0.050  0.047</code></pre>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="statistical-inference.html#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">&quot;More precise p value = &quot;</span>, <span class="fu">round</span>(result<span class="sc">$</span>p.value,<span class="dv">2</span>))</span></code></pre></div>
+<pre><code>## [1] &quot;More precise p value =  0.15&quot;</code></pre>
+<p>This confirms the results with 5.0% versus 4.7% a difference that is indeed statistically insignificant (p &gt; 0.05). However while the conventional frequentist analysis can’t reject Ho of no mortality Δ, the data actually provides more support for the alternative hypothesis of a decrease in mortality in mortality and provides diminished support for Ho of no mortality Δ for the observed 16 minute reduction in time to treatment. Exactly how much support for these competing hypotheses can be determined using Bayes factors.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="statistical-inference.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># determine Z value from the observed p value</span></span>
+<span id="cb26-2"><a href="statistical-inference.html#cb26-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fl">0.1491</span></span>
+<span id="cb26-3"><a href="statistical-inference.html#cb26-3" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">&lt;-</span> <span class="fu">qnorm</span>(<span class="dv">1</span><span class="sc">-</span>(p<span class="sc">/</span><span class="dv">2</span>)) </span>
+<span id="cb26-4"><a href="statistical-inference.html#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">min_bf</span>(Z)</span></code></pre></div>
+<pre><code>## [1] &quot;Minimum Bayes Factor =  0.35 so there is  2.83 times more evidence supporting the alternative hypothesis of the observed data than for the null of no benefit&quot;</code></pre>
+<p>This analysis may also be interpreted as<br />
+i) the observed results are 1/3 as probable under the null hypothesis of no difference in mortality as they are under the alternative of a 3 /1000 decrease<br />
+ii) the evidence supports the null hypothesis only 1/3 as strongly as it does the alternative<br />
+iii) the odds of the null hypothesis relative to the alternative hypothesis after the experiment are 1/3 what they were before the experiment</p>
+<p>In the text, the authors state “We have reached a threshold such that time to reperfusion no longer matter, provided &lt;90 minutes, and we need to look elsewhere for improvements.”</p>
+<p>This suggests the following conclusion may be more appropriate<br />
+“This study shows that improved treatment times, even below the 90 minute threshold, are likely associated with meaningful mortality benefits that are entirely consistent with previous work, strengthen the evidence that quicker time to treatment improves outcomes and emphasizes the huge public health impact that continued quality improvement to decrease time to treatment holds. Efforts should continue to reduce all treatment delays as well as to search elsewhere for improvements.”</p>
+<p>As this article has been cited over 400 times, correctly interpreting this data is essential.</p>
+</div>
+
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-retire" class="csl-entry">
+Amrhein, V., S. Greenland, and B. McShane. 2019. <span>“Retire Statistical Significance.”</span> Journal Article. <em>Nature</em> 567: 305–7.
+</div>
+<div id="ref-Gelman_false" class="csl-entry">
+Gelman, A. 2014. Web Page. <a href="https://statmodeling.stat.columbia.edu/2014/09/05/confirmationist-falsificationist-paradigms-science/ accessed Oct 7 2020">https://statmodeling.stat.columbia.edu/2014/09/05/confirmationist-falsificationist-paradigms-science/ accessed Oct 7 2020</a>.
+</div>
+<div id="ref-Gelman_book" class="csl-entry">
+Gelman, A., JB. Carlin, HS. Stern, and DB. Rubin. 2014. <em>Bayesian Data Analysis</em>. Book. Third edition. Chapman &amp; Hall/CRC Texts in Statistical Science. Boca Raton: CRC Press. <a href="Cover image http://images.tandf.co.uk/common/jackets/websmall/978143984/9781439840955.jpg">Cover image http://images.tandf.co.uk/common/jackets/websmall/978143984/9781439840955.jpg</a>.
+</div>
+<div id="ref-Gelman06" class="csl-entry">
+Gelman, A., and HS. Stern. 2006. <span>“The Difference Between <span>‘Significant’</span> and <span>‘Not Significant’</span> Is Not Itself Statistically Significant.”</span> Journal Article. <em>Am Statist</em> 60: 328–31.
+</div>
+<div id="ref-GG" class="csl-entry">
+Goodman, S., and S. Greenland. 2007. <span>“Why Most Published Research Findings Are False: Problems in the Analysis.”</span> Journal Article. <em>PLoS Med</em> 4 (4): e168. <a href="https://doi.org/10.1371/journal.pmed.0040168">https://doi.org/10.1371/journal.pmed.0040168</a>.
+</div>
+<div id="ref-Goodman1" class="csl-entry">
+Goodman, S. N. 1999a. <span>“Toward Evidence-Based Medical Statistics. 1: The p Value Fallacy.”</span> Journal Article. <em>Ann Intern Med</em> 130 (12): 995–1004. <a href="https://doi.org/10.7326/0003-4819-130-12-199906150-00008">https://doi.org/10.7326/0003-4819-130-12-199906150-00008</a>.
+</div>
+<div id="ref-Goodman2" class="csl-entry">
+———. 1999b. <span>“Toward Evidence-Based Medical Statistics. 2: The Bayes Factor.”</span> Journal Article. <em>Ann Intern Med</em> 130 (12): 1005–13. <a href="https://doi.org/10.7326/0003-4819-130-12-199906150-00019">https://doi.org/10.7326/0003-4819-130-12-199906150-00019</a>.
+</div>
+<div id="ref-Greenland_17" class="csl-entry">
+Greenland, S. 2017. <span>“Invited Commentary: The Need for Cognitive Science in Methodology.”</span> Journal Article. <em>Am J Epidemiol</em> 186 (6): 639–45. <a href="https://doi.org/10.1093/aje/kwx259">https://doi.org/10.1093/aje/kwx259</a>.
+</div>
+<div id="ref-thinking" class="csl-entry">
+Kahneman, Daniel. 2011. <em>Thinking, Fast and Slow</em>. Book. 1st ed. New York: Farrar, Straus; Giroux.
+</div>
+<div id="ref-Rafi" class="csl-entry">
+Rafi, Z., and S. Greenland. 2020. <span>“Semantic and Cognitive Tools to Aid Statistical Science: Replace Confidence and Significance by Compatibility and Surprise.”</span> Journal Article. <em>BMC Med Res Methodol</em> 20 (1): 244. <a href="https://doi.org/10.1186/s12874-020-01105-9">https://doi.org/10.1186/s12874-020-01105-9</a>.
+</div>
+<div id="ref-Wasserstein_16" class="csl-entry">
+Wasserstein, RL., and NA. Lazar. 2016. <span>“The ASA’s Statement on p-Values: Context, Process, and Purpose.”</span> Journal Article. <em>The American Statistician</em> 70:2: 129–33.
+</div>
+<div id="ref-pvalue" class="csl-entry">
+Wasserstein, RL., AL. Schirm, and NA. Lazar. 2019. <span>“Moving to a World Beyond <span>‘p &lt; 0.05’</span>.”</span> Journal Article. <em>The American Statistician</em> 73: 1–19.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="meas.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="design.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-clinepi.pdf", "bookdown-clinepi.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

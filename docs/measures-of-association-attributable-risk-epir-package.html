@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Measures of association &amp; attributable risk - epiR package | (Mostly Clinical) Epidemiology with R</title>
+  <meta name="description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="generator" content="bookdown 0.21.6 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Measures of association &amp; attributable risk - epiR package | (Mostly Clinical) Epidemiology with R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="github-repo" content="brophyj/epi_book" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Measures of association &amp; attributable risk - epiR package | (Mostly Clinical) Epidemiology with R" />
+  
+  <meta name="twitter:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  
+
+<meta name="author" content="James Brophy" />
+
+
+<meta name="date" content="2021-01-27" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="vis.html"/>
+<link rel="next" href="statistical-inference.html"/>
+<script src="libs/header-attrs-2.6.6/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+p.caption {
+  color: #777;
+  margin-top: 10px;
+}
+p code {
+  white-space: inherit;
+}
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+pre code {
+  white-space: inherit;
+}
+FOO {
+  font-weight: bold;
+  color: red;
+}
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">(Mostly Clinical) Epidemiology with R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.0.1" data-path="intro.html"><a href="intro.html#r-packages-required-for-this-chapter"><i class="fa fa-check"></i><b>1.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#preface"><i class="fa fa-check"></i><b>1.1</b> Preface</a></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#pre"><i class="fa fa-check"></i><b>1.2</b> Prerequisites</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#my-general-philosophy-for-clinical-epidemiology"><i class="fa fa-check"></i><b>1.3</b> My general philosophy for clinical epidemiology</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#brief-excursions-into-quantification"><i class="fa fa-check"></i><b>1.4</b> Brief excursions into quantification</a></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#outline"><i class="fa fa-check"></i><b>1.5</b> Outline</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html"><i class="fa fa-check"></i><b>2</b> Introduction to statistical software - R</a>
+<ul>
+<li class="chapter" data-level="2.0.1" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r-packages-required-for-this-chapter-1"><i class="fa fa-check"></i><b>2.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="2.1" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#statistical-software---r"><i class="fa fa-check"></i><b>2.1</b> Statistical software - R</a></li>
+<li class="chapter" data-level="2.2" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r---common-data-and-variable-manipulations"><i class="fa fa-check"></i><b>2.2</b> R - Common data and variable manipulations</a></li>
+<li class="chapter" data-level="2.3" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#rstudio---the-ide-for-r"><i class="fa fa-check"></i><b>2.3</b> RStudio - <strong>The</strong> IDE for R</a></li>
+<li class="chapter" data-level="2.4" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r---more-than-a-statistical-program"><i class="fa fa-check"></i><b>2.4</b> R - More than a statistical program</a></li>
+<li class="chapter" data-level="2.5" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r---general-public-license"><i class="fa fa-check"></i><b>2.5</b> R - General Public License</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="vis.html"><a href="vis.html"><i class="fa fa-check"></i><b>3</b> Data visualizations</a>
+<ul>
+<li class="chapter" data-level="3.0.1" data-path="vis.html"><a href="vis.html#r-packages-required-for-this-chapter-2"><i class="fa fa-check"></i><b>3.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="3.1" data-path="vis.html"><a href="vis.html#introduction"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2" data-path="vis.html"><a href="vis.html#why-is-data-visualization-important"><i class="fa fa-check"></i><b>3.2</b> Why is data visualization important?</a></li>
+<li class="chapter" data-level="3.3" data-path="vis.html"><a href="vis.html#creating-an-effective-and-professional-appearing-graph"><i class="fa fa-check"></i><b>3.3</b> Creating an effective and professional appearing graph</a></li>
+<li class="chapter" data-level="3.4" data-path="vis.html"><a href="vis.html#graphical-choices"><i class="fa fa-check"></i><b>3.4</b> Graphical choices</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html"><i class="fa fa-check"></i><b>4</b> Measures of association &amp; attributable risk - epiR package</a>
+<ul>
+<li class="chapter" data-level="4.0.1" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html#r-packages-required-for-this-chapter-3"><i class="fa fa-check"></i><b>4.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="4.1" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html#contingency-tables"><i class="fa fa-check"></i><b>4.1</b> Contingency tables</a></li>
+<li class="chapter" data-level="4.2" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html#some-basic-defintions"><i class="fa fa-check"></i><b>4.2</b> Some basic defintions</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html#relative-comparative-measures"><i class="fa fa-check"></i><b>4.2.1</b> Relative comparative measures</a></li>
+<li class="chapter" data-level="4.2.2" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html#absolute-comparative-measures"><i class="fa fa-check"></i><b>4.2.2</b> Absolute comparative measures</a></li>
+<li class="chapter" data-level="4.2.3" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html#attributal-measures"><i class="fa fa-check"></i><b>4.2.3</b> Attributal measures</a></li>
+<li class="chapter" data-level="4.2.4" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html#standardization"><i class="fa fa-check"></i><b>4.2.4</b> Standardization</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html#sample-calculations"><i class="fa fa-check"></i><b>4.3</b> Sample calculations</a>
+<ul>
+<li class="chapter" data-level="4.3.1" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html#example-1---basic-incidence-measures"><i class="fa fa-check"></i><b>4.3.1</b> Example 1 - basic incidence measures</a></li>
+<li class="chapter" data-level="4.3.2" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html#example-2---rare-disease"><i class="fa fa-check"></i><b>4.3.2</b> Example 2 - rare disease</a></li>
+<li class="chapter" data-level="4.3.3" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html#example-3---standardization"><i class="fa fa-check"></i><b>4.3.3</b> Example 3 - Standardization</a></li>
+<li class="chapter" data-level="4.3.4" data-path="measures-of-association-attributable-risk-epir-package.html"><a href="measures-of-association-attributable-risk-epir-package.html#example-4---contingency-tables"><i class="fa fa-check"></i><b>4.3.4</b> Example 4 - Contingency Tables</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="statistical-inference.html"><a href="statistical-inference.html"><i class="fa fa-check"></i><b>5</b> Statistical inference</a>
+<ul>
+<li class="chapter" data-level="5.0.1" data-path="statistical-inference.html"><a href="statistical-inference.html#r-packages-required-for-this-chapter-4"><i class="fa fa-check"></i><b>5.0.1</b> R packages required for this chapter</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="design.html"><a href="design.html"><i class="fa fa-check"></i><b>6</b> Non-experimental designs</a>
+<ul>
+<li class="chapter" data-level="6.0.1" data-path="design.html"><a href="design.html#r-packages-required-for-this-chapter-5"><i class="fa fa-check"></i><b>6.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="6.1" data-path="design.html"><a href="design.html#introduction-1"><i class="fa fa-check"></i><b>6.1</b> Introduction</a></li>
+<li class="chapter" data-level="6.2" data-path="design.html"><a href="design.html#cohort-studies"><i class="fa fa-check"></i><b>6.2</b> Cohort studies</a></li>
+<li class="chapter" data-level="6.3" data-path="design.html"><a href="design.html#case-control"><i class="fa fa-check"></i><b>6.3</b> Case control</a></li>
+<li class="chapter" data-level="6.4" data-path="design.html"><a href="design.html#cross-sectional"><i class="fa fa-check"></i><b>6.4</b> Cross sectional</a></li>
+<li class="chapter" data-level="6.5" data-path="design.html"><a href="design.html#miscellaneous-designs"><i class="fa fa-check"></i><b>6.5</b> Miscellaneous designs</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">(Mostly Clinical) Epidemiology with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="measures-of-association-attributable-risk---epir-package" class="section level1" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Measures of association &amp; attributable risk - epiR package</h1>
+<div id="r-packages-required-for-this-chapter-3" class="section level3" number="4.0.1">
+<h3><span class="header-section-number">4.0.1</span> R packages required for this chapter</h3>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="measures-of-association-attributable-risk-epir-package.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-2"><a href="measures-of-association-attributable-risk-epir-package.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="measures-of-association-attributable-risk-epir-package.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
+<span id="cb1-4"><a href="measures-of-association-attributable-risk-epir-package.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb1-5"><a href="measures-of-association-attributable-risk-epir-package.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#library(hrbrthemes)</span></span></code></pre></div>
+</div>
+<div id="contingency-tables" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Contingency tables</h2>
+<p>Begin by reading in the <code>heart.csv</code> dataset where the outcome status is recorded in the <code>fstat</code> variable.Details about the other variables can be obtained with <code>str()</code>. It is often of interest to initially explore any categorical exposure and outcome create a table of <code>fstat</code> (alive / dead) versus <code>gender</code> (men=0, women=1).</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="measures-of-association-attributable-risk-epir-package.html#cb2-1" aria-hidden="true" tabindex="-1"></a>heart <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/heart.csv&quot;</span>, <span class="at">header =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-2"><a href="measures-of-association-attributable-risk-epir-package.html#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># create gender factor variable</span></span>
+<span id="cb2-3"><a href="measures-of-association-attributable-risk-epir-package.html#cb2-3" aria-hidden="true" tabindex="-1"></a>heart<span class="sc">$</span>gender <span class="ot">&lt;-</span> <span class="fu">factor</span>(heart<span class="sc">$</span>gender, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;men&quot;</span>, <span class="st">&quot;women&quot;</span>))</span>
+<span id="cb2-4"><a href="measures-of-association-attributable-risk-epir-package.html#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a 2-way contingency table of gender vs outcome</span></span>
+<span id="cb2-5"><a href="measures-of-association-attributable-risk-epir-package.html#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(heart<span class="sc">$</span>gender,heart<span class="sc">$</span>fstat )</span></code></pre></div>
+<pre><code>##        
+##         alive dead
+##   men     189  111
+##   women    96  104</code></pre>
+<p>As discussed in Chapter <a href="vis.html#vis">3</a>, graphical displays are often helpful and informative.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="measures-of-association-attributable-risk-epir-package.html#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create side-by-side barchart outcome and gender</span></span>
+<span id="cb4-2"><a href="measures-of-association-attributable-risk-epir-package.html#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(heart, <span class="fu">aes</span>(<span class="at">x =</span> gender, <span class="at">fill =</span> fstat)) <span class="sc">+</span> </span>
+<span id="cb4-3"><a href="measures-of-association-attributable-risk-epir-package.html#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>)  <span class="sc">+</span> <span class="co">#position = &quot;dodge&quot;, to have a side-by-side (i.e. not stacked) barchart</span></span>
+<span id="cb4-4"><a href="measures-of-association-attributable-risk-epir-package.html#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="04-measures_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+<div id="some-basic-defintions" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Some basic defintions</h2>
+<ol style="list-style-type: decimal">
+<li><p><strong>Cumulative incidence</strong> —proportion of new cases devlopping in an iniital disease free population during a given risk period.</p></li>
+<li><p><strong>Incidence time</strong> —time span from 0 to the time of outcome/event/failure/occurrence</p></li>
+<li><p><strong>Person-time</strong> —length of time that each individual was in the population at risk of the event</p></li>
+<li><p><strong>Total person-time at risk</strong> - sum of all individual person-times</p></li>
+<li><p><strong>Incidence rate</strong> —number of new cases of disease divided by person-time over the period</p></li>
+<li><p><strong>Incidence proportion or cumulative incidence</strong> —with complete cohort follow-up, it is the proportion of people who become cases among those in the population at the start of the interval. Can also be considered a measure of average risk</p></li>
+</ol>
+<p><strong>Comparison of cumulative incidence and incidence rate</strong></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="22%" />
+<col width="22%" />
+<col width="19%" />
+<col width="20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Cumulative Incidence</th>
+<th>Cumulative Incidence</th>
+<th>Incidence rate</th>
+<th>Incidence rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td>FU complete</td>
+<td>FU incomplete</td>
+<td>FU complete</td>
+<td>FU incomplete</td>
+</tr>
+<tr class="even">
+<td>Numerator</td>
+<td>cases</td>
+<td><p>Kaplan Meier</p>
+<p>Lfe Table</p></td>
+<td>Number cases</td>
+<td>Number cases</td>
+</tr>
+<tr class="odd">
+<td>Denominator</td>
+<td>population</td>
+<td><p>Kaplan Meier</p>
+<p>Lfe Table</p></td>
+<td>Person - time</td>
+<td>Average population</td>
+</tr>
+<tr class="even">
+<td>Units</td>
+<td>no units</td>
+<td>no units</td>
+<td>Time<sup>-1</sup></td>
+<td>Time<sup>-1</sup></td>
+</tr>
+<tr class="odd">
+<td>Range</td>
+<td>0 to 1</td>
+<td>0 to 1</td>
+<td>0 to infinity</td>
+<td>0 to infinity</td>
+</tr>
+<tr class="even">
+<td>Synonyms</td>
+<td><p>Probability</p>
+<p>Proportion</p></td>
+<td><p>Probability</p>
+<p>Proportion</p></td>
+<td>Incidence density</td>
+<td>Incidence density</td>
+</tr>
+</tbody>
+</table>
+<p>Risk is a general term but often refers to cumulative incidence (Q) but other interpretations including instantaneous risk (hazard) and risk at a given time point (prevalence).<br />
+Incidence rate and cumulative incidence proportion are longitudinal measures. In contrast prevalence measures are cross-sectional. The numerator of cumulative incidence and incidence rates are the number of cases while the denominator is proportional to the size (counts or person time) of the population from whioch the cases are derived. Numerator and denominator must cover the same population and the same time period.</p>
+<div id="relative-comparative-measures" class="section level3" number="4.2.1">
+<h3><span class="header-section-number">4.2.1</span> Relative comparative measures</h3>
+<p>Generic name “relative risk” (RR) comparing occurrences between exposed (1) and unexposed (0) groups can refer to<br />
+* Incidence rate ratio IR = I1 / I0 (the most commonly used comparative measure)<br />
+* Incidence proportion ratio IPR = Q1 / Q0<br />
+* Incidence odds ratio IOR = [Q1/(1 − Q1)] / [Q0/(1 − Q0)]<br />
+* Prevalence ratio PR = P1/P0<br />
+* Prevalence odds ratio POR = [P1/(1 − P1)] / [P0/(1 − P0)]</p>
+</div>
+<div id="absolute-comparative-measures" class="section level3" number="4.2.2">
+<h3><span class="header-section-number">4.2.2</span> Absolute comparative measures</h3>
+<p>Generic term “excess risk” or “risk difference” (RD) between exposed and unexposed can refer to<br />
+* Incidence rate difference ID = I1 − I0<br />
+* Incidence proportion difference IPD = Q1 − Q0<br />
+* Prevalence difference PD = P1 − P0</p>
+<p>Ratios – most often employed to describe the biological strength of the exposure<br />
+Differences – absolute differences better inform about public health importance</p>
+</div>
+<div id="attributal-measures" class="section level3" number="4.2.3">
+<h3><span class="header-section-number">4.2.3</span> Attributal measures</h3>
+<p>-<strong>Attributable fraction</strong> (excess fraction or attributable risk) is a measures of potential impact. <span class="math display">\[AF = \dfrac{I_{1} - I_{0}}{I_{1}} = \dfrac{RR-1}{RR}\]</span><br />
+This measure estimates the fraction out of all new cases of disease <em>among those exposed</em>, which are attributable to (or “caused” by) the exposure itself, and which thus could be avoided if the exposure were absent. This represents the biological impact of exposure and is represented diagrammatically as</p>
+<p align="center">
+<p><img src="img/assoc/af.png" /></p>
+<p align="center">
+<p>where AF fraction = black area out of total black + gray area.</p>
+<p>-<strong>Prevented fraction</strong> When the incidence in exposed is lower, we define the prevented fraction as <span class="math display">\[AF = \dfrac{I_{0} - I_{1}}{I_{0}} = 1 - RR\]</span></p>
+<p>-<strong>Population attributable (excess) fraction (PAF)</strong> addresses the impact of exposure on the population level and also depends <span class="math inline">\(p_E\)</span>, the proportion of exposed in the population.</p>
+<p><span class="math display" id="eq:paf">\[\begin{equation} 
+  PAF = I - I_{0} 
+  \tag{4.1}
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(I\)</span> = population incidence that can be expressed as a weighted average among exposed and unexposed as follows<br />
+<span class="math inline">\(I = p_{E}*I_{1} + (1-p_{E})*I_{0}\)</span> and substituting into Equation <a href="measures-of-association-attributable-risk-epir-package.html#eq:paf">(4.1)</a> gives</p>
+<p><span class="math display" id="eq:paf1">\[\begin{equation} 
+  PAF = \dfrac{I - I_{0}}{I} = \dfrac{p_{E} * (RR-1)}{1 + p_{E}* (RR-1) }
+  \tag{4.2}
+\end{equation}\]</span></p>
+<p><strong>Important:</strong> Use the crude and NOT adjusted RR in the above PAF formula that uses the fraction of the entire population exposed</p>
+<p>Diagrammatically represented as</p>
+<p align="center">
+<p><img src="img/assoc/paf.png" /></p>
+<p align="center">
+<p>where PAF fraction = black area out of total black + gray area.</p>
+<p>The PAF is only a simple fraction derived from the arithmetic manipulation of probabilities. As with other measures in public health, how this fraction is interpreted is key. For PAF to be important in the discussion of the public health consequences of intervening to reduce the prevalence of risk exposures, we need to be sure of<br />
+- the causal model<br />
+- absence or control of confounding<br />
+- understanding of multiple exposures &amp; their combinations<br />
+- existence of a feasible intervention with no untoward effects</p>
+<p><code>R</code> packages for AF estimation include <code>epiR</code>, <code>attribrisk</code>, <code>paf</code> and <code>AF</code>. <code>AF</code> can handle confounders for different research designs, including survival data, matched case/control and clustered data.</p>
+</div>
+<div id="standardization" class="section level3" number="4.2.4">
+<h3><span class="header-section-number">4.2.4</span> Standardization</h3>
+<p>Sometimes the exposure disease relationship is distorted by another variable and stratification is the most transparent manner of dealing with this confounding. Combining this strata is most often used for age adjustment.Other more advanced techniques for dealing with confounding will be discussed in later chapters.<br />
+- <strong>Direct adjustment</strong> by standardization <span class="math inline">\(= \sum_{k=1}^K weight_k * rate_k /\)</span> sum of weights<br />
+is a weighted average of stratum-specific rates for each group and applies them to a common standard, but often arbitrary, population, thereby removing differences due to distribution of the population<br />
+- <strong>Indirect adjustment</strong> is performed whenever the stratum-specific incidence risk estimates are either unknown or unreliable. In this case external stratum specific rates are applied.</p>
+</div>
+</div>
+<div id="sample-calculations" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Sample calculations</h2>
+<div id="example-1---basic-incidence-measures" class="section level3" number="4.3.1">
+<h3><span class="header-section-number">4.3.1</span> Example 1 - basic incidence measures</h3>
+<p>Consider the follow-up of a small cohort of 10 subjects.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create small data set</span></span>
+<span id="cb5-2"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb5-3"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb5-4"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">x=</span><span class="fu">factor</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)),</span>
+<span id="cb5-5"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">y=</span><span class="fu">abs</span>(<span class="fu">runif</span>(<span class="dv">10</span>, <span class="dv">1</span>,<span class="dv">24</span>)),</span>
+<span id="cb5-6"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">cen=</span><span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">&quot;n&quot;</span>,<span class="st">&quot;y&quot;</span>,<span class="st">&quot;n&quot;</span>, <span class="st">&quot;y&quot;</span>,<span class="st">&quot;n&quot;</span>,<span class="st">&quot;n&quot;</span>,<span class="st">&quot;y&quot;</span>,<span class="st">&quot;n&quot;</span>,<span class="st">&quot;y&quot;</span>,<span class="st">&quot;n&quot;</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;died&quot;</span>, <span class="st">&quot;censored&quot;</span>))</span>
+<span id="cb5-7"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-8"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># plot of follow-up time</span></span>
+<span id="cb5-10"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-10" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>y, <span class="at">color=</span>cen)) <span class="sc">+</span></span>
+<span id="cb5-11"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>( <span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">xend=</span>x, <span class="at">y=</span><span class="dv">0</span>, <span class="at">yend=</span>y ) ) <span class="sc">+</span></span>
+<span id="cb5-12"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>( <span class="at">color=</span><span class="fu">ifelse</span>(data<span class="sc">$</span>cen <span class="sc">==</span> <span class="st">&quot;died&quot;</span>, <span class="st">&quot;orange&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="at">size=</span><span class="fu">ifelse</span>(data<span class="sc">$</span>cen <span class="sc">==</span> <span class="st">&quot;died&quot;</span>, <span class="dv">5</span>, <span class="dv">2</span>) ) <span class="sc">+</span></span>
+<span id="cb5-13"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb5-14"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb5-15"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;subject&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-16"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">name=</span><span class="st">&quot;Follow-up (months)&quot;</span>, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dv">3</span>), <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">24</span>)) <span class="sc">+</span></span>
+<span id="cb5-17"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Horizontal plot of follow-up time&quot;</span>) <span class="sc">+</span></span>
+<span id="cb5-18"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">&quot;Status&quot;</span>)</span>
+<span id="cb5-19"><a href="measures-of-association-attributable-risk-epir-package.html#cb5-19" aria-hidden="true" tabindex="-1"></a>p</span></code></pre></div>
+<p><img src="04-measures_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>The incidence rate at the end of the follow-up (21 months) = total number of deaths / total person time follow-up</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="measures-of-association-attributable-risk-epir-package.html#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">1</span>, <span class="at">digits =</span> <span class="dv">2</span>)</span>
+<span id="cb6-2"><a href="measures-of-association-attributable-risk-epir-package.html#cb6-2" aria-hidden="true" tabindex="-1"></a>ir_m <span class="ot">&lt;-</span> <span class="fu">sum</span>(data<span class="sc">$</span>cen<span class="sc">==</span><span class="st">&quot;died&quot;</span>) <span class="sc">/</span> <span class="fu">sum</span>(data<span class="sc">$</span>y)</span></code></pre></div>
+<p>The incidence rate at the end of the follow-up (21 months) = 0.05 / person month or 4.9 / 100 person months<br />
+The incidence rate at the end of the follow-up could also be expressed in person years = 0.59 / person year or 58.76 / 100 person years<br />
+One could also calculate the incidence rate for the first 12 months.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="measures-of-association-attributable-risk-epir-package.html#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">1</span>, <span class="at">digits =</span> <span class="dv">2</span>)</span>
+<span id="cb7-2"><a href="measures-of-association-attributable-risk-epir-package.html#cb7-2" aria-hidden="true" tabindex="-1"></a>deaths_1 <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="measures-of-association-attributable-risk-epir-package.html#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( y<span class="sc">&lt;=</span> <span class="dv">12</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="measures-of-association-attributable-risk-epir-package.html#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">months=</span><span class="fu">sum</span>(y))</span></code></pre></div>
+<p>In this time period there were 3 deaths in 11.18 months of follow-up. There were also 7 subjects who completed the 12 months follow-up with no deaths. So the total follow-up time = 95.18<br />
+Therefore the incidence rate at 12 months = 0.03 / person month or 3.15 / 100 person months.<br />
+What is the cumulative incidence over 21 months?<br />
+On the surface, straightforward calculation of number of deaths / initial population = 0.6. However this ignores the censoring.<br />
+The incidence proportions in the presence of censoring can be estimated by assuming a constant rates. <span class="math display">\[Q = 1 − exp(−I × ∆) = 1- exp(-0.049 * 21) = 0.64\]</span> With dynamic study population individual follow-up times are variable and difficult to measure accurately such that a common approximation is to use the mid-population average of the initial and final populations multiplied by the follow-up time.</p>
+</div>
+<div id="example-2---rare-disease" class="section level3" number="4.3.2">
+<h3><span class="header-section-number">4.3.2</span> Example 2 - rare disease</h3>
+<p>For <em>rare disease</em>, the cumulative incidence, rate incidence and incident odds ratio are very similar.<br />
+Consider the following data;</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="measures-of-association-attributable-risk-epir-package.html#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">digits =</span> <span class="dv">5</span>)</span>
+<span id="cb8-2"><a href="measures-of-association-attributable-risk-epir-package.html#cb8-2" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Yes=</span> <span class="fu">c</span>(<span class="dv">4000</span>,<span class="dv">30</span>, <span class="dv">7970</span>), <span class="at">No=</span><span class="fu">c</span>(<span class="dv">16000</span>,<span class="dv">60</span>, <span class="dv">31940</span>), <span class="at">row.names=</span><span class="fu">c</span>(<span class="st">&quot;No. initally at risk&quot;</span>, <span class="st">&quot;No. cases&quot;</span>, <span class="st">&quot;Person years at risk&quot;</span>))</span>
+<span id="cb8-3"><a href="measures-of-association-attributable-risk-epir-package.html#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kbl</span>(dt) <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="measures-of-association-attributable-risk-epir-package.html#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_paper</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="measures-of-association-attributable-risk-epir-package.html#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_header_above</span>(<span class="fu">c</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;Exposure&quot;</span> <span class="ot">=</span> <span class="dv">2</span>)) </span></code></pre></div>
+<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #00000020; padding-bottom: 5px; ">
+Exposure
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Yes
+</th>
+<th style="text-align:right;">
+No
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+No. initally at risk
+</td>
+<td style="text-align:right;">
+4000
+</td>
+<td style="text-align:right;">
+16000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+No. cases
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+60
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Person years at risk
+</td>
+<td style="text-align:right;">
+7970
+</td>
+<td style="text-align:right;">
+31940
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="measures-of-association-attributable-risk-epir-package.html#cb9-1" aria-hidden="true" tabindex="-1"></a>cum_inc <span class="ot">&lt;-</span> (dt[<span class="dv">2</span>,<span class="dv">1</span>]<span class="sc">/</span>dt[<span class="dv">1</span>,<span class="dv">1</span>]) <span class="sc">/</span> (dt[<span class="dv">2</span>,<span class="dv">2</span>]<span class="sc">/</span>dt[<span class="dv">1</span>,<span class="dv">2</span>])                           <span class="co">#    30/4000  /   60/16000</span></span>
+<span id="cb9-2"><a href="measures-of-association-attributable-risk-epir-package.html#cb9-2" aria-hidden="true" tabindex="-1"></a>rate_ratio <span class="ot">&lt;-</span> (dt[<span class="dv">2</span>,<span class="dv">1</span>]<span class="sc">/</span>dt[<span class="dv">3</span>,<span class="dv">1</span>]) <span class="sc">/</span> (dt[<span class="dv">2</span>,<span class="dv">2</span>]<span class="sc">/</span>dt[<span class="dv">3</span>,<span class="dv">2</span>])</span>
+<span id="cb9-3"><a href="measures-of-association-attributable-risk-epir-package.html#cb9-3" aria-hidden="true" tabindex="-1"></a>odds_ratio <span class="ot">&lt;-</span> (dt[<span class="dv">2</span>,<span class="dv">1</span>]<span class="sc">/</span>(dt[<span class="dv">1</span>,<span class="dv">1</span>]<span class="sc">-</span>dt[<span class="dv">2</span>,<span class="dv">1</span>])) <span class="sc">/</span> (dt[<span class="dv">2</span>,<span class="dv">2</span>]<span class="sc">/</span>(dt[<span class="dv">1</span>,<span class="dv">2</span>]<span class="sc">-</span>dt[<span class="dv">2</span>,<span class="dv">2</span>]))</span></code></pre></div>
+<p>This gives a cumulative incidence, rate incidence and incident odds ratio of 2 , 2.0038 , 2.0076, respectively</p>
+</div>
+<div id="example-3---standardization" class="section level3" number="4.3.3">
+<h3><span class="header-section-number">4.3.3</span> Example 3 - Standardization</h3>
+<p>Consider the following cases and populations at risk from 2 different cities</p>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-8">Table 4.1: </span>Cases and numbers at risk
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+age
+</th>
+<th style="text-align:right;">
+cases
+</th>
+<th style="text-align:right;">
+at_risk
+</th>
+<th style="text-align:left;">
+city
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+&lt;40
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Pop1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+&gt;40
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:left;">
+Pop1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+&lt;40
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+400
+</td>
+<td style="text-align:left;">
+Pop2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+&gt;40
+</td>
+<td style="text-align:right;">
+80
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:left;">
+Pop2
+</td>
+</tr>
+</tbody>
+</table>
+<p>The crude risk ratio (Population 1 : Population 2) is 2 but there is severe unbalancing in the age distributions of the 2 populations and age influences the outcome.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stratum specific rates</span></span>
+<span id="cb10-2"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-2" aria-hidden="true" tabindex="-1"></a>rate1 <span class="ot">&lt;-</span> dat[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="st">&quot;cases&quot;</span>] <span class="sc">/</span>dat[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="st">&quot;at_risk&quot;</span>]</span>
+<span id="cb10-3"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-3" aria-hidden="true" tabindex="-1"></a>rate2 <span class="ot">&lt;-</span> dat[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>,<span class="st">&quot;cases&quot;</span>] <span class="sc">/</span>dat[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>, <span class="st">&quot;at_risk&quot;</span>]</span>
+<span id="cb10-4"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-5" aria-hidden="true" tabindex="-1"></a>std.pop <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="dv">100</span>)  <span class="co"># standard young population</span></span>
+<span id="cb10-6"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># adjusted risk ratio</span></span>
+<span id="cb10-8"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-8" aria-hidden="true" tabindex="-1"></a>std.pop1 <span class="ot">&lt;-</span> rate1<span class="sc">*</span>std.pop; std.pop2 <span class="ot">&lt;-</span> rate2<span class="sc">*</span>std.pop</span>
+<span id="cb10-9"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-9" aria-hidden="true" tabindex="-1"></a>rr_std_y <span class="ot">&lt;-</span> <span class="fu">sum</span>(std.pop1) <span class="sc">/</span> <span class="fu">sum</span>(std.pop2)</span>
+<span id="cb10-10"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-11" aria-hidden="true" tabindex="-1"></a>std.pop <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">500</span>)  <span class="co"># standard older population</span></span>
+<span id="cb10-12"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co"># adjusted risk ratio</span></span>
+<span id="cb10-14"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-14" aria-hidden="true" tabindex="-1"></a>std.pop2 <span class="ot">&lt;-</span> rate1<span class="sc">*</span>std.pop; std.pop2 <span class="ot">&lt;-</span> rate2<span class="sc">*</span>std.pop</span>
+<span id="cb10-15"><a href="measures-of-association-attributable-risk-epir-package.html#cb10-15" aria-hidden="true" tabindex="-1"></a>rr_std_o <span class="ot">&lt;-</span> <span class="fu">sum</span>(std.pop1) <span class="sc">/</span> <span class="fu">sum</span>(std.pop2)</span></code></pre></div>
+<p>Standardizing the age distributions (500, 100), we see that Population 2 still has an increased risk, 1.66667, but part of the crude difference was due to the confounding effect of age. Standardizing to an older population (100,500) leads to a smaller relative risk, 0.71429.<br />
+The calculations could be incorporated into a user defined function.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="measures-of-association-attributable-risk-epir-package.html#cb11-1" aria-hidden="true" tabindex="-1"></a>std.pop <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">500</span>)</span>
+<span id="cb11-2"><a href="measures-of-association-attributable-risk-epir-package.html#cb11-2" aria-hidden="true" tabindex="-1"></a>std.direct <span class="ot">&lt;-</span> <span class="cf">function</span>(x1,y1,x2,y2,std.pop){</span>
+<span id="cb11-3"><a href="measures-of-association-attributable-risk-epir-package.html#cb11-3" aria-hidden="true" tabindex="-1"></a>  rate1 <span class="ot">&lt;-</span> x1<span class="sc">/</span>y1; rate2 <span class="ot">&lt;-</span> x2<span class="sc">/</span>y2</span>
+<span id="cb11-4"><a href="measures-of-association-attributable-risk-epir-package.html#cb11-4" aria-hidden="true" tabindex="-1"></a>   std.pop1 <span class="ot">&lt;-</span> rate1<span class="sc">*</span>std.pop; std.pop2 <span class="ot">&lt;-</span> rate2<span class="sc">*</span>std.pop</span>
+<span id="cb11-5"><a href="measures-of-association-attributable-risk-epir-package.html#cb11-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">sum</span>(std.pop1) <span class="sc">/</span> <span class="fu">sum</span>(std.pop2)</span>
+<span id="cb11-6"><a href="measures-of-association-attributable-risk-epir-package.html#cb11-6" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb11-7"><a href="measures-of-association-attributable-risk-epir-package.html#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">std.direct</span>(dat[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="dv">2</span>], dat[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="dv">3</span>], dat[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">2</span>], dat[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">3</span>], std.pop)</span></code></pre></div>
+<pre><code>## [1] 1.2857</code></pre>
+<p>Rather than writing your own function, one can use <code>epi.directadj</code> from the <code>epiR</code> package.<br />
+Care must be taken to provide the arguments as matrices.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="measures-of-association-attributable-risk-epir-package.html#cb13-1" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> <span class="fu">matrix</span>(dat<span class="sc">$</span>cases, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-2"><a href="measures-of-association-attributable-risk-epir-package.html#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;Pop1&quot;</span>,<span class="st">&quot;Pop2&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;&lt;40&quot;</span>,<span class="st">&quot;&gt;40&quot;</span>)))</span>
+<span id="cb13-3"><a href="measures-of-association-attributable-risk-epir-package.html#cb13-3" aria-hidden="true" tabindex="-1"></a>tar <span class="ot">&lt;-</span> <span class="fu">matrix</span>(dat<span class="sc">$</span>at_risk, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-4"><a href="measures-of-association-attributable-risk-epir-package.html#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;Pop1&quot;</span>,<span class="st">&quot;Pop2&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;&lt;40&quot;</span>,<span class="st">&quot;&gt;40&quot;</span>)))</span>
+<span id="cb13-5"><a href="measures-of-association-attributable-risk-epir-package.html#cb13-5" aria-hidden="true" tabindex="-1"></a>std <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">c</span>(<span class="dv">500</span>,<span class="dv">100</span>), <span class="at">nrow =</span> <span class="dv">1</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-6"><a href="measures-of-association-attributable-risk-epir-package.html#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="st">&quot;&quot;</span>, <span class="fu">c</span>(<span class="st">&quot;&lt;40&quot;</span>,<span class="st">&quot;&gt;40&quot;</span>)))</span>
+<span id="cb13-7"><a href="measures-of-association-attributable-risk-epir-package.html#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="measures-of-association-attributable-risk-epir-package.html#cb13-8" aria-hidden="true" tabindex="-1"></a>ans <span class="ot">&lt;-</span> <span class="fu">epi.directadj</span>(obs, tar, std, <span class="at">units =</span> <span class="dv">1</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span>
+<span id="cb13-9"><a href="measures-of-association-attributable-risk-epir-package.html#cb13-9" aria-hidden="true" tabindex="-1"></a>rr <span class="ot">&lt;-</span> ans<span class="sc">$</span>adj.strata<span class="sc">$</span>est[<span class="dv">1</span>] <span class="sc">/</span> ans<span class="sc">$</span>adj.strata<span class="sc">$</span>est[<span class="dv">2</span>]</span>
+<span id="cb13-10"><a href="measures-of-association-attributable-risk-epir-package.html#cb13-10" aria-hidden="true" tabindex="-1"></a>ans</span></code></pre></div>
+<pre><code>## $crude
+##   strata cov est    lower   upper
+## 1   Pop1 &lt;40 0.2 0.122165 0.30888
+## 2   Pop2 &lt;40 0.1 0.071441 0.13617
+## 3   Pop1 &gt;40 0.5 0.406820 0.60813
+## 4   Pop2 &gt;40 0.4 0.317175 0.49783
+## 
+## $crude.strata
+##   strata est   lower   upper
+## 1   Pop1 0.4 0.33164 0.47830
+## 2   Pop2 0.2 0.16582 0.23915
+## 
+## $adj.strata
+##   strata  est   lower   upper
+## 1   Pop1 0.25 0.18082 0.34038
+## 2   Pop2 0.15 0.12180 0.18346</code></pre>
+<p>This function gives the crude, crude by stratum and the adjusted values. The adjusted value for population 1 = 0.25 and the adjusted value for population 1 = 0.15 so the relative risk is 1.66667 as calculated previously for the older standard population.</p>
+<p>It is most often helpful to include a measure of the variation around this point estimate and the general structure is: <strong>Point estimate ± [1.96 × SE (estimate)]</strong> where 1.96 is the z-score (standard normal score) corresponding to the 95% confidence level (i.e., an alpha error of 5%). Confidence intervals for different levels of alpha error obtained by replacing this value with the corresponding z-score value (e.g., 1.64 for 90%, 2.58 for 99% confidence intervals).</p>
+<p>Because the RR is a multiplicative measure and thus asymmetrically distributed, its SE needs to be calculated in a logarithmic scale. <span class="math display">\[Se(log RR) = \sqrt{\frac{b}{a + b} + \frac{d}{c + d}}\]</span> where a = exposed cases, b = exposed non cases, c = unexposed cases, d = unexposed non cases<br />
+The 95% CI calculated on the logarithmic scale is therefore log(95%CI RR) = log RR ± 1.96 X SE(log RR)</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="measures-of-association-attributable-risk-epir-package.html#cb15-1" aria-hidden="true" tabindex="-1"></a>log_se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((<span class="dv">150</span><span class="sc">/</span>(<span class="dv">150</span><span class="sc">*</span><span class="dv">450</span>)) <span class="sc">+</span> (<span class="dv">90</span><span class="sc">/</span>(<span class="dv">90</span><span class="sc">+</span><span class="dv">510</span>)))</span>
+<span id="cb15-2"><a href="measures-of-association-attributable-risk-epir-package.html#cb15-2" aria-hidden="true" tabindex="-1"></a>log_CI <span class="ot">&lt;-</span> <span class="fu">log</span>(rr) <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>)<span class="sc">*</span> <span class="fl">1.96</span> <span class="sc">*</span> log_se</span>
+<span id="cb15-3"><a href="measures-of-association-attributable-risk-epir-package.html#cb15-3" aria-hidden="true" tabindex="-1"></a>CI <span class="ot">&lt;-</span> <span class="fu">exp</span>(log_CI)</span></code></pre></div>
+<p>The 95% CI for the relative risk are therefore from 0.77578 to 3.58061.</p>
+<p>Remembering that these CIs are calculated on a multiplicative scale it is noticed that the point estimate is <strong>not</strong> the arithmetic mean of the confidence limits. Rather the point estimate equals the geometric mean, so as expected <span class="math inline">\(\sqrt{.78 * 3.58} = 1.66\)</span>.<br />
+This follows from lower limit 95% CI (RR) = RR × e<sup>–[1.96 × SE(log RR)]</sup> and upper limit 95% CI (RR) = RR × e<sup>[1.96 × SE(log RR)]</sup><br />
+so lower CI * upper CI = RR<sup>2</sup> or RR = <span class="math inline">\(\sqrt{LCI * UCI}\)</span>.</p>
+</div>
+<div id="example-4---contingency-tables" class="section level3" number="4.3.4">
+<h3><span class="header-section-number">4.3.4</span> Example 4 - Contingency Tables</h3>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="vis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="statistical-inference.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-clinepi.pdf", "bookdown-clinepi.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

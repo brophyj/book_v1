@@ -1,0 +1,103 @@
+
+
+processing file: index.Rmd
+output file: index.knit.md
+
+
+
+processing file: 01-intro.Rmd
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.3     v purrr   0.3.4
+v tibble  3.0.6     v dplyr   1.0.3
+v tidyr   1.1.2     v stringr 1.4.0
+v readr   1.4.0     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+output file: 01-intro.knit.md
+
+
+
+processing file: 02-intro-R.Rmd
+-- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+v ggplot2 3.3.3     v purrr   0.3.4
+v tibble  3.0.6     v dplyr   1.0.3
+v tidyr   1.1.2     v stringr 1.4.0
+v readr   1.4.0     v forcats 0.5.0
+-- Conflicts ------------------------------------------ tidyverse_conflicts() --
+x dplyr::filter() masks stats::filter()
+x dplyr::lag()    masks stats::lag()
+
+Attaching package: 'psych'
+
+The following objects are masked from 'package:ggplot2':
+
+    %+%, alpha
+
+
+Attaching package: 'magrittr'
+
+The following object is masked from 'package:purrr':
+
+    set_names
+
+The following object is masked from 'package:tidyr':
+
+    extract
+
+output file: 02-intro-R.knit.md
+
+Warning messages:
+1: Data frame tidiers are deprecated and will be removed in an upcoming release of broom. 
+2: `data_frame()` is deprecated as of tibble 1.1.0.
+Please use `tibble()` instead.
+This warning is displayed once every 8 hours.
+Call `lifecycle::last_warnings()` to see where this warning was generated. 
+
+
+processing file: 03-visualizations.Rmd
+
+Attaching package: 'dplyr'
+
+The following objects are masked from 'package:stats':
+
+    filter, lag
+
+The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union
+
+Loading required package: sp
+Checking rgeos availability: FALSE
+ 	Note: when rgeos is not available, polygon geometry 	computations in maptools depend on gpclib,
+ 	which has a restricted licence. It is disabled by default;
+ 	to enable gpclib, type gpclibPermit()
+rgdal: version: 1.5-23, (SVN revision 1121)
+Geospatial Data Abstraction Library extensions to R successfully loaded
+Loaded GDAL runtime: GDAL 3.1.4, released 2020/10/20
+Path to GDAL shared files: /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rgdal/gdal
+GDAL binary built with GEOS: TRUE 
+Loaded PROJ runtime: Rel. 6.3.1, February 10th, 2020, [PJ_VERSION: 631]
+Path to PROJ shared files: /Library/Frameworks/R.framework/Versions/4.0/Resources/library/rgdal/proj
+Linking to sp version:1.4-5
+To mute warnings of possible GDAL/OSR exportToProj4() degradation,
+use options("rgdal_show_exportToProj4_warnings"="none") before loading rgdal.
+Google's Terms of Service: https://cloud.google.com/maps-platform/terms/.
+Please cite ggmap if you use it! See citation("ggmap") for details.
+
+Attaching package: 'ggmap'
+
+The following object is masked from 'package:magrittr':
+
+    inset
+
+Quitting from lines 101-117 (03-visualizations.Rmd) 
+Error in grid.Call.graphics(C_text, as.graphicsAnnot(x$label), x$x, x$y,  : 
+  invalid font type
+Calls: local ... drawDetails -> drawDetails.text -> grid.Call.graphics
+In addition: There were 50 or more warnings (use warnings() to see the first 50)
+Execution halted
+Error in Rscript_render(f, render_args, render_meta, add1, add2) : 
+  Failed to compile 03-visualizations.Rmd
+Calls: local ... <Anonymous> -> render_new_session -> Rscript_render
+Execution halted

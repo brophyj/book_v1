@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 5 Non-experimental designs | (Mostly Clinical) Epidemiology with R</title>
+  <meta name="description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="generator" content="bookdown 0.21.6 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 5 Non-experimental designs | (Mostly Clinical) Epidemiology with R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="github-repo" content="brophyj/epi_book" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 5 Non-experimental designs | (Mostly Clinical) Epidemiology with R" />
+  
+  <meta name="twitter:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  
+
+<meta name="author" content="James Brophy" />
+
+
+<meta name="date" content="2021-03-02" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="infer.html"/>
+<link rel="next" href="references.html"/>
+<script src="libs/header-attrs-2.6.6/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<script>
+/* ========================================================================
+ * Bootstrap: transition.js v3.3.7
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: collapse.js v3.3.7
+ * http://getbootstrap.com/javascript/#collapse
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+/* jshint latedef: false */
+
++function ($) {
+  'use strict';
+
+  // COLLAPSE PUBLIC CLASS DEFINITION
+  // ================================
+
+  var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                           '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+    this.transitioning = null
+
+    if (this.options.parent) {
+      this.$parent = this.getParent()
+    } else {
+      this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+    }
+
+    if (this.options.toggle) this.toggle()
+  }
+
+  Collapse.VERSION  = '3.3.7'
+
+  Collapse.TRANSITION_DURATION = 350
+
+  Collapse.DEFAULTS = {
+    toggle: true
+  }
+
+  Collapse.prototype.dimension = function () {
+    var hasWidth = this.$element.hasClass('width')
+    return hasWidth ? 'width' : 'height'
+  }
+
+  Collapse.prototype.show = function () {
+    if (this.transitioning || this.$element.hasClass('in')) return
+
+    var activesData
+    var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+
+    if (actives && actives.length) {
+      activesData = actives.data('bs.collapse')
+      if (activesData && activesData.transitioning) return
+    }
+
+    var startEvent = $.Event('show.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    if (actives && actives.length) {
+      Plugin.call(actives, 'hide')
+      activesData || actives.data('bs.collapse', null)
+    }
+
+    var dimension = this.dimension()
+
+    this.$element
+      .removeClass('collapse')
+      .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
+
+    this.$trigger
+      .removeClass('collapsed')
+      .attr('aria-expanded', true)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse in')[dimension]('')
+      this.transitioning = 0
+      this.$element
+        .trigger('shown.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+
+    this.$element
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+  }
+
+  Collapse.prototype.hide = function () {
+    if (this.transitioning || !this.$element.hasClass('in')) return
+
+    var startEvent = $.Event('hide.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    var dimension = this.dimension()
+
+    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+
+    this.$element
+      .addClass('collapsing')
+      .removeClass('collapse in')
+      .attr('aria-expanded', false)
+
+    this.$trigger
+      .addClass('collapsed')
+      .attr('aria-expanded', false)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.transitioning = 0
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse')
+        .trigger('hidden.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    this.$element
+      [dimension](0)
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+  }
+
+  Collapse.prototype.toggle = function () {
+    this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
+
+  Collapse.prototype.getParent = function () {
+    return $(this.options.parent)
+      .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+      .each($.proxy(function (i, element) {
+        var $element = $(element)
+        this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+      }, this))
+      .end()
+  }
+
+  Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+    var isOpen = $element.hasClass('in')
+
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
+  }
+
+  function getTargetFromTrigger($trigger) {
+    var href
+    var target = $trigger.attr('data-target')
+      || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+
+    return $(target)
+  }
+
+
+  // COLLAPSE PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.collapse')
+      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+      if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.collapse
+
+  $.fn.collapse             = Plugin
+  $.fn.collapse.Constructor = Collapse
+
+
+  // COLLAPSE NO CONFLICT
+  // ====================
+
+  $.fn.collapse.noConflict = function () {
+    $.fn.collapse = old
+    return this
+  }
+
+
+  // COLLAPSE DATA-API
+  // =================
+
+  $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+    var $this   = $(this)
+
+    if (!$this.attr('data-target')) e.preventDefault()
+
+    var $target = getTargetFromTrigger($this)
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $this.data()
+
+    Plugin.call($target, option)
+  })
+
+}(jQuery);
+</script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    // close the dropdown menu when an option is clicked
+    $("#allCodeButton").dropdown("toggle");
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    // close the dropdown menu when an option is clicked
+    $("#allCodeButton").dropdown("toggle");
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+
+    // if code block has been labeled with class `fold-show`, show the code on init!
+    var classList = $(this).attr('class').split(/\s+/);
+    for (var i = 0; i < classList.length; i++) {
+    if (classList[i] === 'fold-show') {
+        show = true;
+      }
+    }
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-target', '#' + id)
+        .attr('aria-expanded', show)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // hack: return show to false, otherwise all next codeBlocks will be shown!
+    show = false;
+
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+
+}
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.7
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.7'
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+    })
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+<style type="text/css">
+.code-folding-btn {
+  margin-bottom: 4px;
+}
+
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+.pull-right > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+.open > .dropdown-menu {
+    display: block;
+    color: #ffffff;
+    background-color: #ffffff;
+    background-image: none;
+    border-color: #92897e;
+}
+
+.dropdown-menu > li > a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #e95420;
+}
+
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #e95420;
+  outline: 0;
+}
+.dropdown-menu > .disabled > a,
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+  color: #aea79f;
+}
+
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+  text-decoration: none;
+  cursor: not-allowed;
+  background-color: transparent;
+  background-image: none;
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+.btn {
+  display: inline-block;
+  margin-bottom: 1;
+  font-weight: normal;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.btn:hover,
+.btn:focus,
+.btn.focus {
+  color: #ffffff;
+  text-decoration: none;
+}
+.btn:active,
+.btn.active {
+  background-image: none;
+  outline: 0;
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
+  cursor: not-allowed;
+  filter: alpha(opacity=65);
+  opacity: 0.65;
+  box-shadow: none;
+}
+a.btn.disabled,
+fieldset[disabled] a.btn {
+  pointer-events: none;
+}
+.btn-default {
+  color: #ffffff;
+  background-color: #aea79f; #important
+  border-color: #aea79f;
+}
+
+.btn-default:focus,
+.btn-default.focus {
+  color: #ffffff;
+  background-color: #978e83;
+  border-color: #6f675e;
+}
+
+.btn-default:hover {
+  color: #ffffff;
+  background-color: #978e83;
+  border-color: #92897e;
+}
+.btn-default:active,
+.btn-default.active,
+.btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
+  border-radius: 0;
+}
+.btn-group > .btn:first-child {
+  margin-left: 0;
+}
+.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group > .btn:last-child:not(:first-child),
+.btn-group > .dropdown-toggle:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.btn-group > .btn-group {
+  float: left;
+}
+.btn-group > .btn-group:not(:first-child):not(:last-child) > .btn {
+  border-radius: 0;
+}
+.btn-group > .btn-group:first-child:not(:last-child) > .btn:last-child,
+.btn-group > .btn-group:first-child:not(:last-child) > .dropdown-toggle {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.btn-group .dropdown-toggle:active,
+.btn-group.open .dropdown-toggle {
+  outline: 0;
+}
+.btn-group > .btn + .dropdown-toggle {
+  padding-right: 8px;
+  padding-left: 8px;
+}
+.btn-group > .btn-lg + .dropdown-toggle {
+  padding-right: 12px;
+  padding-left: 12px;
+}
+.btn-group.open .dropdown-toggle {
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.btn-group.open .dropdown-toggle.btn-link {
+  box-shadow: none;
+}
+
+</style>
+<script>
+var str = '<div class="btn-group pull-right" style="position: fixed; right: 50px; top: 10px; z-index: 200"><button type="button" class="btn btn-default btn-xs dropdown-toggle" id="allCodeButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast=""><span>Code</span> <span class="caret"></span></button><ul class="dropdown-menu" style="min-width: 50px;"><li><a id="rmd-show-all-code" href="#">Show All Code</a></li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li></ul></div>';
+document.write(str);
+</script>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "hide");
+});
+</script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">(Mostly Clinical) Epidemiology with R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="" data-path="simple-acknowledgment-and-request.html"><a href="simple-acknowledgment-and-request.html"><i class="fa fa-check"></i>Simple acknowledgment and request</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.0.1" data-path="intro.html"><a href="intro.html#r-packages-required-for-this-chapter"><i class="fa fa-check"></i><b>1.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#preface"><i class="fa fa-check"></i><b>1.1</b> Preface</a></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#pre"><i class="fa fa-check"></i><b>1.2</b> Prerequisites</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#my-general-philosophy-for-clinical-epidemiology"><i class="fa fa-check"></i><b>1.3</b> My general philosophy for clinical epidemiology</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#brief-excursions-into-quantification"><i class="fa fa-check"></i><b>1.4</b> Brief excursions into quantification</a></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#outline"><i class="fa fa-check"></i><b>1.5</b> Outline</a></li>
+<li class="chapter" data-level="1.6" data-path="intro.html"><a href="intro.html#statistical-software---r"><i class="fa fa-check"></i><b>1.6</b> Statistical software - R</a></li>
+<li class="chapter" data-level="1.7" data-path="intro.html"><a href="intro.html#r---common-data-and-variable-manipulations"><i class="fa fa-check"></i><b>1.7</b> R - Common data and variable manipulations</a></li>
+<li class="chapter" data-level="1.8" data-path="intro.html"><a href="intro.html#rstudio---the-ide-for-r"><i class="fa fa-check"></i><b>1.8</b> RStudio - <strong>The</strong> IDE for R</a></li>
+<li class="chapter" data-level="1.9" data-path="intro.html"><a href="intro.html#r---more-than-a-statistical-program"><i class="fa fa-check"></i><b>1.9</b> R - More than a statistical program</a></li>
+<li class="chapter" data-level="1.10" data-path="intro.html"><a href="intro.html#r---general-public-license"><i class="fa fa-check"></i><b>1.10</b> R - General Public License</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="vis.html"><a href="vis.html"><i class="fa fa-check"></i><b>2</b> Exploratory Data Analysis - Data visualization</a>
+<ul>
+<li class="chapter" data-level="2.0.1" data-path="vis.html"><a href="vis.html#r-packages-required-for-this-chapter-1"><i class="fa fa-check"></i><b>2.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="2.1" data-path="vis.html"><a href="vis.html#introduction"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
+<li class="chapter" data-level="2.2" data-path="vis.html"><a href="vis.html#why-is-data-visualization-important"><i class="fa fa-check"></i><b>2.2</b> Why is data visualization important?</a></li>
+<li class="chapter" data-level="2.3" data-path="vis.html"><a href="vis.html#creating-an-effective-and-professional-appearing-graph"><i class="fa fa-check"></i><b>2.3</b> Creating an effective and professional appearing graph</a></li>
+<li class="chapter" data-level="2.4" data-path="vis.html"><a href="vis.html#graphical-choices"><i class="fa fa-check"></i><b>2.4</b> Graphical choices</a></li>
+<li class="chapter" data-level="2.5" data-path="vis.html"><a href="vis.html#example---a-modern-version-of-the-ghost-map"><i class="fa fa-check"></i><b>2.5</b> Example - A modern version of the “Ghost Map”</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="vis.html"><a href="vis.html#using-modern-geographic-information-system-mapping"><i class="fa fa-check"></i><b>2.5.1</b> Using modern Geographic Information System mapping</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="meas.html"><a href="meas.html"><i class="fa fa-check"></i><b>3</b> Contingency tables, measures of association &amp; R packages</a>
+<ul>
+<li class="chapter" data-level="3.0.1" data-path="meas.html"><a href="meas.html#r-packages-required-for-this-chapter-2"><i class="fa fa-check"></i><b>3.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="3.1" data-path="meas.html"><a href="meas.html#meas1"><i class="fa fa-check"></i><b>3.1</b> Proportions - One sample <span class="math inline">\(\chi^2\)</span> tests</a></li>
+<li class="chapter" data-level="3.2" data-path="meas.html"><a href="meas.html#contingency-tables"><i class="fa fa-check"></i><b>3.2</b> Contingency tables</a></li>
+<li class="chapter" data-level="3.3" data-path="meas.html"><a href="meas.html#some-basic-defintions"><i class="fa fa-check"></i><b>3.3</b> Some basic defintions</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="meas.html"><a href="meas.html#relative-comparative-measures"><i class="fa fa-check"></i><b>3.3.1</b> Relative comparative measures</a></li>
+<li class="chapter" data-level="3.3.2" data-path="meas.html"><a href="meas.html#absolute-comparative-measures"><i class="fa fa-check"></i><b>3.3.2</b> Absolute comparative measures</a></li>
+<li class="chapter" data-level="3.3.3" data-path="meas.html"><a href="meas.html#attributal-measures"><i class="fa fa-check"></i><b>3.3.3</b> Attributal measures</a></li>
+<li class="chapter" data-level="3.3.4" data-path="meas.html"><a href="meas.html#standardization"><i class="fa fa-check"></i><b>3.3.4</b> Standardization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="meas.html"><a href="meas.html#examples-using-base-r"><i class="fa fa-check"></i><b>3.4</b> Examples using base R</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="meas.html"><a href="meas.html#example-1---basic-incidence-measures"><i class="fa fa-check"></i><b>3.4.1</b> Example 1 - basic incidence measures</a></li>
+<li class="chapter" data-level="3.4.2" data-path="meas.html"><a href="meas.html#example-2---rare-disease"><i class="fa fa-check"></i><b>3.4.2</b> Example 2 - rare disease</a></li>
+<li class="chapter" data-level="3.4.3" data-path="meas.html"><a href="meas.html#example-3---standardization"><i class="fa fa-check"></i><b>3.4.3</b> Example 3 - Standardization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="meas.html"><a href="meas.html#packages"><i class="fa fa-check"></i><b>3.5</b> Examples using R epidemiology packages</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="meas.html"><a href="meas.html#example-4-standardization"><i class="fa fa-check"></i><b>3.5.1</b> Example 4 Standardization</a></li>
+<li class="chapter" data-level="3.5.2" data-path="meas.html"><a href="meas.html#example-5---contingency-tables-with-epir-package"><i class="fa fa-check"></i><b>3.5.2</b> Example 5 - Contingency Tables with <code>epiR</code> package</a></li>
+<li class="chapter" data-level="3.5.3" data-path="meas.html"><a href="meas.html#example-6---contingency-tables-with-other-r-packages"><i class="fa fa-check"></i><b>3.5.3</b> Example 6 - Contingency Tables with other <code>R</code> packages</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="infer.html"><a href="infer.html"><i class="fa fa-check"></i><b>4</b> Statistical inference</a>
+<ul>
+<li class="chapter" data-level="4.0.1" data-path="infer.html"><a href="infer.html#r-packages-required-for-this-chapter-3"><i class="fa fa-check"></i><b>4.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="4.1" data-path="infer.html"><a href="infer.html#introduction-1"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.2" data-path="infer.html"><a href="infer.html#null-hypothesis-significance-testing"><i class="fa fa-check"></i><b>4.2</b> Null Hypothesis Significance Testing</a></li>
+<li class="chapter" data-level="4.3" data-path="infer.html"><a href="infer.html#s-values"><i class="fa fa-check"></i><b>4.3</b> S values</a></li>
+<li class="chapter" data-level="4.4" data-path="infer.html"><a href="infer.html#two-views-of-probability"><i class="fa fa-check"></i><b>4.4</b> Two views of probability</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="infer.html"><a href="infer.html#basic-rules-of-probability"><i class="fa fa-check"></i><b>4.4.1</b> Basic rules of probability</a></li>
+<li class="chapter" data-level="4.4.2" data-path="infer.html"><a href="infer.html#bayes-theorem"><i class="fa fa-check"></i><b>4.4.2</b> Bayes Theorem</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="infer.html"><a href="infer.html#bayesian-reasoning-to-understand-why-most-published-research-findings-are-false"><i class="fa fa-check"></i><b>4.5</b> Bayesian reasoning to understand “Why Most Published Research Findings are False”</a></li>
+<li class="chapter" data-level="4.6" data-path="infer.html"><a href="infer.html#bayesian-data-analysis-and-statistical-inference"><i class="fa fa-check"></i><b>4.6</b> Bayesian data analysis and statistical inference</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="infer.html"><a href="infer.html#bayes-factors"><i class="fa fa-check"></i><b>4.6.1</b> Bayes factors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="design.html"><a href="design.html"><i class="fa fa-check"></i><b>5</b> Non-experimental designs</a>
+<ul>
+<li class="chapter" data-level="5.0.1" data-path="design.html"><a href="design.html#r-packages-required-for-this-chapter-4"><i class="fa fa-check"></i><b>5.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="5.1" data-path="design.html"><a href="design.html#introduction-2"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="design.html"><a href="design.html#cohort-studies"><i class="fa fa-check"></i><b>5.2</b> Cohort studies</a></li>
+<li class="chapter" data-level="5.3" data-path="design.html"><a href="design.html#case-control"><i class="fa fa-check"></i><b>5.3</b> Case control</a></li>
+<li class="chapter" data-level="5.4" data-path="design.html"><a href="design.html#cross-sectional"><i class="fa fa-check"></i><b>5.4</b> Cross sectional</a></li>
+<li class="chapter" data-level="5.5" data-path="design.html"><a href="design.html#miscellaneous-designs"><i class="fa fa-check"></i><b>5.5</b> Miscellaneous designs</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>6</b> References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">(Mostly Clinical) Epidemiology with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="design" class="section level1" number="5">
+<h1><span class="header-section-number">Chapter 5</span> Non-experimental designs</h1>
+<div id="r-packages-required-for-this-chapter-4" class="section level3" number="5.0.1">
+<h3><span class="header-section-number">5.0.1</span> R packages required for this chapter</h3>
+<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="design.html#cb155-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb155-2"><a href="design.html#cb155-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span></code></pre></div>
+</div>
+<div id="introduction-2" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Introduction</h2>
+<p>This chapter will provide only the briefest review of non-experimental study designs so as to try and assure that the reader has a common baseline knowledge of the advantages and limitations of each design. The excellent introductory <span class="citation">(<a href="#ref-Gordis" role="doc-biblioref">Gordis 2014</a>)</span> <span class="citation">(<a href="#ref-Rothman" role="doc-biblioref">Rothman 2012</a>)</span>, intermediate <span class="citation">(<a href="#ref-SN" role="doc-biblioref">Szklo and Nieto 2019</a>)</span> and advanced <span class="citation">(<a href="#ref-RGL" role="doc-biblioref">Rothman, Greenland, and Lash 2008</a>)</span> epidemiology textbooks referred to in Chapter <a href="intro.html#pre">1.2</a> provide more complete information.<br />
+The common hierarchy of evidence based medicine (EBM) research designs is presented in this ubiquituous pyramid schema.</p>
+<div class="figure" style="text-align: center"><span id="fig:pyramid"></span>
+<img src="img/ebm/pyramid.png" alt="EBM pyramid of research designs" width="50%" />
+<p class="caption">
+Figure 5.1: EBM pyramid of research designs
+</p>
+</div>
+<p>However, Figure <a href="design.html#fig:pyramid">5.1</a> is another example of a simple heuristic which enables quick but often erroneous conclusions concerning study design. Unfortunately as shown in this and susequent chapters, there are no shortcuts to the evaluation of study designs which need individual considerations. In that respect the following <a href="https://twitter.com/statsepi/status/895012576714731520?lang=en">pyramid</a> is both more realistic and helpful.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-3"></span>
+<img src="img/ebm/pyramid_good.png" alt="EBM pyramid of research designs" width="50%" />
+<p class="caption">
+Figure 2.1: EBM pyramid of research designs
+</p>
+</div>
+<p>Although one may debate that the magnitude of the blue area is an overestimate of the scale of good designs, it does underline the importance in clinical epidemiology of assessing individual study quality for both experimental and non-experimental studies. As this book is orientated toward clinical epidemiology, experimental designs (randomized clinical trials (RCTs)) will be emphasized and discussed separately in a later chapter. RCTs have a special emphasis since they are often considered the pinnacle of research designs and greatly influence medical guidelines and consequently clinical practice.</p>
+<p>The following is a taxonomy of the different types of study designs.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-4"></span>
+<img src="img/ebm/overview.png" alt="Overview of different research designs" width="1000%" />
+<p class="caption">
+Figure 2.4: Overview of different research designs
+</p>
+</div>
+<p>Ecological study designs involve populations or groups of individuals as the unit of analysis as opposed to the other observation designs where the unit of analysis is the individual. Ecological studies are especially useful for descriptive reports, the analysis of birth cohorts, when exposure is only available at the group level, or to investigate differences between populations when the between population difference is much greater than within population differences. For example, ecological studies would be appropriate for aggregate exposure involving air pollution, health care systems, or gun control laws. One must be careful to avoid the <a href="https://en.wikipedia.org/wiki/Ecological_fallacy"><strong>ecological bias</strong></a> that can occur because an association observed between variables on the aggregate level does not necessarily represent the association that exists at the individual level. The ecological bias can be shown graphically in Figure <a href="design.html#fig:ecology">5.2</a> where the discordance of the exposure association between groups and individuals is especially strong.</p>
+<div class="figure" style="text-align: center"><span id="fig:ecology"></span>
+<img src="img/ebm/ecological.png" alt="Ecological bias" width="1000%" />
+<p class="caption">
+Figure 5.2: Ecological bias
+</p>
+</div>
+<p>The real problem is <strong>cross-level reference</strong>. For an ecological study the level of measurement, level of analysis, and level of inference must all remain at the group level. Ecological studies will not be considered further in this book.</p>
+<p>Among non-experimental designs involving individuals, there are essentially 3 different ways at arriving at conclusions by<br />
+1) reference to population follow-up (cohort)<br />
+2) joint assessment of exposure among cases and non-cases (case-control)<br />
+3) reference to one particular time (cross-sectional)</p>
+<p>Since all study designs, including the non-experimental (cohort, case-control, cross-sectional) either secretly or not, aim to estimate similar causal quantities, it could be argued that emphasizing their distinctions is somewhat artificial. In other words, do not mistake the journey (particular study type) for the destination (causal effect of an exposure).</p>
+<p>This lack of randomization with observational studies, is why we are continually reminded that non-experimental studies can’t provide evidence for causality. Instead we are told to talk of associations. A list of the top 2019 JAMA Internal Medicine articles as determined by <a href="https://www.altmetric.com">Altmetric scores</a> can be found <a href="https://jamanetwork.com/pages/2019-most-discussed-articles">here</a> and is reproduced in Figure <a href="design.html#fig:jama">5.3</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:jama"></span>
+<img src="img/ebm/jama.png" alt="JAMA Internal Medicine Top 2019 Altmetric Articles" width="100%" />
+<p class="caption">
+Figure 5.3: JAMA Internal Medicine Top 2019 Altmetric Articles
+</p>
+</div>
+<p>Most interestingly, 11 of the top 14 articles have “association” in their title. But are we really interested in mere associations of the type that matches in your pocket or yellow fingers are associated with lung cancer? I don’t believe so and suspect most people are more interested for obvious reasons in causality and whether they care to admit it or not are subconsciously interpreting association studies in this light<span class="citation">(<a href="#ref-cword" role="doc-biblioref">Hernan 2018</a>)</span> . Otherwise there appears little justification to waste one’s time on reading these articles.</p>
+<p>Although this is not a book on causality and although I most definitely lack the expertise to delve deeply into this issue, I do think we should acknowledge that the heuristic that observational studies can never inform on causality is flawed and should think more deeply about how we can reach this elusive goal of establishing causality. Please see the following excellent references on causal inference, <span class="citation">(<a href="#ref-Westreich" role="doc-biblioref">Westreich 2019</a>)</span>, <span class="citation">(<a href="#ref-pearl_intro" role="doc-biblioref">Pearl, Glymour, and Jewell 2016</a>)</span>, <span class="citation">(<a href="#ref-Hernan_book" role="doc-biblioref">Hernán and JM 2020</a>)</span> and <span class="citation">(<a href="#ref-Pearl_causality" role="doc-biblioref">Pearl 2008</a>)</span>, ordered in increasing detail and complexity.</p>
+<div class="blue-box">
+<table>
+<colgroup>
+<col width="100%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key concepts for causal inference</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><ul>
+<li><p>Temporality (exposure must occur before the outcome)</p></li>
+<li><p>Conditional exchangeability (to minimize confounding and selection bias to achieve comparability using regression, stratification, restriction, or standardization)</p></li>
+<li><p>Positivity and consistency (to assure the existence of a potential counterfactual)</p></li>
+<li><p>No measurement error (to minimize misclassification in exposure, outcome or confounders required to achieve conditional exchangeability)</p></li>
+</ul></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Again more details may be found in the above mentioned references.</p>
+</div>
+<div id="cohort-studies" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Cohort studies</h2>
+<p>A cohort is a designated/defined group of individuals followed through time often to study incidence of disease in the study group. Examples of sample cohorts may include occupational cohorts, specific groups at risk of a disease or convenience samples (e.g. Nurses or Framingham cohorts). Be careful to distinguish between study, source and target populations.</p>
+<p>Cohort studies offer multiple potential advantages:<br />
+* Can study exposures that are difficult or unthinkable to randomize<br />
+* Study population often more representative of target pop’l<br />
+* Allows calculation of incidence rates<br />
+* Time sequence is generally clear (exposure before outcome)<br />
+* Efficient as multiple outcomes / exposures can be assessed as new hypothesis are developed over time</p>
+<p>Cohort studies can be of 2 formats;<br />
+1. Concurrent (prospective) cohort studies: assembled at present time. Advantages: measurement of exposure, outcome, covariates is decided at baseline and can see temporal ordering of exposure and disease. Disadvantages: expensive and time consuming.<br />
+2. Historical/non-concurrent/mixed (retrospective) cohort studies: incorporates historical time exposed (at least partially). Advantages: less expensive; linking data registries (e.g. exposure and outcome information). Disadvantages: can only use available information; possibly lower quality measurements; data may not have been collected for research purposes.</p>
+<p>In cohort studies, exposed/unexposed groups <strong>exist</strong> in the source population and are <strong>selected</strong> by the investigator while in an RCT, a form of closed cohort, treatment/exposure is <strong>assigned</strong> by the investigator.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-5-1"></span>
+<img src="img/ebm/cohort.png" alt="Observational research design" width="50%" />
+<p class="caption">
+Figure 5.4: Observational research design
+</p>
+</div>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-5-2"></span>
+<img src="img/ebm/rct.png" alt="Experimental research design" width="50%" />
+<p class="caption">
+Figure 5.5: Experimental research design
+</p>
+</div>
+<p>Practically, the best general approach to achieve valid causal non-experimental designs is to try to emulate the RCT<span class="citation">(<a href="#ref-emulate" role="doc-biblioref">Hernan and Robins 2016</a>)</span> you would like to do with special attention to the following:<br />
+* Selection of population<br />
+* Exposure definition (induction, duration, intensity, cumulative exposures)<br />
+* Outcome ascertainment with minimization of lost to follow-up</p>
+</div>
+<div id="case-control" class="section level2" number="5.3">
+<h2><span class="header-section-number">5.3</span> Case control</h2>
+<p>Sometimes it useful to start with the cases! Although important for all research designs, it is obviously essential for case control designs to have an unambiguous, valid case definition preferably using objective and established criteria that avoids any misclassification or other biases. Careful distinction between incident and prevalent cases is also of prime importance. Where the cases are found is a function of the particular research question and setting. Potential sources include hospital registers, vital records (births/deaths), national registries (e.g., for cancer, diabetes) and community clinics.</p>
+<p>After case identification, the most important and difficult next step is the selection of the controls. Consideration of a counterfactual model can help operationalize the choice of controls. Controls are drawn from a sample of individuals without the disease, selected from the same reference population that originated the cases and who go through the same selection processes as the cases. Moreover, controls must be individuals who, if they had developed the case disease, would have been included in the case group.</p>
+<p>Case control studies may be conducted with an open or closed study population. In a dynamic (open) population, there are two options for selecting controls; i) if the population is in a steady-state, sample randomly from the person-time distribution ii) if not, controls may be selected at the same time as cases occur (i.e., “matched on time”). In a closed study population, there are three options for selecting controls; i) at the end of follow-up ii) at the beginning of follow-up iii) throughout follow-up as cases occur (“matched on time”). Analytically, these distinctions lead to different effect measures, each of which (under various assumptions) parallels an equivalent measure from a full-cohort study.</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-6"></span>
+<img src="img/ebm/cc.png" alt="Case control sampling times" width="50%" />
+<p class="caption">
+Figure 2.6: Case control sampling times
+</p>
+</div>
+<ul>
+<li>Sample point 1 - This is the classic “<strong>case based</strong>” sampling (AKA “exclusive,” “cumulative”) that occurs at the end of follow-up. In this case, the incident odds ratio (OR) ≈ risk ratio (RR) (under the rare disease assumption)<br />
+</li>
+<li>Sample point 2 - This is “<strong>case-cohort</strong>” sampling (AKA “inclusive”) that occurs at the beginning of follow-up. In this case, the incident odds ratio (OR) ≈ risk ratio (RR) (rare disease assumption not required)<br />
+</li>
+<li>Sample point 3 - “<strong>Nested</strong>” sampling (AKA “incidence density”) from the distribution of exposed person-time matched during follow-up. In this case, the incident odds ratio (OR) ≈ rate ratio (RR)</li>
+</ul>
+<p>The efficiency of the case control design comes from taking a sample, and not all, of the controls. Under that logic, it may be reasonably asked why not take only a sample of the cases? Consider the following example.</p>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="design.html#cb156-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb156-2"><a href="design.html#cb156-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb156-3"><a href="design.html#cb156-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">200</span>,<span class="dv">100</span>,<span class="dv">1800</span>,<span class="dv">1900</span>), <span class="at">nrow=</span><span class="dv">2</span>, <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;Not exposed&quot;</span>,<span class="st">&quot;Exposed&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;MI yes&quot;</span>, <span class="st">&quot;MI no&quot;</span>)))</span>
+<span id="cb156-4"><a href="design.html#cb156-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb156-5"><a href="design.html#cb156-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dat, <span class="at">caption =</span> <span class="st">&quot;Full cohort&quot;</span>)</span></code></pre></div>
+<table>
+<caption><span id="tab:unnamed-chunk-7">Table 5.1: </span>Full cohort</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">MI yes</th>
+<th align="right">MI no</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Not exposed</td>
+<td align="right">200</td>
+<td align="right">1800</td>
+</tr>
+<tr class="even">
+<td align="left">Exposed</td>
+<td align="right">100</td>
+<td align="right">1900</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="design.html#cb157-1" aria-hidden="true" tabindex="-1"></a>full <span class="ot">&lt;-</span> <span class="fu">epi.2by2</span>(dat)</span>
+<span id="cb157-2"><a href="design.html#cb157-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb157-3"><a href="design.html#cb157-3" aria-hidden="true" tabindex="-1"></a>dat.con10 <span class="ot">&lt;-</span> dat</span>
+<span id="cb157-4"><a href="design.html#cb157-4" aria-hidden="true" tabindex="-1"></a>dat.con10[,<span class="dv">2</span>] <span class="ot">&lt;-</span> dat[,<span class="dv">2</span>]<span class="sc">/</span><span class="dv">10</span></span>
+<span id="cb157-5"><a href="design.html#cb157-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dat.con10, <span class="at">caption =</span> <span class="st">&quot;Case control - 10% of controls&quot;</span>)</span></code></pre></div>
+<table>
+<caption><span id="tab:unnamed-chunk-7">Table 5.1: </span>Case control - 10% of controls</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">MI yes</th>
+<th align="right">MI no</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Not exposed</td>
+<td align="right">200</td>
+<td align="right">180</td>
+</tr>
+<tr class="even">
+<td align="left">Exposed</td>
+<td align="right">100</td>
+<td align="right">190</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="design.html#cb158-1" aria-hidden="true" tabindex="-1"></a>full<span class="fl">.10</span> <span class="ot">&lt;-</span> <span class="fu">epi.2by2</span>(<span class="fu">as.matrix</span>(dat.con10))</span>
+<span id="cb158-2"><a href="design.html#cb158-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb158-3"><a href="design.html#cb158-3" aria-hidden="true" tabindex="-1"></a>dat.case10 <span class="ot">&lt;-</span> dat</span>
+<span id="cb158-4"><a href="design.html#cb158-4" aria-hidden="true" tabindex="-1"></a>dat.case10[,<span class="dv">1</span>] <span class="ot">&lt;-</span> dat[,<span class="dv">1</span>]<span class="sc">/</span><span class="dv">10</span></span>
+<span id="cb158-5"><a href="design.html#cb158-5" aria-hidden="true" tabindex="-1"></a>dat.case10[,<span class="dv">2</span>] <span class="ot">&lt;-</span> dat[,<span class="dv">2</span>]<span class="sc">/</span><span class="dv">10</span></span>
+<span id="cb158-6"><a href="design.html#cb158-6" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dat.case10, <span class="at">caption =</span> <span class="st">&quot;Case control - 10% of cases and controls&quot;</span>)</span></code></pre></div>
+<table>
+<caption><span id="tab:unnamed-chunk-7">Table 5.1: </span>Case control - 10% of cases and controls</caption>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="right">MI yes</th>
+<th align="right">MI no</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Not exposed</td>
+<td align="right">20</td>
+<td align="right">180</td>
+</tr>
+<tr class="even">
+<td align="left">Exposed</td>
+<td align="right">10</td>
+<td align="right">190</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="design.html#cb159-1" aria-hidden="true" tabindex="-1"></a>full.case10 <span class="ot">&lt;-</span> <span class="fu">epi.2by2</span>(<span class="fu">as.matrix</span>(dat.case10))</span></code></pre></div>
+<p>The OR is 2.11 with 95% CI 1.65 - 2.71. The OR is fairly close to incident risk ratio for the full cohort (RR = 2) since the rare assumption is approximately true, about 10% incidence.<br />
+If we select only 1/10 of the controls the OR is 2.11 with 95% CI 1.54 - 2.89, a trivial difference.<br />
+On the other hand, suppose we take a 1/10 sample of the cases, the OR remains unbiased at 2.11 but the 95% CI 0.96 - 4.63 is much larger. It is this lack of precision that mandates the inclusion of all cases in a case / control design.<br />
+This is easily understood when it is recalled that the standard error of the estimated OR is <span class="math display">\[se(\hat{OR}) = \sqrt{\dfrac{1}{a} + \dfrac{1}{b} + \dfrac{1}{c} + \dfrac{1}{d}}\]</span> so the largest component comes from the smallest cell entries and se will be minimized by taking all the cases.</p>
+<p>The following figure from <span class="citation">(<a href="#ref-Knol" role="doc-biblioref">Knol et al. 2008</a>)</span> is a useful summary of the effect measures available from case control studies depending on the nature of the cases (prevalent or incident; level 1), the type of source population (fixed cohort or dynamic population; level 2), the sampling design used to select controls (level 3), and the underlying assumptions (level 4).</p>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-8"></span>
+<img src="img/ebm/cc_measures.png" alt="Effect measures from case control designs" width="1000%" />
+<p class="caption">
+Figure 1.2: Effect measures from case control designs
+</p>
+</div>
+<p>In summary, case control studies have the advantages of being faster to perform and less expensive to conduct than cohort studies but care must be exercised that they, like all study designs, are carefully performed. Proper control selection is essential and must come from the same target population as cases (easiest when performed within an established cohort). Controls must be sampled independently of exposure and there is improved precision with more controls (1,2,3,4) but diminishing returns (SE 0.167, 0.145, 0.138, 0.134). Effect measure precision is improved precision by taking all the cases. Although case control studies are susceptible to recognized biases (Berkson, recall, incidence/prevalence) these can be avoided with necessary care. The routine placement of case-control studies under cohort studies on hierarchies of study designs is not well-founded.</p>
+<p>An interesting variant is the case crossover design where each case serves as its own control thereby minimizes confounding for time invariant factors whether observed or unobserved. Exposures must vary over time but have a short induction time, a transient effect (e.g., triggers for heart attacks, asthma episodes) and no cumulative effects. This design is the observational analogue of the crossover randomized trial.</p>
+<p>A final variant are case series without any controls. While the early identification of cases may prove sentinel for a new disease (see cases series that lead to first identification of the <a href="https://www.cdc.gov/mmwr/preview/mmwrhtml/june_5.htm">AIDS epidemic</a>), the inferential strength of this design is limited due to the lack of any suitable comparator. Moreover arbitrary selection of cases and an embellished narrative can lead to an undervaluing of scientific evidence and great public health danger (see cases series <span class="citation">(<a href="#ref-Wakefield" role="doc-biblioref">Wakefield et al. 1998</a>)</span>, later retracted, at the genesis of the vaccine autism falsehood).</p>
+</div>
+<div id="cross-sectional" class="section level2" number="5.4">
+<h2><span class="header-section-number">5.4</span> Cross sectional</h2>
+<p>Cross sectional studies are most useful for descriptive epidemiology with a primary goal of estimating disease prevalence. As no follow-up is required, cross sectional studies are fast, efficient and can enroll large numbers of participants. However they have little value for causal inference as they provide no information on timing of outcome relative to exposure (temporality) and include only those individuals alive at the time of the study, thereby introducing a prevalence-incidence bias. Due to these limitations, this study design has little value in clinical epidemiology and will not be discussed further.</p>
+</div>
+<div id="miscellaneous-designs" class="section level2" number="5.5">
+<h2><span class="header-section-number">5.5</span> Miscellaneous designs</h2>
+<p>There are, of course, many variants and other miscellaneous non-experimental designs including <a href="https://en.wikipedia.org/wiki/Difference_in_differences">difference-in-difference (DID)</a>, <a href="https://en.wikipedia.org/wiki/Regression_discontinuity_design">regression discontinuity</a>, and <a href="https://en.wikipedia.org/wiki/Quasi-experiment">quasi-experimental</a> to name but a few.</p>
+<p>Conceptually, DID design can be best thought of as a combination of a before &amp; after comparison and a comparison between treated &amp; untreated individuals and are therefore also known as ontrolled before and after studies. These studies minimize bias due to pretreatment differences in outcomes,allow for a flexible control of time invariant confounders and are preferable to an uncontrolled before and after comparison of only treated individuals.</p>
+<p>Quasi-experimental designs refer to approaches to effect estimation in which investigators identify (or create) a source of variation in the exposure which is unrelated to the rest of the causal system under study—including the outcome (except through the exposure itself) and the confounders. A classic historical example is John Snow’s cholera work where which household received “dirtier” water from the Southwark and Vauxhall company or “cleaner” water from the Lambeth company was a quasi-random event. The company can thus be seen as an instrumental variable, similar to randomization. Regression discontinuity designs are a special subset of quasi-experimental designs where subjects just above and below a given threshold are essentially identical on all observed and unobserved characteristics yet are arbitrarily assigned different therapies.</p>
+
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Gordis" class="csl-entry">
+Gordis, Leon. 2014. <em>Epidemiology</em>. Book.
+</div>
+<div id="ref-cword" class="csl-entry">
+Hernan, M. A. 2018. <span>“The c-Word: Scientific Euphemisms Do Not Improve Causal Inference from Observational Data.”</span> Journal Article. <em>Am J Public Health</em> 108 (5): 616–19. <a href="https://doi.org/10.2105/AJPH.2018.304337">https://doi.org/10.2105/AJPH.2018.304337</a>.
+</div>
+<div id="ref-emulate" class="csl-entry">
+Hernan, M. A., and J. M. Robins. 2016. <span>“Using Big Data to Emulate a Target Trial When a Randomized Trial Is Not Available.”</span> Journal Article. <em>Am J Epidemiol</em> 183 (8): 758–64. <a href="https://doi.org/10.1093/aje/kwv254">https://doi.org/10.1093/aje/kwv254</a>.
+</div>
+<div id="ref-Hernan_book" class="csl-entry">
+Hernán, MA, and Robins JM. 2020. <em>Causal Inference: What If.</em> Book. Boca Raton: Chapman &amp; Hall/CRC.
+</div>
+<div id="ref-Knol" class="csl-entry">
+Knol, M. J., J. P. Vandenbroucke, P. Scott, and M. Egger. 2008. <span>“What Do Case-Control Studies Estimate? Survey of Methods and Assumptions in Published Case-Control Research.”</span> Journal Article. <em>Am J Epidemiol</em> 168 (9): 1073–81. <a href="https://doi.org/10.1093/aje/kwn217">https://doi.org/10.1093/aje/kwn217</a>.
+</div>
+<div id="ref-Pearl_causality" class="csl-entry">
+Pearl, J. 2008. <em>Causality. Cambridge University Press</em>. Book.
+</div>
+<div id="ref-pearl_intro" class="csl-entry">
+Pearl, J, M Glymour, and NP Jewell. 2016. <em>Causal Inference in Statistics. John Wiley.</em> Book.
+</div>
+<div id="ref-Rothman" class="csl-entry">
+Rothman, Kenneth J. 2012. <em>Epidemiology : An Introduction</em>. Book. New York, NY: Oxford University Press.
+</div>
+<div id="ref-RGL" class="csl-entry">
+Rothman, Kenneth J., Sander Greenland, and Timothy L. Lash. 2008. <em>Modern Epidemiology</em>. Book.
+</div>
+<div id="ref-SN" class="csl-entry">
+Szklo, M., and F. Javier Nieto. 2019. <em>Epidemiology : Beyond the Basics</em>. Book.
+</div>
+<div id="ref-Wakefield" class="csl-entry">
+Wakefield, A. J., S. H. Murch, A. Anthony, J. Linnell, D. M. Casson, M. Malik, M. Berelowitz, et al. 1998. <span>“Ileal-Lymphoid-Nodular Hyperplasia, Non-Specific Colitis, and Pervasive Developmental Disorder in Children.”</span> Journal Article. <em>Lancet</em> 351 (9103): 637–41. <a href="https://doi.org/10.1016/s0140-6736(97)11096-0">https://doi.org/10.1016/s0140-6736(97)11096-0</a>.
+</div>
+<div id="ref-Westreich" class="csl-entry">
+Westreich, D. 2019. <em>Epidemiology by Design. Oxford University Press</em>. Book.
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="infer.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-clinepi.pdf", "bookdown-clinepi.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

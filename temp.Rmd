@@ -1,0 +1,155 @@
+---
+title: "Forest plots - steroids"
+author: "Jay Brophy"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output:
+  html_document:
+    code_folding: hide
+    highlight: tango
+    theme: cerulean
+    toc: yes
+    toc_float: yes
+  pdf_document:
+    toc: yes
+link-citations: yes
+linkcolor: red
+urlcolor: blue
+bibliography: references.bib
+csl: vancouver-brackets.csl
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load libaries and Total data
+
+```{r results='asis', warning=FALSE, message=FALSE}
+library(bayesmeta)
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(ggthemes)
+library(metafor)
+library(meta)
+library(epiR)
+options(dplyr.summarise.inform=FALSE)
+
+temp <- read.csv("steroids_new.csv", header = TRUE, sep = ",")
+total <- temp[1:4,1:5]
+total$Study <- sub(" .*", "", total$Study) # remove everything after first space
+kable(total)
+```
+
+### Calaculating individual RR and SE for total data
+```{r}
+remd.es <- escalc(measure="RR", ai=Steroid.Died, n1i=Steroid.Total, ci=Control.Died, 
+                  n2i=Control.Total, slab=Study, data=total)
+
+set.seed(1234)
+ma02 <- bayesmeta(y = remd.es[,"yi"], sigma = sqrt(remd.es[,"vi"]),
+                  labels = remd.es[,"Study"], mu.prior.mean = 0, mu.prior.sd = 4,
+                  tau.prior = function(t){dhalfnormal(t,scale=0.03)})
+
+
+ma02$summary
+
+forestplot(ma02, expo=TRUE, zero=1)
+ 
+pdf(file = 'figs/het_03/RRforestplot_s_total.pdf') 
+forestplot(ma02, expo=TRUE, zero=1, xlab="Relative Risk ", title="Steroids - total data")
+dev.off() 
+
+png(file = 'figs/het_03/RRforestplot_s_total.png') 
+forestplot(ma02, expo=TRUE, zero=1, xlab="Relative Risk ", title="Steroids - total data")
+dev.off() 
+
+```
+
+### Calaculating individual RR and SE for Mechanical Ventilation or High Flow Oxygen
+
+```{r}
+higho2 <- temp[c(2:9),1:5]
+higho2$Study <- sub(" .*", "", higho2$Study) # remove everything after first space
+kable(higho2)
+
+remd.es <- escalc(measure="RR", ai=Steroid.Died, n1i=Steroid.Total, ci=Control.Died, 
+                  n2i=Control.Total, slab=Study, data=higho2)
+
+set.seed(1234)
+
+ma03 <- bayesmeta(y = remd.es[,"yi"], sigma = sqrt(remd.es[,"vi"]),
+                  labels = remd.es[,"Study"], mu.prior.mean = 0, mu.prior.sd = 4,
+                  tau.prior = function(t){dhalfnormal(t,scale=0.03)})
+
+ma03$summary
+forestplot(ma03,expo=TRUE, zero=1) # gives log OR
+
+pdf(file = 'figs/het_03/RRforestplot_s_vent.pdf') 
+forestplot(ma03, expo=TRUE, zero=1, xlab="Relative Risk", title="Steroids - Mechanical Ventilation or High Flow Oxygen")
+dev.off() 
+
+png(file = 'figs/het_03/RRforestplot_s_vent.png') 
+forestplot(ma03, expo=TRUE, zero=1, xlab="Relative Risk", title="Steroids - Mechanical Ventilation or High Flow Oxygen")
+dev.off() 
+```
+
+### Calaculating individual RR and SE for O2 but no mechanical ventilation data
+
+```{r}
+novent <- temp[c(11:16),1:5]
+novent$Study <- sub(" .*", "", novent$Study) # remove everything after first space
+kable(novent)
+
+remd.es <- escalc(measure="RR", ai=Steroid.Died, n1i=Steroid.Total, ci=Control.Died, 
+                  n2i=Control.Total, slab=Study, data=novent)
+
+set.seed(1234)
+
+ma04 <- bayesmeta(y = remd.es[,"yi"], sigma = sqrt(remd.es[,"vi"]),
+                  labels = remd.es[,"Study"], mu.prior.mean = 0, mu.prior.sd = 4,
+                  tau.prior = function(t){dhalfnormal(t,scale=0.03)})
+
+ma04$summary
+forestplot(ma04,expo=TRUE, zero=1) # gives log OR
+
+pdf(file = 'figs/het_03/RRforestplot_s_o2novent.pdf') 
+forestplot(ma04, expo=TRUE, zero=1, xlab="Relative Risk ", title="Steroids - Oxygen without mechanical ventilation ")
+dev.off() 
+
+png(file = 'figs/het_03/RRforestplot_s_o2novent.png') 
+forestplot(ma04, expo=TRUE, zero=1, xlab="Relative Risk", title="Steroids - Oxygen without mechanical ventilation ")
+dev.off() 
+
+```
+### Calaculating individual RR and SE for no oxygen
+
+```{r}
+noo2 <- temp[c(18:19),1:5]
+noo2$Study <- sub(" .*", "", noo2$Study) # remove everything after first space
+kable(noo2)
+
+remd.es <- escalc(measure="RR", ai=Steroid.Died, n1i=Steroid.Total, ci=Control.Died, 
+                  n2i=Control.Total, slab=Study, data=noo2)
+
+set.seed(1234)
+
+ma05 <- bayesmeta(y = remd.es[,"yi"], sigma = sqrt(remd.es[,"vi"]),
+                  labels = remd.es[,"Study"], mu.prior.mean = 0, mu.prior.sd = 4,
+                  tau.prior = function(t){dhalfnormal(t,scale=0.03)})
+
+ma05$summary
+forestplot(ma05, expo=TRUE, zero=1) # gives log OR
+
+pdf(file = 'figs/het_03/RRforestplot_s_noO2.pdf') 
+forestplot(ma05, expo=TRUE, zero=1, xlab="Relative Risk ", title="Steroids - No oxygen")
+dev.off() 
+
+png(file = 'figs/het_03/RRforestplot_s_noO2.png') 
+forestplot(ma05, expo=TRUE, zero=1, xlab="Relative Risk", title="Steroids - No oxygen")
+dev.off() 
+
+
+```
+
+
+

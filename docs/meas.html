@@ -1,0 +1,1862 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 3 Contingency tables, measures of association &amp; R packages | (Mostly Clinical) Epidemiology with R</title>
+  <meta name="description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="generator" content="bookdown 0.21.6 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 3 Contingency tables, measures of association &amp; R packages | (Mostly Clinical) Epidemiology with R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="github-repo" content="brophyj/epi_book" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 3 Contingency tables, measures of association &amp; R packages | (Mostly Clinical) Epidemiology with R" />
+  
+  <meta name="twitter:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  
+
+<meta name="author" content="James Brophy" />
+
+
+<meta name="date" content="2021-03-02" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="vis.html"/>
+<link rel="next" href="infer.html"/>
+<script src="libs/header-attrs-2.6.6/header-attrs.js"></script>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script src="libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<script>
+/* ========================================================================
+ * Bootstrap: transition.js v3.3.7
+ * http://getbootstrap.com/javascript/#transitions
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
+  // ============================================================
+
+  function transitionEnd() {
+    var el = document.createElement('bootstrap')
+
+    var transEndEventNames = {
+      WebkitTransition : 'webkitTransitionEnd',
+      MozTransition    : 'transitionend',
+      OTransition      : 'oTransitionEnd otransitionend',
+      transition       : 'transitionend'
+    }
+
+    for (var name in transEndEventNames) {
+      if (el.style[name] !== undefined) {
+        return { end: transEndEventNames[name] }
+      }
+    }
+
+    return false // explicit for ie8 (  ._.)
+  }
+
+  // http://blog.alexmaccaw.com/css-transitions
+  $.fn.emulateTransitionEnd = function (duration) {
+    var called = false
+    var $el = this
+    $(this).one('bsTransitionEnd', function () { called = true })
+    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
+    setTimeout(callback, duration)
+    return this
+  }
+
+  $(function () {
+    $.support.transition = transitionEnd()
+
+    if (!$.support.transition) return
+
+    $.event.special.bsTransitionEnd = {
+      bindType: $.support.transition.end,
+      delegateType: $.support.transition.end,
+      handle: function (e) {
+        if ($(e.target).is(this)) return e.handleObj.handler.apply(this, arguments)
+      }
+    }
+  })
+
+}(jQuery);
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: collapse.js v3.3.7
+ * http://getbootstrap.com/javascript/#collapse
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+/* jshint latedef: false */
+
++function ($) {
+  'use strict';
+
+  // COLLAPSE PUBLIC CLASS DEFINITION
+  // ================================
+
+  var Collapse = function (element, options) {
+    this.$element      = $(element)
+    this.options       = $.extend({}, Collapse.DEFAULTS, options)
+    this.$trigger      = $('[data-toggle="collapse"][href="#' + element.id + '"],' +
+                           '[data-toggle="collapse"][data-target="#' + element.id + '"]')
+    this.transitioning = null
+
+    if (this.options.parent) {
+      this.$parent = this.getParent()
+    } else {
+      this.addAriaAndCollapsedClass(this.$element, this.$trigger)
+    }
+
+    if (this.options.toggle) this.toggle()
+  }
+
+  Collapse.VERSION  = '3.3.7'
+
+  Collapse.TRANSITION_DURATION = 350
+
+  Collapse.DEFAULTS = {
+    toggle: true
+  }
+
+  Collapse.prototype.dimension = function () {
+    var hasWidth = this.$element.hasClass('width')
+    return hasWidth ? 'width' : 'height'
+  }
+
+  Collapse.prototype.show = function () {
+    if (this.transitioning || this.$element.hasClass('in')) return
+
+    var activesData
+    var actives = this.$parent && this.$parent.children('.panel').children('.in, .collapsing')
+
+    if (actives && actives.length) {
+      activesData = actives.data('bs.collapse')
+      if (activesData && activesData.transitioning) return
+    }
+
+    var startEvent = $.Event('show.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    if (actives && actives.length) {
+      Plugin.call(actives, 'hide')
+      activesData || actives.data('bs.collapse', null)
+    }
+
+    var dimension = this.dimension()
+
+    this.$element
+      .removeClass('collapse')
+      .addClass('collapsing')[dimension](0)
+      .attr('aria-expanded', true)
+
+    this.$trigger
+      .removeClass('collapsed')
+      .attr('aria-expanded', true)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse in')[dimension]('')
+      this.transitioning = 0
+      this.$element
+        .trigger('shown.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
+
+    this.$element
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)[dimension](this.$element[0][scrollSize])
+  }
+
+  Collapse.prototype.hide = function () {
+    if (this.transitioning || !this.$element.hasClass('in')) return
+
+    var startEvent = $.Event('hide.bs.collapse')
+    this.$element.trigger(startEvent)
+    if (startEvent.isDefaultPrevented()) return
+
+    var dimension = this.dimension()
+
+    this.$element[dimension](this.$element[dimension]())[0].offsetHeight
+
+    this.$element
+      .addClass('collapsing')
+      .removeClass('collapse in')
+      .attr('aria-expanded', false)
+
+    this.$trigger
+      .addClass('collapsed')
+      .attr('aria-expanded', false)
+
+    this.transitioning = 1
+
+    var complete = function () {
+      this.transitioning = 0
+      this.$element
+        .removeClass('collapsing')
+        .addClass('collapse')
+        .trigger('hidden.bs.collapse')
+    }
+
+    if (!$.support.transition) return complete.call(this)
+
+    this.$element
+      [dimension](0)
+      .one('bsTransitionEnd', $.proxy(complete, this))
+      .emulateTransitionEnd(Collapse.TRANSITION_DURATION)
+  }
+
+  Collapse.prototype.toggle = function () {
+    this[this.$element.hasClass('in') ? 'hide' : 'show']()
+  }
+
+  Collapse.prototype.getParent = function () {
+    return $(this.options.parent)
+      .find('[data-toggle="collapse"][data-parent="' + this.options.parent + '"]')
+      .each($.proxy(function (i, element) {
+        var $element = $(element)
+        this.addAriaAndCollapsedClass(getTargetFromTrigger($element), $element)
+      }, this))
+      .end()
+  }
+
+  Collapse.prototype.addAriaAndCollapsedClass = function ($element, $trigger) {
+    var isOpen = $element.hasClass('in')
+
+    $element.attr('aria-expanded', isOpen)
+    $trigger
+      .toggleClass('collapsed', !isOpen)
+      .attr('aria-expanded', isOpen)
+  }
+
+  function getTargetFromTrigger($trigger) {
+    var href
+    var target = $trigger.attr('data-target')
+      || (href = $trigger.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') // strip for ie7
+
+    return $(target)
+  }
+
+
+  // COLLAPSE PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this   = $(this)
+      var data    = $this.data('bs.collapse')
+      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
+
+      if (!data && options.toggle && /show|hide/.test(option)) options.toggle = false
+      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  var old = $.fn.collapse
+
+  $.fn.collapse             = Plugin
+  $.fn.collapse.Constructor = Collapse
+
+
+  // COLLAPSE NO CONFLICT
+  // ====================
+
+  $.fn.collapse.noConflict = function () {
+    $.fn.collapse = old
+    return this
+  }
+
+
+  // COLLAPSE DATA-API
+  // =================
+
+  $(document).on('click.bs.collapse.data-api', '[data-toggle="collapse"]', function (e) {
+    var $this   = $(this)
+
+    if (!$this.attr('data-target')) e.preventDefault()
+
+    var $target = getTargetFromTrigger($this)
+    var data    = $target.data('bs.collapse')
+    var option  = data ? 'toggle' : $this.data()
+
+    Plugin.call($target, option)
+  })
+
+}(jQuery);
+</script>
+<script>
+window.initializeCodeFolding = function(show) {
+
+  // handlers for show-all and hide all
+  $("#rmd-show-all-code").click(function() {
+    // close the dropdown menu when an option is clicked
+    $("#allCodeButton").dropdown("toggle");
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('show');
+    });
+  });
+  $("#rmd-hide-all-code").click(function() {
+    // close the dropdown menu when an option is clicked
+    $("#allCodeButton").dropdown("toggle");
+    $('div.r-code-collapse').each(function() {
+      $(this).collapse('hide');
+    });
+  });
+
+  // index for unique code element ids
+  var currentIndex = 1;
+
+  // select all R code blocks
+  var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
+  rCodeBlocks.each(function() {
+
+    // if code block has been labeled with class `fold-show`, show the code on init!
+    var classList = $(this).attr('class').split(/\s+/);
+    for (var i = 0; i < classList.length; i++) {
+    if (classList[i] === 'fold-show') {
+        show = true;
+      }
+    }
+
+    // create a collapsable div to wrap the code in
+    var div = $('<div class="collapse r-code-collapse"></div>');
+    if (show)
+      div.addClass('in');
+    var id = 'rcode-643E0F36' + currentIndex++;
+    div.attr('id', id);
+    $(this).before(div);
+    $(this).detach().appendTo(div);
+
+    // add a show code button right above
+    var showCodeText = $('<span>' + (show ? 'Hide' : 'Code') + '</span>');
+    var showCodeButton = $('<button type="button" class="btn btn-default btn-xs code-folding-btn pull-right"></button>');
+    showCodeButton.append(showCodeText);
+    showCodeButton
+        .attr('data-toggle', 'collapse')
+        .attr('data-target', '#' + id)
+        .attr('aria-expanded', show)
+        .attr('aria-controls', id);
+
+    var buttonRow = $('<div class="row"></div>');
+    var buttonCol = $('<div class="col-md-12"></div>');
+
+    buttonCol.append(showCodeButton);
+    buttonRow.append(buttonCol);
+
+    div.before(buttonRow);
+
+    // hack: return show to false, otherwise all next codeBlocks will be shown!
+    show = false;
+
+    // update state of button on show/hide
+    div.on('hidden.bs.collapse', function () {
+      showCodeText.text('Code');
+    });
+    div.on('show.bs.collapse', function () {
+      showCodeText.text('Hide');
+    });
+  });
+
+}
+</script>
+<script>
+/* ========================================================================
+ * Bootstrap: dropdown.js v3.3.7
+ * http://getbootstrap.com/javascript/#dropdowns
+ * ========================================================================
+ * Copyright 2011-2016 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+ * ======================================================================== */
+
+
++function ($) {
+  'use strict';
+
+  // DROPDOWN CLASS DEFINITION
+  // =========================
+
+  var backdrop = '.dropdown-backdrop'
+  var toggle   = '[data-toggle="dropdown"]'
+  var Dropdown = function (element) {
+    $(element).on('click.bs.dropdown', this.toggle)
+  }
+
+  Dropdown.VERSION = '3.3.7'
+
+  function getParent($this) {
+    var selector = $this.attr('data-target')
+
+    if (!selector) {
+      selector = $this.attr('href')
+      selector = selector && /#[A-Za-z]/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
+    }
+
+    var $parent = selector && $(selector)
+
+    return $parent && $parent.length ? $parent : $this.parent()
+  }
+
+  function clearMenus(e) {
+    if (e && e.which === 3) return
+    $(backdrop).remove()
+    $(toggle).each(function () {
+      var $this         = $(this)
+      var $parent       = getParent($this)
+      var relatedTarget = { relatedTarget: this }
+
+      if (!$parent.hasClass('open')) return
+
+      if (e && e.type == 'click' && /input|textarea/i.test(e.target.tagName) && $.contains($parent[0], e.target)) return
+
+      $parent.trigger(e = $.Event('hide.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this.attr('aria-expanded', 'false')
+      $parent.removeClass('open').trigger($.Event('hidden.bs.dropdown', relatedTarget))
+    })
+  }
+
+  Dropdown.prototype.toggle = function (e) {
+    var $this = $(this)
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    clearMenus()
+
+    if (!isActive) {
+      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
+        // if mobile we use a backdrop because click events don't delegate
+        $(document.createElement('div'))
+          .addClass('dropdown-backdrop')
+          .insertAfter($(this))
+          .on('click', clearMenus)
+      }
+
+      var relatedTarget = { relatedTarget: this }
+      $parent.trigger(e = $.Event('show.bs.dropdown', relatedTarget))
+
+      if (e.isDefaultPrevented()) return
+
+      $this
+        .trigger('focus')
+        .attr('aria-expanded', 'true')
+
+      $parent
+        .toggleClass('open')
+        .trigger($.Event('shown.bs.dropdown', relatedTarget))
+    }
+
+    return false
+  }
+
+  Dropdown.prototype.keydown = function (e) {
+    if (!/(38|40|27|32)/.test(e.which) || /input|textarea/i.test(e.target.tagName)) return
+
+    var $this = $(this)
+
+    e.preventDefault()
+    e.stopPropagation()
+
+    if ($this.is('.disabled, :disabled')) return
+
+    var $parent  = getParent($this)
+    var isActive = $parent.hasClass('open')
+
+    if (!isActive && e.which != 27 || isActive && e.which == 27) {
+      if (e.which == 27) $parent.find(toggle).trigger('focus')
+      return $this.trigger('click')
+    }
+
+    var desc = ' li:not(.disabled):visible a'
+    var $items = $parent.find('.dropdown-menu' + desc)
+
+    if (!$items.length) return
+
+    var index = $items.index(e.target)
+
+    if (e.which == 38 && index > 0)                 index--         // up
+    if (e.which == 40 && index < $items.length - 1) index++         // down
+    if (!~index)                                    index = 0
+
+    $items.eq(index).trigger('focus')
+  }
+
+
+  // DROPDOWN PLUGIN DEFINITION
+  // ==========================
+
+  function Plugin(option) {
+    return this.each(function () {
+      var $this = $(this)
+      var data  = $this.data('bs.dropdown')
+
+      if (!data) $this.data('bs.dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  var old = $.fn.dropdown
+
+  $.fn.dropdown             = Plugin
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  // DROPDOWN NO CONFLICT
+  // ====================
+
+  $.fn.dropdown.noConflict = function () {
+    $.fn.dropdown = old
+    return this
+  }
+
+
+  // APPLY TO STANDARD DROPDOWN ELEMENTS
+  // ===================================
+
+  $(document)
+    .on('click.bs.dropdown.data-api', clearMenus)
+    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
+    .on('click.bs.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+    .on('keydown.bs.dropdown.data-api', toggle, Dropdown.prototype.keydown)
+    .on('keydown.bs.dropdown.data-api', '.dropdown-menu', Dropdown.prototype.keydown)
+
+}(jQuery);
+</script>
+<style type="text/css">
+.code-folding-btn {
+  margin-bottom: 4px;
+}
+
+.row { display: flex; }
+.collapse { display: none; }
+.in { display:block }
+.pull-right > .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+.open > .dropdown-menu {
+    display: block;
+    color: #ffffff;
+    background-color: #ffffff;
+    background-image: none;
+    border-color: #92897e;
+}
+
+.dropdown-menu > li > a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  color: #000000;
+  white-space: nowrap;
+}
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #e95420;
+}
+
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus {
+  color: #ffffff;
+  text-decoration: none;
+  background-color: #e95420;
+  outline: 0;
+}
+.dropdown-menu > .disabled > a,
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+  color: #aea79f;
+}
+
+.dropdown-menu > .disabled > a:hover,
+.dropdown-menu > .disabled > a:focus {
+  text-decoration: none;
+  cursor: not-allowed;
+  background-color: transparent;
+  background-image: none;
+  filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+.btn {
+  display: inline-block;
+  margin-bottom: 1;
+  font-weight: normal;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+      touch-action: manipulation;
+  cursor: pointer;
+  background-image: none;
+  border: 1px solid transparent;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  border-radius: 4px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn.active.focus {
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+.btn:hover,
+.btn:focus,
+.btn.focus {
+  color: #ffffff;
+  text-decoration: none;
+}
+.btn:active,
+.btn.active {
+  background-image: none;
+  outline: 0;
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.btn.disabled,
+.btn[disabled],
+fieldset[disabled] .btn {
+  cursor: not-allowed;
+  filter: alpha(opacity=65);
+  opacity: 0.65;
+  box-shadow: none;
+}
+a.btn.disabled,
+fieldset[disabled] a.btn {
+  pointer-events: none;
+}
+.btn-default {
+  color: #ffffff;
+  background-color: #aea79f; #important
+  border-color: #aea79f;
+}
+
+.btn-default:focus,
+.btn-default.focus {
+  color: #ffffff;
+  background-color: #978e83;
+  border-color: #6f675e;
+}
+
+.btn-default:hover {
+  color: #ffffff;
+  background-color: #978e83;
+  border-color: #92897e;
+}
+.btn-default:active,
+.btn-default.active,
+.btn-group > .btn:not(:first-child):not(:last-child):not(.dropdown-toggle) {
+  border-radius: 0;
+}
+.btn-group > .btn:first-child {
+  margin-left: 0;
+}
+.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group > .btn:last-child:not(:first-child),
+.btn-group > .dropdown-toggle:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.btn-group > .btn-group {
+  float: left;
+}
+.btn-group > .btn-group:not(:first-child):not(:last-child) > .btn {
+  border-radius: 0;
+}
+.btn-group > .btn-group:first-child:not(:last-child) > .btn:last-child,
+.btn-group > .btn-group:first-child:not(:last-child) > .dropdown-toggle {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.btn-group .dropdown-toggle:active,
+.btn-group.open .dropdown-toggle {
+  outline: 0;
+}
+.btn-group > .btn + .dropdown-toggle {
+  padding-right: 8px;
+  padding-left: 8px;
+}
+.btn-group > .btn-lg + .dropdown-toggle {
+  padding-right: 12px;
+  padding-left: 12px;
+}
+.btn-group.open .dropdown-toggle {
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.btn-group.open .dropdown-toggle.btn-link {
+  box-shadow: none;
+}
+
+</style>
+<script>
+var str = '<div class="btn-group pull-right" style="position: fixed; right: 50px; top: 10px; z-index: 200"><button type="button" class="btn btn-default btn-xs dropdown-toggle" id="allCodeButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" data-_extension-text-contrast=""><span>Code</span> <span class="caret"></span></button><ul class="dropdown-menu" style="min-width: 50px;"><li><a id="rmd-show-all-code" href="#">Show All Code</a></li><li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li></ul></div>';
+document.write(str);
+</script>
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "hide");
+});
+</script>
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+/* Used with Pandoc 2.11+ new --citeproc when CSL is used */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">(Mostly Clinical) Epidemiology with R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="" data-path="simple-acknowledgment-and-request.html"><a href="simple-acknowledgment-and-request.html"><i class="fa fa-check"></i>Simple acknowledgment and request</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
+<ul>
+<li class="chapter" data-level="1.0.1" data-path="intro.html"><a href="intro.html#r-packages-required-for-this-chapter"><i class="fa fa-check"></i><b>1.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#preface"><i class="fa fa-check"></i><b>1.1</b> Preface</a></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#pre"><i class="fa fa-check"></i><b>1.2</b> Prerequisites</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#my-general-philosophy-for-clinical-epidemiology"><i class="fa fa-check"></i><b>1.3</b> My general philosophy for clinical epidemiology</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#brief-excursions-into-quantification"><i class="fa fa-check"></i><b>1.4</b> Brief excursions into quantification</a></li>
+<li class="chapter" data-level="1.5" data-path="intro.html"><a href="intro.html#outline"><i class="fa fa-check"></i><b>1.5</b> Outline</a></li>
+<li class="chapter" data-level="1.6" data-path="intro.html"><a href="intro.html#statistical-software---r"><i class="fa fa-check"></i><b>1.6</b> Statistical software - R</a></li>
+<li class="chapter" data-level="1.7" data-path="intro.html"><a href="intro.html#r---common-data-and-variable-manipulations"><i class="fa fa-check"></i><b>1.7</b> R - Common data and variable manipulations</a></li>
+<li class="chapter" data-level="1.8" data-path="intro.html"><a href="intro.html#rstudio---the-ide-for-r"><i class="fa fa-check"></i><b>1.8</b> RStudio - <strong>The</strong> IDE for R</a></li>
+<li class="chapter" data-level="1.9" data-path="intro.html"><a href="intro.html#r---more-than-a-statistical-program"><i class="fa fa-check"></i><b>1.9</b> R - More than a statistical program</a></li>
+<li class="chapter" data-level="1.10" data-path="intro.html"><a href="intro.html#r---general-public-license"><i class="fa fa-check"></i><b>1.10</b> R - General Public License</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="vis.html"><a href="vis.html"><i class="fa fa-check"></i><b>2</b> Exploratory Data Analysis - Data visualization</a>
+<ul>
+<li class="chapter" data-level="2.0.1" data-path="vis.html"><a href="vis.html#r-packages-required-for-this-chapter-1"><i class="fa fa-check"></i><b>2.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="2.1" data-path="vis.html"><a href="vis.html#introduction"><i class="fa fa-check"></i><b>2.1</b> Introduction</a></li>
+<li class="chapter" data-level="2.2" data-path="vis.html"><a href="vis.html#why-is-data-visualization-important"><i class="fa fa-check"></i><b>2.2</b> Why is data visualization important?</a></li>
+<li class="chapter" data-level="2.3" data-path="vis.html"><a href="vis.html#creating-an-effective-and-professional-appearing-graph"><i class="fa fa-check"></i><b>2.3</b> Creating an effective and professional appearing graph</a></li>
+<li class="chapter" data-level="2.4" data-path="vis.html"><a href="vis.html#graphical-choices"><i class="fa fa-check"></i><b>2.4</b> Graphical choices</a></li>
+<li class="chapter" data-level="2.5" data-path="vis.html"><a href="vis.html#example---a-modern-version-of-the-ghost-map"><i class="fa fa-check"></i><b>2.5</b> Example - A modern version of the “Ghost Map”</a>
+<ul>
+<li class="chapter" data-level="2.5.1" data-path="vis.html"><a href="vis.html#using-modern-geographic-information-system-mapping"><i class="fa fa-check"></i><b>2.5.1</b> Using modern Geographic Information System mapping</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="meas.html"><a href="meas.html"><i class="fa fa-check"></i><b>3</b> Contingency tables, measures of association &amp; R packages</a>
+<ul>
+<li class="chapter" data-level="3.0.1" data-path="meas.html"><a href="meas.html#r-packages-required-for-this-chapter-2"><i class="fa fa-check"></i><b>3.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="3.1" data-path="meas.html"><a href="meas.html#meas1"><i class="fa fa-check"></i><b>3.1</b> Proportions - One sample <span class="math inline">\(\chi^2\)</span> tests</a></li>
+<li class="chapter" data-level="3.2" data-path="meas.html"><a href="meas.html#contingency-tables"><i class="fa fa-check"></i><b>3.2</b> Contingency tables</a></li>
+<li class="chapter" data-level="3.3" data-path="meas.html"><a href="meas.html#some-basic-defintions"><i class="fa fa-check"></i><b>3.3</b> Some basic defintions</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="meas.html"><a href="meas.html#relative-comparative-measures"><i class="fa fa-check"></i><b>3.3.1</b> Relative comparative measures</a></li>
+<li class="chapter" data-level="3.3.2" data-path="meas.html"><a href="meas.html#absolute-comparative-measures"><i class="fa fa-check"></i><b>3.3.2</b> Absolute comparative measures</a></li>
+<li class="chapter" data-level="3.3.3" data-path="meas.html"><a href="meas.html#attributal-measures"><i class="fa fa-check"></i><b>3.3.3</b> Attributal measures</a></li>
+<li class="chapter" data-level="3.3.4" data-path="meas.html"><a href="meas.html#standardization"><i class="fa fa-check"></i><b>3.3.4</b> Standardization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="meas.html"><a href="meas.html#examples-using-base-r"><i class="fa fa-check"></i><b>3.4</b> Examples using base R</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="meas.html"><a href="meas.html#example-1---basic-incidence-measures"><i class="fa fa-check"></i><b>3.4.1</b> Example 1 - basic incidence measures</a></li>
+<li class="chapter" data-level="3.4.2" data-path="meas.html"><a href="meas.html#example-2---rare-disease"><i class="fa fa-check"></i><b>3.4.2</b> Example 2 - rare disease</a></li>
+<li class="chapter" data-level="3.4.3" data-path="meas.html"><a href="meas.html#example-3---standardization"><i class="fa fa-check"></i><b>3.4.3</b> Example 3 - Standardization</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="meas.html"><a href="meas.html#packages"><i class="fa fa-check"></i><b>3.5</b> Examples using R epidemiology packages</a>
+<ul>
+<li class="chapter" data-level="3.5.1" data-path="meas.html"><a href="meas.html#example-4-standardization"><i class="fa fa-check"></i><b>3.5.1</b> Example 4 Standardization</a></li>
+<li class="chapter" data-level="3.5.2" data-path="meas.html"><a href="meas.html#example-5---contingency-tables-with-epir-package"><i class="fa fa-check"></i><b>3.5.2</b> Example 5 - Contingency Tables with <code>epiR</code> package</a></li>
+<li class="chapter" data-level="3.5.3" data-path="meas.html"><a href="meas.html#example-6---contingency-tables-with-other-r-packages"><i class="fa fa-check"></i><b>3.5.3</b> Example 6 - Contingency Tables with other <code>R</code> packages</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="infer.html"><a href="infer.html"><i class="fa fa-check"></i><b>4</b> Statistical inference</a>
+<ul>
+<li class="chapter" data-level="4.0.1" data-path="infer.html"><a href="infer.html#r-packages-required-for-this-chapter-3"><i class="fa fa-check"></i><b>4.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="4.1" data-path="infer.html"><a href="infer.html#introduction-1"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+<li class="chapter" data-level="4.2" data-path="infer.html"><a href="infer.html#null-hypothesis-significance-testing"><i class="fa fa-check"></i><b>4.2</b> Null Hypothesis Significance Testing</a></li>
+<li class="chapter" data-level="4.3" data-path="infer.html"><a href="infer.html#s-values"><i class="fa fa-check"></i><b>4.3</b> S values</a></li>
+<li class="chapter" data-level="4.4" data-path="infer.html"><a href="infer.html#two-views-of-probability"><i class="fa fa-check"></i><b>4.4</b> Two views of probability</a>
+<ul>
+<li class="chapter" data-level="4.4.1" data-path="infer.html"><a href="infer.html#basic-rules-of-probability"><i class="fa fa-check"></i><b>4.4.1</b> Basic rules of probability</a></li>
+<li class="chapter" data-level="4.4.2" data-path="infer.html"><a href="infer.html#bayes-theorem"><i class="fa fa-check"></i><b>4.4.2</b> Bayes Theorem</a></li>
+</ul></li>
+<li class="chapter" data-level="4.5" data-path="infer.html"><a href="infer.html#bayesian-reasoning-to-understand-why-most-published-research-findings-are-false"><i class="fa fa-check"></i><b>4.5</b> Bayesian reasoning to understand “Why Most Published Research Findings are False”</a></li>
+<li class="chapter" data-level="4.6" data-path="infer.html"><a href="infer.html#bayesian-data-analysis-and-statistical-inference"><i class="fa fa-check"></i><b>4.6</b> Bayesian data analysis and statistical inference</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="infer.html"><a href="infer.html#bayes-factors"><i class="fa fa-check"></i><b>4.6.1</b> Bayes factors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="design.html"><a href="design.html"><i class="fa fa-check"></i><b>5</b> Non-experimental designs</a>
+<ul>
+<li class="chapter" data-level="5.0.1" data-path="design.html"><a href="design.html#r-packages-required-for-this-chapter-4"><i class="fa fa-check"></i><b>5.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="5.1" data-path="design.html"><a href="design.html#introduction-2"><i class="fa fa-check"></i><b>5.1</b> Introduction</a></li>
+<li class="chapter" data-level="5.2" data-path="design.html"><a href="design.html#cohort-studies"><i class="fa fa-check"></i><b>5.2</b> Cohort studies</a></li>
+<li class="chapter" data-level="5.3" data-path="design.html"><a href="design.html#case-control"><i class="fa fa-check"></i><b>5.3</b> Case control</a></li>
+<li class="chapter" data-level="5.4" data-path="design.html"><a href="design.html#cross-sectional"><i class="fa fa-check"></i><b>5.4</b> Cross sectional</a></li>
+<li class="chapter" data-level="5.5" data-path="design.html"><a href="design.html#miscellaneous-designs"><i class="fa fa-check"></i><b>5.5</b> Miscellaneous designs</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>6</b> References</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">(Mostly Clinical) Epidemiology with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="meas" class="section level1" number="3">
+<h1><span class="header-section-number">Chapter 3</span> Contingency tables, measures of association &amp; R packages</h1>
+<div id="r-packages-required-for-this-chapter-2" class="section level3" number="3.0.1">
+<h3><span class="header-section-number">3.0.1</span> R packages required for this chapter</h3>
+<div class="sourceCode" id="cb68"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb68-1"><a href="meas.html#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb68-2"><a href="meas.html#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb68-3"><a href="meas.html#cb68-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># specifically dplyr and ggplot2</span></span>
+<span id="cb68-4"><a href="meas.html#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
+<span id="cb68-5"><a href="meas.html#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epibasix)</span>
+<span id="cb68-6"><a href="meas.html#cb68-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epitools)</span></code></pre></div>
+</div>
+<div id="meas1" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Proportions - One sample <span class="math inline">\(\chi^2\)</span> tests</h2>
+<p>Suppose we have the following data and want to test if the hypothesis that <span class="math inline">\(\pi\)</span> = 0.80 is true. In this simple example, the base <code>R</code> <code>chisq.test</code> function is more than adequate.</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Success</th>
+<th>Failure</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Population</td>
+<td>60</td>
+<td>40</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb69-1"><a href="meas.html#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># one sample chi sq test</span></span>
+<span id="cb69-2"><a href="meas.html#cb69-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">60</span>,<span class="dv">40</span>)</span>
+<span id="cb69-3"><a href="meas.html#cb69-3" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(x, <span class="at">p =</span> <span class="fu">c</span>(.<span class="dv">8</span>, .<span class="dv">2</span>))</span></code></pre></div>
+<pre><code>## 
+##  Chi-squared test for given probabilities
+## 
+## data:  x
+## X-squared = 25, df = 1, p-value = 6e-07</code></pre>
+<p>For small sample sizes (n &lt; 5), <code>chisq.test</code> is not valid. A famous example of a small data set is Fisher’s <a href="https://en.wikipedia.org/wiki/Lady_tasting_tea">lady tasting tea example</a>. In this experiment, a lady claims she can tell if milk is added to the cup before or after the tea. suppose there are 8 cups, 4 with milk added first and 4 with milk added after the tea. How unlikely would it be if she could identify correctly the 8 cups? This can be calculated by hand using the <a href="https://en.wikipedia.org/wiki/Hypergeometric_distribution">hypergeometric distribution</a> or using <code>fisher.test</code>.</p>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb71-1"><a href="meas.html#cb71-1" aria-hidden="true" tabindex="-1"></a>Tea <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">4</span>), <span class="at">nrow =</span> <span class="dv">2</span>,</span>
+<span id="cb71-2"><a href="meas.html#cb71-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="at">Guess =</span> <span class="fu">c</span>(<span class="st">&quot;Milk&quot;</span>, <span class="st">&quot;Tea&quot;</span>), <span class="at">Truth =</span> <span class="fu">c</span>(<span class="st">&quot;Milk&quot;</span>, <span class="st">&quot;Tea&quot;</span>)))</span>
+<span id="cb71-3"><a href="meas.html#cb71-3" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> <span class="fu">fisher.test</span>(Tea, <span class="at">alternative =</span> <span class="st">&quot;greater&quot;</span>)</span>
+<span id="cb71-4"><a href="meas.html#cb71-4" aria-hidden="true" tabindex="-1"></a>Tea</span></code></pre></div>
+<pre><code>##       Truth
+## Guess  Milk Tea
+##   Milk    4   0
+##   Tea     0   4</code></pre>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb73-1"><a href="meas.html#cb73-1" aria-hidden="true" tabindex="-1"></a>temp</span></code></pre></div>
+<pre><code>## 
+##  Fisher&#39;s Exact Test for Count Data
+## 
+## data:  Tea
+## p-value = 0.01
+## alternative hypothesis: true odds ratio is greater than 1
+## 95 percent confidence interval:
+##  2.004   Inf
+## sample estimates:
+## odds ratio 
+##        Inf</code></pre>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb75-1"><a href="meas.html#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="co"># more precise p value</span></span>
+<span id="cb75-2"><a href="meas.html#cb75-2" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>p.value</span></code></pre></div>
+<pre><code>## [1] 0.01429</code></pre>
+<p>There is a 1.4% chance of this occurring.</p>
+<p>More commonly we will have larger 2X2 datasets, or more generally nXm datasets to investigate and these may be helpfully presented in contingency tables.</p>
+</div>
+<div id="contingency-tables" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Contingency tables</h2>
+<p>Begin by reading in the <code>heart.csv</code> dataset where the outcome status is the <code>fstat</code> variable. Details about the other variables can be obtained with <code>str()</code>. It is often of interest to initially explore any categorical exposure and outcome create a contingency table of <code>fstat</code> (alive / dead) versus <code>gender</code> (men=0, women=1).</p>
+<div class="sourceCode" id="cb77"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb77-1"><a href="meas.html#cb77-1" aria-hidden="true" tabindex="-1"></a>heart <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">&quot;data/heart.csv&quot;</span>, <span class="at">header =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb77-2"><a href="meas.html#cb77-2" aria-hidden="true" tabindex="-1"></a><span class="co"># create gender factor variable</span></span>
+<span id="cb77-3"><a href="meas.html#cb77-3" aria-hidden="true" tabindex="-1"></a>heart<span class="sc">$</span>gender <span class="ot">&lt;-</span> <span class="fu">factor</span>(heart<span class="sc">$</span>gender, <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;men&quot;</span>, <span class="st">&quot;women&quot;</span>))</span>
+<span id="cb77-4"><a href="meas.html#cb77-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a 2-way contingency table of gender vs outcome</span></span>
+<span id="cb77-5"><a href="meas.html#cb77-5" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(heart<span class="sc">$</span>gender,heart<span class="sc">$</span>fstat )</span></code></pre></div>
+<pre><code>##        
+##         alive dead
+##   men     189  111
+##   women    96  104</code></pre>
+<p>As discussed in Chapter <a href="vis.html#vis">2</a>, graphical displays are often helpful and informative.</p>
+<div class="sourceCode" id="cb79"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb79-1"><a href="meas.html#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create side-by-side barchart outcome and gender</span></span>
+<span id="cb79-2"><a href="meas.html#cb79-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(heart, <span class="fu">aes</span>(<span class="at">x =</span> gender, <span class="at">fill =</span> fstat)) <span class="sc">+</span> </span>
+<span id="cb79-3"><a href="meas.html#cb79-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">position =</span> <span class="st">&quot;dodge&quot;</span>)  <span class="sc">+</span>  <span class="co">#position = &quot;dodge&quot;, to have a side-by-side (i.e. not stacked) barchart</span></span>
+<span id="cb79-4"><a href="meas.html#cb79-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="04-measures_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>There are more males than females in this dataset. Total male and female deaths are about equal but better survival rates in males. Marginals can be easily obtained as can statistical testing with <code>chisq.test</code> or <code>fisher.test</code></p>
+<div class="sourceCode" id="cb80"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb80-1"><a href="meas.html#cb80-1" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> <span class="fu">table</span>(heart<span class="sc">$</span>gender,heart<span class="sc">$</span>fstat )</span>
+<span id="cb80-2"><a href="meas.html#cb80-2" aria-hidden="true" tabindex="-1"></a><span class="co"># marginals</span></span>
+<span id="cb80-3"><a href="meas.html#cb80-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(tab)</span></code></pre></div>
+<pre><code>##   men women 
+##   300   200</code></pre>
+<div class="sourceCode" id="cb82"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb82-1"><a href="meas.html#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(tab)</span></code></pre></div>
+<pre><code>## alive  dead 
+##   285   215</code></pre>
+<div class="sourceCode" id="cb84"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb84-1"><a href="meas.html#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">&quot;Probabilities conditional on columns&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;Probabilities conditional on columns&quot;</code></pre>
+<div class="sourceCode" id="cb86"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb86-1"><a href="meas.html#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.table</span>(tab, <span class="dv">2</span>)  </span></code></pre></div>
+<pre><code>##        
+##          alive   dead
+##   men   0.6632 0.5163
+##   women 0.3368 0.4837</code></pre>
+<div class="sourceCode" id="cb88"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb88-1"><a href="meas.html#cb88-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Probabilities conditional on rows&quot;</span>)</span></code></pre></div>
+<pre><code>## [1] &quot;\nProbabilities conditional on rows&quot;</code></pre>
+<div class="sourceCode" id="cb90"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb90-1"><a href="meas.html#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="fu">prop.table</span>(tab, <span class="dv">1</span>) </span></code></pre></div>
+<pre><code>##        
+##         alive dead
+##   men    0.63 0.37
+##   women  0.48 0.52</code></pre>
+<div class="sourceCode" id="cb92"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb92-1"><a href="meas.html#cb92-1" aria-hidden="true" tabindex="-1"></a><span class="co"># statistical testing</span></span>
+<span id="cb92-2"><a href="meas.html#cb92-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(tab)</span></code></pre></div>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
+## 
+## data:  tab
+## X-squared = 10, df = 1, p-value = 0.001</code></pre>
+<div class="sourceCode" id="cb94"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb94-1"><a href="meas.html#cb94-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fisher.test</span>(tab)</span></code></pre></div>
+<pre><code>## 
+##  Fisher&#39;s Exact Test for Count Data
+## 
+## data:  tab
+## p-value = 0.001
+## alternative hypothesis: true odds ratio is not equal to 1
+## 95 percent confidence interval:
+##  1.262 2.696
+## sample estimates:
+## odds ratio 
+##      1.842</code></pre>
+<p>Now while the base <code>R</code> <code>chisq.test</code> function provides the OR, 95% CI, and a p value, we will show in section <a href="meas.html#packages">3.5</a> that the use of epidemiologic specific <code>R</code> packages allows the use of more customized and detailed functions.<br />
+Suppose we are now interested in the gender outcomes association but according to the presence or absence of pre-existing cardiac disease. Adding this third variable, <code>cvd</code> is straightforward but the limits of this approach are readily appreciated as the number of variables increases.</p>
+<div class="sourceCode" id="cb96"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb96-1"><a href="meas.html#cb96-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(heart<span class="sc">$</span>gender, heart<span class="sc">$</span>fstat, heart<span class="sc">$</span>cvd)</span></code></pre></div>
+<pre><code>## , ,  = no
+## 
+##        
+##         alive dead
+##   men      65   24
+##   women    15   21
+## 
+## , ,  = yes
+## 
+##        
+##         alive dead
+##   men     124   87
+##   women    81   83</code></pre>
+<div class="sourceCode" id="cb98"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb98-1"><a href="meas.html#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot of alignment broken down by gender</span></span>
+<span id="cb98-2"><a href="meas.html#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(heart, <span class="fu">aes</span>(<span class="at">x =</span> gender,<span class="at">fill =</span> fstat )) <span class="sc">+</span> </span>
+<span id="cb98-3"><a href="meas.html#cb98-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb98-4"><a href="meas.html#cb98-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> cvd) <span class="sc">+</span></span>
+<span id="cb98-5"><a href="meas.html#cb98-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div>
+<p><img src="04-measures_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="some-basic-defintions" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> Some basic defintions</h2>
+<ol style="list-style-type: decimal">
+<li><p><strong>Cumulative incidence</strong> —proportion of new cases developing in an initial disease free population during a given risk period.</p></li>
+<li><p><strong>Incidence time</strong> —time span from 0 to the time of outcome/event/failure/occurrence</p></li>
+<li><p><strong>Person-time</strong> —length of time that each individual was in the population at risk of the event</p></li>
+<li><p><strong>Total person-time at risk</strong> - sum of all individual person-times</p></li>
+<li><p><strong>Incidence rate</strong> —number of new cases of disease divided by person-time over the period</p></li>
+<li><p><strong>Incidence proportion or cumulative incidence</strong> —with complete cohort follow-up, it is the proportion of people who become cases among those in the population at the start of the interval. Can also be considered a measure of average risk</p></li>
+</ol>
+<p><strong>Comparison of cumulative incidence and incidence rate</strong></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="22%" />
+<col width="22%" />
+<col width="19%" />
+<col width="20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Cumulative Incidence</th>
+<th>Cumulative Incidence</th>
+<th>Incidence rate</th>
+<th>Incidence rate</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td>FU complete</td>
+<td>FU incomplete</td>
+<td>FU complete</td>
+<td>FU incomplete</td>
+</tr>
+<tr class="even">
+<td>Numerator</td>
+<td>cases</td>
+<td><p>Kaplan Meier</p>
+<p>Lfe Table</p></td>
+<td>Number cases</td>
+<td>Number cases</td>
+</tr>
+<tr class="odd">
+<td>Denominator</td>
+<td>population</td>
+<td><p>Kaplan Meier</p>
+<p>Lfe Table</p></td>
+<td>Person - time</td>
+<td>Average population</td>
+</tr>
+<tr class="even">
+<td>Units</td>
+<td>no units</td>
+<td>no units</td>
+<td>Time<sup>-1</sup></td>
+<td>Time<sup>-1</sup></td>
+</tr>
+<tr class="odd">
+<td>Range</td>
+<td>0 to 1</td>
+<td>0 to 1</td>
+<td>0 to infinity</td>
+<td>0 to infinity</td>
+</tr>
+<tr class="even">
+<td>Synonyms</td>
+<td><p>Probability</p>
+<p>Proportion</p></td>
+<td><p>Probability</p>
+<p>Proportion</p></td>
+<td>Incidence density</td>
+<td>Incidence density</td>
+</tr>
+</tbody>
+</table>
+<p>Risk is a general term but often refers to cumulative incidence (Q) but other interpretations including instantaneous risk (hazard) and risk at a given time point (prevalence).<br />
+Incidence rate and cumulative incidence proportion are longitudinal measures. In contrast prevalence measures are cross-sectional. The numerator of cumulative incidence and incidence rates are the number of cases while the denominator is proportional to the size (counts or person time) of the population from whioch the cases are derived. Numerator and denominator must cover the same population and the same time period.</p>
+<div id="relative-comparative-measures" class="section level3" number="3.3.1">
+<h3><span class="header-section-number">3.3.1</span> Relative comparative measures</h3>
+<p>Generic name “relative risk” (RR) comparing occurrences between exposed (1) and unexposed (0) groups can refer to<br />
+* Incidence rate ratio IR = I1 / I0 (the most commonly used comparative measure)<br />
+* Incidence proportion ratio IPR = Q1 / Q0<br />
+* Incidence odds ratio IOR = [Q1/(1 − Q1)] / [Q0/(1 − Q0)]<br />
+* Prevalence ratio PR = P1/P0<br />
+* Prevalence odds ratio POR = [P1/(1 − P1)] / [P0/(1 − P0)]</p>
+</div>
+<div id="absolute-comparative-measures" class="section level3" number="3.3.2">
+<h3><span class="header-section-number">3.3.2</span> Absolute comparative measures</h3>
+<p>Generic term “excess risk” or “risk difference” (RD) between exposed and unexposed can refer to<br />
+* Incidence rate difference ID = I1 − I0<br />
+* Incidence proportion difference IPD = Q1 − Q0<br />
+* Prevalence difference PD = P1 − P0</p>
+<p>Ratios – most often employed to describe the biological strength of the exposure<br />
+Differences – absolute differences better inform about public health importance</p>
+</div>
+<div id="attributal-measures" class="section level3" number="3.3.3">
+<h3><span class="header-section-number">3.3.3</span> Attributal measures</h3>
+<p>-<strong>Attributable fraction</strong> (excess fraction or attributable risk) is a measures of potential impact. <span class="math display">\[AF = \dfrac{I_{1} - I_{0}}{I_{1}} = \dfrac{RR-1}{RR}\]</span><br />
+This measure estimates the fraction out of all new cases of disease <em>among those exposed</em>, which are attributable to (or “caused” by) the exposure itself, and which thus could be avoided if the exposure were absent. This represents the biological impact of exposure and is represented diagrammatically as</p>
+<p align="center">
+<p><img src="img/assoc/af.png" /></p>
+<p align="center">
+<p>where AF fraction = black area out of total black + gray area.</p>
+<p>-<strong>Prevented fraction</strong> When the incidence in exposed is lower, we define the prevented fraction as <span class="math display">\[AF = \dfrac{I_{0} - I_{1}}{I_{0}} = 1 - RR\]</span></p>
+<p>-<strong>Population attributable (excess) fraction (PAF)</strong> addresses the impact of exposure on the population level and also depends <span class="math inline">\(p_E\)</span>, the proportion of exposed in the population.</p>
+<p><span class="math display" id="eq:paf">\[\begin{equation} 
+  PAF = I - I_{0} 
+  \tag{3.1}
+\end{equation}\]</span></p>
+<p>where <span class="math inline">\(I\)</span> = population incidence that can be expressed as a weighted average among exposed and unexposed as follows<br />
+<span class="math inline">\(I = p_{E}*I_{1} + (1-p_{E})*I_{0}\)</span> and substituting into Equation <a href="meas.html#eq:paf">(3.1)</a> gives</p>
+<p><span class="math display" id="eq:paf1">\[\begin{equation} 
+  PAF = \dfrac{I - I_{0}}{I} = \dfrac{p_{E} * (RR-1)}{1 + p_{E}* (RR-1) }
+  \tag{3.2}
+\end{equation}\]</span></p>
+<p><strong>Important:</strong> Use the crude and NOT adjusted RR in the above PAF formula that uses the fraction of the entire population exposed</p>
+<p>Diagrammatically represented as</p>
+<p align="center">
+<p><img src="img/assoc/paf.png" /></p>
+<p align="center">
+<p>where PAF fraction = black area out of total black + gray area.</p>
+<p>The PAF is only a simple fraction derived from the arithmetic manipulation of probabilities. As with other measures in public health, how this fraction is interpreted is key. For PAF to be important in the discussion of the public health consequences of intervening to reduce the prevalence of risk exposures, we need to be sure of<br />
+- the causal model<br />
+- absence or control of confounding<br />
+- understanding of multiple exposures &amp; their combinations<br />
+- existence of a feasible intervention with no untoward effects</p>
+<p><code>R</code> packages for AF estimation include <code>epiR</code>, <code>attribrisk</code>, <code>paf</code> and <code>AF</code>. <code>AF</code> can handle confounders for different research designs, including survival data, matched case/control and clustered data.</p>
+</div>
+<div id="standardization" class="section level3" number="3.3.4">
+<h3><span class="header-section-number">3.3.4</span> Standardization</h3>
+<p>Sometimes the exposure disease relationship is distorted by another variable and stratification is the most transparent manner of dealing with this confounding. Combining this strata is most often used for age adjustment.Other more advanced techniques for dealing with confounding will be discussed in later chapters.<br />
+- <strong>Direct adjustment</strong> by standardization <span class="math inline">\(= \sum_{k=1}^K weight_k * rate_k /\)</span> <em>sum of weights</em><br />
+is a weighted average of stratum-specific rates for each group and applies them to a common standard, but often arbitrary, population, thereby removing differences due to distribution of the population<br />
+- <strong>Indirect adjustment</strong> is performed whenever the stratum-specific incidence risk estimates are either unknown or unreliable. In this case external stratum specific rates are applied.</p>
+</div>
+</div>
+<div id="examples-using-base-r" class="section level2" number="3.4">
+<h2><span class="header-section-number">3.4</span> Examples using base R</h2>
+<div id="example-1---basic-incidence-measures" class="section level3" number="3.4.1">
+<h3><span class="header-section-number">3.4.1</span> Example 1 - basic incidence measures</h3>
+<p>Consider the follow-up of a small cohort of 10 subjects.</p>
+<div class="sourceCode" id="cb99"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb99-1"><a href="meas.html#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create small data set</span></span>
+<span id="cb99-2"><a href="meas.html#cb99-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb99-3"><a href="meas.html#cb99-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb99-4"><a href="meas.html#cb99-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">x=</span><span class="fu">factor</span>(<span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)),</span>
+<span id="cb99-5"><a href="meas.html#cb99-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">y=</span><span class="fu">abs</span>(<span class="fu">runif</span>(<span class="dv">10</span>, <span class="dv">1</span>,<span class="dv">24</span>)),</span>
+<span id="cb99-6"><a href="meas.html#cb99-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">cen=</span><span class="fu">factor</span>(<span class="fu">c</span>(<span class="st">&quot;n&quot;</span>,<span class="st">&quot;y&quot;</span>,<span class="st">&quot;n&quot;</span>, <span class="st">&quot;y&quot;</span>,<span class="st">&quot;n&quot;</span>,<span class="st">&quot;n&quot;</span>,<span class="st">&quot;y&quot;</span>,<span class="st">&quot;n&quot;</span>,<span class="st">&quot;y&quot;</span>,<span class="st">&quot;n&quot;</span>), <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">&quot;died&quot;</span>, <span class="st">&quot;censored&quot;</span>))</span>
+<span id="cb99-7"><a href="meas.html#cb99-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb99-8"><a href="meas.html#cb99-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-9"><a href="meas.html#cb99-9" aria-hidden="true" tabindex="-1"></a><span class="co"># plot of follow-up time</span></span>
+<span id="cb99-10"><a href="meas.html#cb99-10" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">y=</span>y, <span class="at">color=</span>cen)) <span class="sc">+</span></span>
+<span id="cb99-11"><a href="meas.html#cb99-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>( <span class="fu">aes</span>(<span class="at">x=</span>x, <span class="at">xend=</span>x, <span class="at">y=</span><span class="dv">0</span>, <span class="at">yend=</span>y ) ) <span class="sc">+</span></span>
+<span id="cb99-12"><a href="meas.html#cb99-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>( <span class="at">color=</span><span class="fu">ifelse</span>(data<span class="sc">$</span>cen <span class="sc">==</span> <span class="st">&quot;died&quot;</span>, <span class="st">&quot;orange&quot;</span>, <span class="st">&quot;blue&quot;</span>), <span class="at">size=</span><span class="fu">ifelse</span>(data<span class="sc">$</span>cen <span class="sc">==</span> <span class="st">&quot;died&quot;</span>, <span class="dv">5</span>, <span class="dv">2</span>) ) <span class="sc">+</span></span>
+<span id="cb99-13"><a href="meas.html#cb99-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb99-14"><a href="meas.html#cb99-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb99-15"><a href="meas.html#cb99-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">&quot;subject&quot;</span>) <span class="sc">+</span></span>
+<span id="cb99-16"><a href="meas.html#cb99-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">name=</span><span class="st">&quot;Follow-up (months)&quot;</span>, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">24</span>, <span class="dv">3</span>), <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">24</span>)) <span class="sc">+</span></span>
+<span id="cb99-17"><a href="meas.html#cb99-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">&quot;Horizontal plot of follow-up time&quot;</span>) <span class="sc">+</span></span>
+<span id="cb99-18"><a href="meas.html#cb99-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">&quot;Status&quot;</span>)</span>
+<span id="cb99-19"><a href="meas.html#cb99-19" aria-hidden="true" tabindex="-1"></a>p</span></code></pre></div>
+<p><img src="04-measures_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>The incidence rate at the end of the follow-up (21 months) = total number of deaths / total person time follow-up</p>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb100-1"><a href="meas.html#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">1</span>, <span class="at">digits =</span> <span class="dv">2</span>)</span>
+<span id="cb100-2"><a href="meas.html#cb100-2" aria-hidden="true" tabindex="-1"></a>ir_m <span class="ot">&lt;-</span> <span class="fu">sum</span>(data<span class="sc">$</span>cen<span class="sc">==</span><span class="st">&quot;died&quot;</span>) <span class="sc">/</span> <span class="fu">sum</span>(data<span class="sc">$</span>y)</span></code></pre></div>
+<p>The incidence rate at the end of the follow-up (21 months) = 0.05 / person month or 4.9 / 100 person months<br />
+The incidence rate at the end of the follow-up could also be expressed in person years = 0.59 / person year or 58.76 / 100 person years<br />
+One could also calculate the incidence rate for the first 12 months.</p>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb101-1"><a href="meas.html#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">1</span>, <span class="at">digits =</span> <span class="dv">2</span>)</span>
+<span id="cb101-2"><a href="meas.html#cb101-2" aria-hidden="true" tabindex="-1"></a>deaths_1 <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb101-3"><a href="meas.html#cb101-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>( y<span class="sc">&lt;=</span> <span class="dv">12</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb101-4"><a href="meas.html#cb101-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n=</span><span class="fu">n</span>(), <span class="at">months=</span><span class="fu">sum</span>(y))</span></code></pre></div>
+<p>In this time period there were 3 deaths in 11.18 months of follow-up. There were also 7 subjects who completed the 12 months follow-up with no deaths. So the total follow-up time = 95.18<br />
+Therefore the incidence rate at 12 months = 0.03 / person month or 3.15 / 100 person months.<br />
+What is the cumulative incidence over 21 months?<br />
+On the surface, straightforward calculation of number of deaths / initial population = 0.6. However this ignores the censoring.<br />
+The incidence proportions in the presence of censoring can be estimated by assuming a constant rates. <span class="math display">\[Q = 1 − exp(−I × ∆) = 1- exp(-0.049 * 21) = 0.64\]</span> With dynamic study population individual follow-up times are variable and difficult to measure accurately such that a common approximation is to use the mid-population average of the initial and final populations multiplied by the follow-up time.</p>
+</div>
+<div id="example-2---rare-disease" class="section level3" number="3.4.2">
+<h3><span class="header-section-number">3.4.2</span> Example 2 - rare disease</h3>
+<p>For <em>rare disease</em>, the cumulative incidence, rate incidence and incident odds ratio are very similar.<br />
+Consider the following data;</p>
+<div class="sourceCode" id="cb102"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb102-1"><a href="meas.html#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">digits =</span> <span class="dv">5</span>)</span>
+<span id="cb102-2"><a href="meas.html#cb102-2" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Yes=</span> <span class="fu">c</span>(<span class="dv">4000</span>,<span class="dv">30</span>, <span class="dv">7970</span>), <span class="at">No=</span><span class="fu">c</span>(<span class="dv">16000</span>,<span class="dv">60</span>, <span class="dv">31940</span>), <span class="at">row.names=</span><span class="fu">c</span>(<span class="st">&quot;No. initally at risk&quot;</span>, <span class="st">&quot;No. cases&quot;</span>, <span class="st">&quot;Person years at risk&quot;</span>))</span>
+<span id="cb102-3"><a href="meas.html#cb102-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kbl</span>(dt) <span class="sc">%&gt;%</span></span>
+<span id="cb102-4"><a href="meas.html#cb102-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_paper</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb102-5"><a href="meas.html#cb102-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_header_above</span>(<span class="fu">c</span>(<span class="st">&quot; &quot;</span>, <span class="st">&quot;Exposure&quot;</span> <span class="ot">=</span> <span class="dv">2</span>)) </span></code></pre></div>
+<table class=" lightable-paper" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="empty-cells: hide;" colspan="1">
+</th>
+<th style="padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="2">
+<div style="border-bottom: 1px solid #00000020; padding-bottom: 5px; ">
+Exposure
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Yes
+</th>
+<th style="text-align:right;">
+No
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+No. initally at risk
+</td>
+<td style="text-align:right;">
+4000
+</td>
+<td style="text-align:right;">
+16000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+No. cases
+</td>
+<td style="text-align:right;">
+30
+</td>
+<td style="text-align:right;">
+60
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Person years at risk
+</td>
+<td style="text-align:right;">
+7970
+</td>
+<td style="text-align:right;">
+31940
+</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb103-1"><a href="meas.html#cb103-1" aria-hidden="true" tabindex="-1"></a>cum_inc <span class="ot">&lt;-</span> (dt[<span class="dv">2</span>,<span class="dv">1</span>]<span class="sc">/</span>dt[<span class="dv">1</span>,<span class="dv">1</span>]) <span class="sc">/</span> (dt[<span class="dv">2</span>,<span class="dv">2</span>]<span class="sc">/</span>dt[<span class="dv">1</span>,<span class="dv">2</span>])                           <span class="co">#    30/4000  /   60/16000</span></span>
+<span id="cb103-2"><a href="meas.html#cb103-2" aria-hidden="true" tabindex="-1"></a>rate_ratio <span class="ot">&lt;-</span> (dt[<span class="dv">2</span>,<span class="dv">1</span>]<span class="sc">/</span>dt[<span class="dv">3</span>,<span class="dv">1</span>]) <span class="sc">/</span> (dt[<span class="dv">2</span>,<span class="dv">2</span>]<span class="sc">/</span>dt[<span class="dv">3</span>,<span class="dv">2</span>])</span>
+<span id="cb103-3"><a href="meas.html#cb103-3" aria-hidden="true" tabindex="-1"></a>odds_ratio <span class="ot">&lt;-</span> (dt[<span class="dv">2</span>,<span class="dv">1</span>]<span class="sc">/</span>(dt[<span class="dv">1</span>,<span class="dv">1</span>]<span class="sc">-</span>dt[<span class="dv">2</span>,<span class="dv">1</span>])) <span class="sc">/</span> (dt[<span class="dv">2</span>,<span class="dv">2</span>]<span class="sc">/</span>(dt[<span class="dv">1</span>,<span class="dv">2</span>]<span class="sc">-</span>dt[<span class="dv">2</span>,<span class="dv">2</span>]))</span></code></pre></div>
+<p>This gives a cumulative incidence, rate incidence and incident odds ratio of 2 , 2.0038 , 2.0076, respectively</p>
+</div>
+<div id="example-3---standardization" class="section level3" number="3.4.3">
+<h3><span class="header-section-number">3.4.3</span> Example 3 - Standardization</h3>
+<p>Consider the following cases and populations at risk from 2 different cities</p>
+<table>
+<caption>
+<span id="tab:unnamed-chunk-12">Table 3.1: </span>Cases and numbers at risk
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+age
+</th>
+<th style="text-align:right;">
+cases
+</th>
+<th style="text-align:right;">
+at_risk
+</th>
+<th style="text-align:left;">
+city
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+&lt;40
+</td>
+<td style="text-align:right;">
+20
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Pop1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+&gt;40
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:left;">
+Pop1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+&lt;40
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:right;">
+400
+</td>
+<td style="text-align:left;">
+Pop2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+&gt;40
+</td>
+<td style="text-align:right;">
+80
+</td>
+<td style="text-align:right;">
+200
+</td>
+<td style="text-align:left;">
+Pop2
+</td>
+</tr>
+</tbody>
+</table>
+<p>The crude risk ratio (Population 1 : Population 2) is 2 but there is severe unbalancing in the age distributions of the 2 populations and age influences the outcome.</p>
+<div class="sourceCode" id="cb104"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb104-1"><a href="meas.html#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="co"># stratum specific rates</span></span>
+<span id="cb104-2"><a href="meas.html#cb104-2" aria-hidden="true" tabindex="-1"></a>rate1 <span class="ot">&lt;-</span> dat[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="st">&quot;cases&quot;</span>] <span class="sc">/</span>dat[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>, <span class="st">&quot;at_risk&quot;</span>]</span>
+<span id="cb104-3"><a href="meas.html#cb104-3" aria-hidden="true" tabindex="-1"></a>rate2 <span class="ot">&lt;-</span> dat[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>,<span class="st">&quot;cases&quot;</span>] <span class="sc">/</span>dat[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>, <span class="st">&quot;at_risk&quot;</span>]</span>
+<span id="cb104-4"><a href="meas.html#cb104-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-5"><a href="meas.html#cb104-5" aria-hidden="true" tabindex="-1"></a>std.pop <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">500</span>, <span class="dv">100</span>)  <span class="co"># standard young population</span></span>
+<span id="cb104-6"><a href="meas.html#cb104-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-7"><a href="meas.html#cb104-7" aria-hidden="true" tabindex="-1"></a><span class="co"># adjusted risk ratio</span></span>
+<span id="cb104-8"><a href="meas.html#cb104-8" aria-hidden="true" tabindex="-1"></a>std.pop1 <span class="ot">&lt;-</span> rate1<span class="sc">*</span>std.pop; std.pop2 <span class="ot">&lt;-</span> rate2<span class="sc">*</span>std.pop</span>
+<span id="cb104-9"><a href="meas.html#cb104-9" aria-hidden="true" tabindex="-1"></a>rr_std_y <span class="ot">&lt;-</span> <span class="fu">sum</span>(std.pop1) <span class="sc">/</span> <span class="fu">sum</span>(std.pop2)</span>
+<span id="cb104-10"><a href="meas.html#cb104-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-11"><a href="meas.html#cb104-11" aria-hidden="true" tabindex="-1"></a>std.pop <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">500</span>)  <span class="co"># standard older population</span></span>
+<span id="cb104-12"><a href="meas.html#cb104-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb104-13"><a href="meas.html#cb104-13" aria-hidden="true" tabindex="-1"></a><span class="co"># adjusted risk ratio</span></span>
+<span id="cb104-14"><a href="meas.html#cb104-14" aria-hidden="true" tabindex="-1"></a>std.pop2 <span class="ot">&lt;-</span> rate1<span class="sc">*</span>std.pop; std.pop2 <span class="ot">&lt;-</span> rate2<span class="sc">*</span>std.pop</span>
+<span id="cb104-15"><a href="meas.html#cb104-15" aria-hidden="true" tabindex="-1"></a>rr_std_o <span class="ot">&lt;-</span> <span class="fu">sum</span>(std.pop1) <span class="sc">/</span> <span class="fu">sum</span>(std.pop2)</span></code></pre></div>
+<p>Standardizing the age distributions (500, 100), we see that Population 2 still has an increased risk, 1.66667, but part of the crude difference was due to the confounding effect of age. Standardizing to an older population (100,500) leads to a smaller relative risk, 0.71429.<br />
+The calculations could be incorporated into a user defined function.</p>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb105-1"><a href="meas.html#cb105-1" aria-hidden="true" tabindex="-1"></a>std.pop <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">500</span>)</span>
+<span id="cb105-2"><a href="meas.html#cb105-2" aria-hidden="true" tabindex="-1"></a>std.direct <span class="ot">&lt;-</span> <span class="cf">function</span>(x1,y1,x2,y2,std.pop){</span>
+<span id="cb105-3"><a href="meas.html#cb105-3" aria-hidden="true" tabindex="-1"></a>  rate1 <span class="ot">&lt;-</span> x1<span class="sc">/</span>y1; rate2 <span class="ot">&lt;-</span> x2<span class="sc">/</span>y2</span>
+<span id="cb105-4"><a href="meas.html#cb105-4" aria-hidden="true" tabindex="-1"></a>   std.pop1 <span class="ot">&lt;-</span> rate1<span class="sc">*</span>std.pop; std.pop2 <span class="ot">&lt;-</span> rate2<span class="sc">*</span>std.pop</span>
+<span id="cb105-5"><a href="meas.html#cb105-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">sum</span>(std.pop1) <span class="sc">/</span> <span class="fu">sum</span>(std.pop2)</span>
+<span id="cb105-6"><a href="meas.html#cb105-6" aria-hidden="true" tabindex="-1"></a> }</span>
+<span id="cb105-7"><a href="meas.html#cb105-7" aria-hidden="true" tabindex="-1"></a><span class="fu">std.direct</span>(dat[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="dv">2</span>], dat[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="dv">3</span>], dat[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">2</span>], dat[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>,<span class="dv">3</span>], std.pop)</span></code></pre></div>
+<pre><code>## [1] 1.2857</code></pre>
+</div>
+</div>
+<div id="packages" class="section level2" number="3.5">
+<h2><span class="header-section-number">3.5</span> Examples using R epidemiology packages</h2>
+<div id="example-4-standardization" class="section level3" number="3.5.1">
+<h3><span class="header-section-number">3.5.1</span> Example 4 Standardization</h3>
+<p>Continuing with the above example, rather than writing your own function, one could use <code>epi.directadj</code> from the <code>epiR</code> package.<br />
+Care must be taken to provide the arguments as matrices.</p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb107-1"><a href="meas.html#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="co"># preprocessing function arguments to matrices</span></span>
+<span id="cb107-2"><a href="meas.html#cb107-2" aria-hidden="true" tabindex="-1"></a>obs <span class="ot">&lt;-</span> <span class="fu">matrix</span>(dat<span class="sc">$</span>cases, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb107-3"><a href="meas.html#cb107-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;Pop1&quot;</span>,<span class="st">&quot;Pop2&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;&lt;40&quot;</span>,<span class="st">&quot;&gt;40&quot;</span>)))</span>
+<span id="cb107-4"><a href="meas.html#cb107-4" aria-hidden="true" tabindex="-1"></a>tar <span class="ot">&lt;-</span> <span class="fu">matrix</span>(dat<span class="sc">$</span>at_risk, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb107-5"><a href="meas.html#cb107-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;Pop1&quot;</span>,<span class="st">&quot;Pop2&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;&lt;40&quot;</span>,<span class="st">&quot;&gt;40&quot;</span>)))</span>
+<span id="cb107-6"><a href="meas.html#cb107-6" aria-hidden="true" tabindex="-1"></a>std <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="at">data =</span> <span class="fu">c</span>(<span class="dv">500</span>,<span class="dv">100</span>), <span class="at">nrow =</span> <span class="dv">1</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb107-7"><a href="meas.html#cb107-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="st">&quot;&quot;</span>, <span class="fu">c</span>(<span class="st">&quot;&lt;40&quot;</span>,<span class="st">&quot;&gt;40&quot;</span>)))</span>
+<span id="cb107-8"><a href="meas.html#cb107-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-9"><a href="meas.html#cb107-9" aria-hidden="true" tabindex="-1"></a>ans <span class="ot">&lt;-</span> <span class="fu">epi.directadj</span>(obs, tar, std, <span class="at">units =</span> <span class="dv">1</span>, <span class="at">conf.level =</span> <span class="fl">0.95</span>)</span>
+<span id="cb107-10"><a href="meas.html#cb107-10" aria-hidden="true" tabindex="-1"></a>rr <span class="ot">&lt;-</span> ans<span class="sc">$</span>adj.strata<span class="sc">$</span>est[<span class="dv">1</span>] <span class="sc">/</span> ans<span class="sc">$</span>adj.strata<span class="sc">$</span>est[<span class="dv">2</span>]</span>
+<span id="cb107-11"><a href="meas.html#cb107-11" aria-hidden="true" tabindex="-1"></a>ans</span></code></pre></div>
+<pre><code>## $crude
+##   strata cov est    lower   upper
+## 1   Pop1 &lt;40 0.2 0.122165 0.30888
+## 2   Pop2 &lt;40 0.1 0.071441 0.13617
+## 3   Pop1 &gt;40 0.5 0.406820 0.60813
+## 4   Pop2 &gt;40 0.4 0.317175 0.49783
+## 
+## $crude.strata
+##   strata est   lower   upper
+## 1   Pop1 0.4 0.33164 0.47830
+## 2   Pop2 0.2 0.16582 0.23915
+## 
+## $adj.strata
+##   strata  est   lower   upper
+## 1   Pop1 0.25 0.18082 0.34038
+## 2   Pop2 0.15 0.12180 0.18346</code></pre>
+<p>The <code>epi.directadj</code> function provides additional outputs including the crude, crude by stratum and adjusted values along with the 95% confidence intervals. The adjusted value for population 1 = 0.25 and the adjusted value for population 1 = 0.15 so the relative risk is 1.66667 as calculated previously for the older standard population.</p>
+<p>It is most helpful to include a measure of the variation around this point estimate and the general structure is: <strong>Point estimate ± [1.96 × SE (estimate)]</strong> where 1.96 is the z-score (standard normal score) corresponding to the 95% confidence level (i.e., an alpha error of 5%). Confidence intervals for different levels of alpha error obtained by replacing this value with the corresponding z-score value (e.g., 1.64 for 90%, 2.58 for 99% confidence intervals).</p>
+<p>Because the RR is a multiplicative measure and thus asymmetrically distributed, its SE needs to be calculated in a logarithmic scale. <span class="math display">\[Se(log RR) = \sqrt{\frac{b}{a + b} + \frac{d}{c + d}}\]</span> where a = exposed cases, b = exposed non cases, c = unexposed cases, d = unexposed non cases<br />
+The 95% CI calculated on the logarithmic scale is therefore log(95%CI RR) = log RR ± 1.96 X SE(log RR)</p>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb109-1"><a href="meas.html#cb109-1" aria-hidden="true" tabindex="-1"></a>log_se <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((<span class="dv">150</span><span class="sc">/</span>(<span class="dv">150</span><span class="sc">*</span><span class="dv">450</span>)) <span class="sc">+</span> (<span class="dv">90</span><span class="sc">/</span>(<span class="dv">90</span><span class="sc">+</span><span class="dv">510</span>)))</span>
+<span id="cb109-2"><a href="meas.html#cb109-2" aria-hidden="true" tabindex="-1"></a>log_CI <span class="ot">&lt;-</span> <span class="fu">log</span>(rr) <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>)<span class="sc">*</span> <span class="fl">1.96</span> <span class="sc">*</span> log_se</span>
+<span id="cb109-3"><a href="meas.html#cb109-3" aria-hidden="true" tabindex="-1"></a>CI <span class="ot">&lt;-</span> <span class="fu">exp</span>(log_CI)</span></code></pre></div>
+<p>The 95% CI for the relative risk are therefore from 0.77578 to 3.58061.</p>
+<div class="tip">
+<p>Remembering that these CIs are calculated on a multiplicative scale it is noticed that the point estimate is <strong>not</strong> the arithmetic mean of the confidence limits. Rather the point estimate equals the geometric mean, so as expected <span class="math inline">\(\sqrt{.78 * 3.58} = 1.66\)</span>.</p>
+<p>This follows from lower limit 95% CI (RR) = RR × e<sup>–[1.96 × SE(log RR)]</sup> and upper limit 95% CI (RR) = RR × e<sup>[1.96 × SE(log RR)]</sup></p>
+<p>so lower CI * upper CI = RR<sup>2</sup> or RR = <span class="math inline">\(\sqrt{LCI * UCI}\)</span>.</p>
+</div>
+</div>
+<div id="example-5---contingency-tables-with-epir-package" class="section level3" number="3.5.2">
+<h3><span class="header-section-number">3.5.2</span> Example 5 - Contingency Tables with <code>epiR</code> package</h3>
+<p>A most useful function for contingency tables is <code>epi.2by2()</code> from the <code>epiR</code> package which calculates multiple measures of association.<br />
+But it needs a specific 2 by 2 table that <strong>must</strong> look like this for risk and odds ratio</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>Outcome +</th>
+<th>Outcome -</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Exposure +</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Exposure -</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>or like this for an incidence rate ratio.</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th>No. events</th>
+<th>PersonTime</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Exposure +</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Exposure -</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p><code>epi.2by2</code> is a useful function but its first argument must be a <code>table</code> object and the cell order must be <strong>exactly</strong> as shown above.</p>
+<p>Using the <code>heart.csv</code> data, what is the risk ratio for women with men as the reference (non-exposed) group?<br />
+What is the odds ratio for the same association?</p>
+<div class="sourceCode" id="cb110"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb110-1"><a href="meas.html#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remember epi.2by2 needs the table in the right order</span></span>
+<span id="cb110-2"><a href="meas.html#cb110-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 1st column is events and the 2nd row is the reference group</span></span>
+<span id="cb110-3"><a href="meas.html#cb110-3" aria-hidden="true" tabindex="-1"></a><span class="co"># previous tab needs to be adjusted accordingly</span></span>
+<span id="cb110-4"><a href="meas.html#cb110-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb110-5"><a href="meas.html#cb110-5" aria-hidden="true" tabindex="-1"></a><span class="co"># risk ratio</span></span>
+<span id="cb110-6"><a href="meas.html#cb110-6" aria-hidden="true" tabindex="-1"></a>tab<span class="ot">&lt;-</span> tab[<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>),<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>)] </span>
+<span id="cb110-7"><a href="meas.html#cb110-7" aria-hidden="true" tabindex="-1"></a><span class="fu">epi.2by2</span>(tab, <span class="at">method=</span><span class="st">&quot;cohort.count&quot;</span>)</span></code></pre></div>
+<pre><code>##              Outcome +    Outcome -      Total        Inc risk *        Odds
+## Exposed +          104           96        200                52       1.083
+## Exposed -          111          189        300                37       0.587
+## Total              215          285        500                43       0.754
+## 
+## Point estimates and 95% CIs:
+## -------------------------------------------------------------------
+## Inc risk ratio                               1.41 (1.15, 1.71)
+## Odds ratio                                   1.84 (1.28, 2.65)
+## Attrib risk *                                15.00 (6.18, 23.82)
+## Attrib risk in population *                  6.00 (-0.98, 12.98)
+## Attrib fraction in exposed (%)               28.85 (13.19, 41.68)
+## Attrib fraction in population (%)            13.95 (5.16, 21.93)
+## -------------------------------------------------------------------
+##  Test that OR = 1: chi2(1) = 11.016 Pr&gt;chi2 = &lt;0.001
+##  Wald confidence limits
+##  CI: confidence interval
+##  * Outcomes per 100 population units</code></pre>
+<div class="sourceCode" id="cb112"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb112-1"><a href="meas.html#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="co"># odds ratio</span></span>
+<span id="cb112-2"><a href="meas.html#cb112-2" aria-hidden="true" tabindex="-1"></a><span class="fu">epi.2by2</span>(tab, <span class="at">method=</span><span class="st">&quot;case.control&quot;</span>)</span></code></pre></div>
+<pre><code>##              Outcome +    Outcome -      Total        Prevalence *        Odds
+## Exposed +          104           96        200                  52       1.083
+## Exposed -          111          189        300                  37       0.587
+## Total              215          285        500                  43       0.754
+## 
+## Point estimates and 95% CIs:
+## -------------------------------------------------------------------
+## Odds ratio (W)                               1.84 (1.28, 2.65)
+## Attrib prevalence *                          15.00 (6.18, 23.82)
+## Attrib prevalence in population *            6.00 (-0.98, 12.98)
+## Attrib fraction (est) in exposed  (%)        45.72 (20.74, 62.91)
+## Attrib fraction (est) in population (%)      22.15 (9.22, 33.23)
+## -------------------------------------------------------------------
+##  Test that OR = 1: chi2(1) = 11.016 Pr&gt;chi2 = &lt;0.001
+##  Wald confidence limits
+##  CI: confidence interval
+##  * Outcomes per 100 population units</code></pre>
+<p>This risk (or odds) ratio) can hand checked by calculating the ratio of the risk (or odds) for women and men.</p>
+<div class="sourceCode" id="cb114"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb114-1"><a href="meas.html#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;Hand calculated risk ratio is &quot;</span>, (tab[<span class="dv">1</span>,<span class="dv">1</span>] <span class="sc">/</span>(tab[<span class="dv">1</span>,<span class="dv">2</span>] <span class="sc">+</span> tab[<span class="dv">1</span>,<span class="dv">1</span>])) <span class="sc">/</span> (tab[<span class="dv">2</span>,<span class="dv">1</span>] <span class="sc">/</span>(tab[<span class="dv">2</span>,<span class="dv">2</span>] <span class="sc">+</span> tab[<span class="dv">2</span>,<span class="dv">1</span>])))</span></code></pre></div>
+<pre><code>## Hand calculated risk ratio is  1.4054</code></pre>
+<div class="sourceCode" id="cb116"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb116-1"><a href="meas.html#cb116-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;</span><span class="sc">\n</span><span class="st">Hand calculated odds ratio is &quot;</span>, (tab[<span class="dv">1</span>,<span class="dv">1</span>] <span class="sc">/</span>tab[<span class="dv">1</span>,<span class="dv">2</span>]) <span class="sc">/</span> (tab[<span class="dv">2</span>,<span class="dv">1</span>] <span class="sc">/</span>tab[<span class="dv">2</span>,<span class="dv">2</span>]))</span></code></pre></div>
+<pre><code>## 
+## Hand calculated odds ratio is  1.8446</code></pre>
+<p>What is the incidence rate ratio for women with men as the reference group?
+Hint: need to calculate the total number of events and person time according to gender.</p>
+<div class="sourceCode" id="cb118"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb118-1"><a href="meas.html#cb118-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Base R - tapply for SUM of people who DIED by GENDER and the SUM of FOLLOW-UP TIME by GENDER </span></span>
+<span id="cb118-2"><a href="meas.html#cb118-2" aria-hidden="true" tabindex="-1"></a>events <span class="ot">&lt;-</span> <span class="fu">tapply</span>(heart<span class="sc">$</span>fstat<span class="sc">==</span><span class="st">&quot;dead&quot;</span>, heart<span class="sc">$</span>gender, sum) </span>
+<span id="cb118-3"><a href="meas.html#cb118-3" aria-hidden="true" tabindex="-1"></a>persontime <span class="ot">&lt;-</span> <span class="fu">tapply</span>(heart<span class="sc">$</span>lenfol, heart<span class="sc">$</span>gender, sum)</span>
+<span id="cb118-4"><a href="meas.html#cb118-4" aria-hidden="true" tabindex="-1"></a><span class="co"># make a 2 by 2 table, remembering to make the unexposed group the 2nd row </span></span>
+<span id="cb118-5"><a href="meas.html#cb118-5" aria-hidden="true" tabindex="-1"></a>tab_gender <span class="ot">&lt;-</span> <span class="fu">cbind</span>(events, persontime) </span>
+<span id="cb118-6"><a href="meas.html#cb118-6" aria-hidden="true" tabindex="-1"></a>tab_gender <span class="ot">&lt;-</span> tab_gender[<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>),]</span>
+<span id="cb118-7"><a href="meas.html#cb118-7" aria-hidden="true" tabindex="-1"></a><span class="fu">epi.2by2</span>(tab_gender, <span class="at">method =</span> <span class="st">&quot;cohort.time&quot;</span>)</span></code></pre></div>
+<pre><code>##              Outcome +    Time at risk        Inc rate *
+## Exposed +          104          165492            0.0628
+## Exposed -          111          275726            0.0403
+## Total              215          441218            0.0487
+## 
+## Point estimates and 95% CIs:
+## -------------------------------------------------------------------
+## Inc rate ratio                               1.56 (1.18, 2.06)
+## Attrib rate *                                0.02 (0.01, 0.04)
+## Attrib rate in population *                  0.01 (-0.00, 0.02)
+## Attrib fraction in exposed (%)               35.94 (15.47, 51.42)
+## Attrib fraction in population (%)            17.38 (12.96, 21.95)
+## -------------------------------------------------------------------
+##  Wald confidence limits
+##  CI: confidence interval
+##  * Outcomes per 100 units of population time at risk</code></pre>
+<p>Of course, this can also be accomplished with the <code>tidyverse</code> approach using the <code>dplyr</code> package.</p>
+<div class="sourceCode" id="cb120"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb120-1"><a href="meas.html#cb120-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Tidyverse approach</span></span>
+<span id="cb120-2"><a href="meas.html#cb120-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb120-3"><a href="meas.html#cb120-3" aria-hidden="true" tabindex="-1"></a>heart_rate <span class="ot">&lt;-</span> heart <span class="sc">%&gt;%</span> </span>
+<span id="cb120-4"><a href="meas.html#cb120-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(gender) <span class="sc">%&gt;%</span> </span>
+<span id="cb120-5"><a href="meas.html#cb120-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">events =</span>  <span class="fu">sum</span>(fstat<span class="sc">==</span><span class="st">&quot;dead&quot;</span>),<span class="at">time =</span> <span class="fu">sum</span>(lenfol)) <span class="sc">%&gt;%</span> </span>
+<span id="cb120-6"><a href="meas.html#cb120-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb120-7"><a href="meas.html#cb120-7" aria-hidden="true" tabindex="-1"></a>  as.matrix</span>
+<span id="cb120-8"><a href="meas.html#cb120-8" aria-hidden="true" tabindex="-1"></a>heart_rate <span class="ot">&lt;-</span> heart_rate[<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>),]</span>
+<span id="cb120-9"><a href="meas.html#cb120-9" aria-hidden="true" tabindex="-1"></a><span class="fu">epi.2by2</span>(heart_rate, <span class="at">method =</span> <span class="st">&quot;cohort.time&quot;</span>)</span></code></pre></div>
+<pre><code>##              Outcome +    Time at risk        Inc rate *
+## Exposed +          104          165492            0.0628
+## Exposed -          111          275726            0.0403
+## Total              215          441218            0.0487
+## 
+## Point estimates and 95% CIs:
+## -------------------------------------------------------------------
+## Inc rate ratio                               1.56 (1.18, 2.06)
+## Attrib rate *                                0.02 (0.01, 0.04)
+## Attrib rate in population *                  0.01 (-0.00, 0.02)
+## Attrib fraction in exposed (%)               35.94 (15.47, 51.42)
+## Attrib fraction in population (%)            17.38 (12.96, 21.95)
+## -------------------------------------------------------------------
+##  Wald confidence limits
+##  CI: confidence interval
+##  * Outcomes per 100 units of population time at risk</code></pre>
+</div>
+<div id="example-6---contingency-tables-with-other-r-packages" class="section level3" number="3.5.3">
+<h3><span class="header-section-number">3.5.3</span> Example 6 - Contingency Tables with other <code>R</code> packages</h3>
+<p>An advantage of <code>r</code> is that there are often multiple ways to get the right answer to a problem. Similarly, there are multiple packages that can used used to calculate epidemiologic measures of association.</p>
+<p>With the <code>heart.csv</code> dataset, what is the incidence rate ratio for women with men as the reference group?<br />
+a) Using <code>epi2X2()</code> in the <code>epibasix</code> package.<br />
+b) Using <code>epitab()</code> in the <code>epitools</code> package.</p>
+<p><strong>Again be careful that the data is entered in the correct format of rows and columns required by each package. The required structure varies between packages and can be checked with <code>help(package="XXX")</code>. Using the wrong structure would produce incorrect results. </strong></p>
+<div class="sourceCode" id="cb122"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb122-1"><a href="meas.html#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using  `epi2X2()` in the `epibasix` package</span></span>
+<span id="cb122-2"><a href="meas.html#cb122-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb122-3"><a href="meas.html#cb122-3" aria-hidden="true" tabindex="-1"></a><span class="co">#cases should be entered as column one and controls as column two.</span></span>
+<span id="cb122-4"><a href="meas.html#cb122-4" aria-hidden="true" tabindex="-1"></a><span class="co">#treatment as columns and outcome as row -&gt; need to transpose the original 2X2 table</span></span>
+<span id="cb122-5"><a href="meas.html#cb122-5" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(<span class="fu">epi2x2</span>(<span class="fu">t</span>(tab))) <span class="co"># note need to transpose the rows</span></span></code></pre></div>
+<pre><code>## Epidemiological 2x2 Table Analysis 
+##  
+## Input Matrix: 
+##        
+##         women men
+##   dead    104 111
+##   alive    96 189
+## 
+## Pearson Chi-Squared Statistic (Includes Yates&#39; Continuity Correction): NA
+## Associated p.value for H0: There is no association between exposure and outcome vs. HA: There is an association : NA
+## p.value using Fisher&#39;s Exact Test (1 DF) : 0.001
+##  
+## Estimate of Odds Ratio: 1.845
+## 95% Confidence Limits for true Odds Ratio are: [1.283, 2.652]
+##  
+## Estimate of Relative Risk (Cohort, Col1): 1.436
+## 95% Confidence Limits for true Relative Risk are: [1.16, 1.778]
+##  
+## Estimate of Risk Difference (p1 - p2) in Cohort Studies: 0.147
+## 95% Confidence Limits for Risk Difference: [0.056, 0.237]
+##  
+## Estimate of Risk Difference (p1 - p2) in Case Control Studies: 0.15
+## 95% Confidence Limits for Risk Difference: [0.059, 0.241]
+##  
+## Note: Above Confidence Intervals employ a continuity correction.</code></pre>
+<div class="sourceCode" id="cb124"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb124-1"><a href="meas.html#cb124-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using `epitab()` in the `epitools` package.</span></span>
+<span id="cb124-2"><a href="meas.html#cb124-2" aria-hidden="true" tabindex="-1"></a><span class="co">#rows and columns need to be reversed/transposed</span></span>
+<span id="cb124-3"><a href="meas.html#cb124-3" aria-hidden="true" tabindex="-1"></a><span class="fu">epitab</span>(tab, <span class="at">method =</span> <span class="st">&quot;riskratio&quot;</span>, <span class="at">rev =</span> <span class="st">&quot;both&quot;</span>)</span></code></pre></div>
+<pre><code>## $tab
+##        
+##         alive   p0 dead   p1 riskratio lower  upper   p.value
+##   men     189 0.63  111 0.37    1.0000    NA     NA        NA
+##   women    96 0.48  104 0.52    1.4054 1.152 1.7146 0.0012243
+## 
+## $measure
+## [1] &quot;wald&quot;
+## 
+## $conf.level
+## [1] 0.95
+## 
+## $pvalue
+## [1] &quot;fisher.exact&quot;</code></pre>
+<div class="sourceCode" id="cb126"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb126-1"><a href="meas.html#cb126-1" aria-hidden="true" tabindex="-1"></a><span class="fu">epitab</span>(tab, <span class="at">method =</span> <span class="st">&quot;oddsratio&quot;</span>, <span class="at">rev =</span> <span class="st">&quot;both&quot;</span>)</span></code></pre></div>
+<pre><code>## $tab
+##        
+##         alive      p0 dead      p1 oddsratio  lower  upper   p.value
+##   men     189 0.66316  111 0.51628    1.0000     NA     NA        NA
+##   women    96 0.33684  104 0.48372    1.8446 1.2829 2.6523 0.0012243
+## 
+## $measure
+## [1] &quot;wald&quot;
+## 
+## $conf.level
+## [1] 0.95
+## 
+## $pvalue
+## [1] &quot;fisher.exact&quot;</code></pre>
+<p>Thus it can be seen that the risk ratio and odds ratios as calculated with 3 different functions from 3 different <code>R</code> packages produce the same results.</p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="vis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="infer.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-clinepi.pdf", "bookdown-clinepi.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

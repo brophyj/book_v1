@@ -1,0 +1,18 @@
+bookdown::gitbook:
+  includes:
+    in_header: hide_code.html # inspired by: https://stackoverflow.com/questions/45360998/code-folding-in-bookdown
+  css: style.css
+  config:
+    toc:
+      before: |
+        <li><a href="./">(Mostly Clinical) Epidemiology with R</a></li>
+      after: |
+         <li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+    download: ["pdf", "epub"]
+bookdown::pdf_book:
+  includes:
+    in_header: preamble.tex
+  latex_engine: xelatex
+  citation_package: natbib
+  keep_tex: yes
+bookdown::epub_book: default

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Non-experimental designs | (Mostly Clinical) Epidemiology with R</title>
+  <meta name="description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="generator" content="bookdown 0.21.6 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Non-experimental designs | (Mostly Clinical) Epidemiology with R" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  <meta name="github-repo" content="brophyj/epi_book" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Non-experimental designs | (Mostly Clinical) Epidemiology with R" />
+  
+  <meta name="twitter:description" content="This is an intermediate epidemiology book that focuses on clinical epidmeiology and its quantification using R. It stems from my belief that the learning of epidmeiologic principles is consolidated through hands on coding examples." />
+  
+
+<meta name="author" content="James Brophy" />
+
+
+<meta name="date" content="2021-01-21" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="data-visualizations.html"/>
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+p.caption {
+  color: #777;
+  margin-top: 10px;
+}
+p code {
+  white-space: inherit;
+}
+pre {
+  word-break: normal;
+  word-wrap: normal;
+}
+pre code {
+  white-space: inherit;
+}
+FOO {
+  font-weight: bold;
+  color: red;
+}
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">(Mostly Clinical) Epidemiology with R</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About the Author</a></li>
+<li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="intro.html"><a href="intro.html#preface"><i class="fa fa-check"></i><b>1.1</b> Preface</a></li>
+<li class="chapter" data-level="1.2" data-path="intro.html"><a href="intro.html#pre"><i class="fa fa-check"></i><b>1.2</b> Prerequisites</a></li>
+<li class="chapter" data-level="1.3" data-path="intro.html"><a href="intro.html#my-general-philosophy-for-clinical-epidemiology"><i class="fa fa-check"></i><b>1.3</b> My general philosophy for clinical epidemiology</a></li>
+<li class="chapter" data-level="1.4" data-path="intro.html"><a href="intro.html#outline"><i class="fa fa-check"></i><b>1.4</b> Outline</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html"><i class="fa fa-check"></i><b>2</b> Introduction to statistical software - R</a><ul>
+<li class="chapter" data-level="2.1" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#statistical-software---r"><i class="fa fa-check"></i><b>2.1</b> Statistical software - R</a></li>
+<li class="chapter" data-level="2.2" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r---common-data-and-variable-manipulations"><i class="fa fa-check"></i><b>2.2</b> R - Common data and variable manipulations</a></li>
+<li class="chapter" data-level="2.3" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#rstudio---the-ide-for-r"><i class="fa fa-check"></i><b>2.3</b> RStudio - <strong>The</strong> IDE for R</a></li>
+<li class="chapter" data-level="2.4" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r---more-than-a-statistical-program"><i class="fa fa-check"></i><b>2.4</b> R - More than a statistical program</a></li>
+<li class="chapter" data-level="2.5" data-path="introduction-to-statistical-software-r.html"><a href="introduction-to-statistical-software-r.html#r---general-public-license"><i class="fa fa-check"></i><b>2.5</b> R - General Public License</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="data-visualizations.html"><a href="data-visualizations.html"><i class="fa fa-check"></i><b>3</b> Data visualizations</a><ul>
+<li class="chapter" data-level="3.0.1" data-path="data-visualizations.html"><a href="data-visualizations.html#r-packages-required-for-this-chapter"><i class="fa fa-check"></i><b>3.0.1</b> R packages required for this chapter</a></li>
+<li class="chapter" data-level="3.1" data-path="data-visualizations.html"><a href="data-visualizations.html#introduction"><i class="fa fa-check"></i><b>3.1</b> Introduction</a></li>
+<li class="chapter" data-level="3.2" data-path="data-visualizations.html"><a href="data-visualizations.html#why-is-data-visualization-important"><i class="fa fa-check"></i><b>3.2</b> Why is data visualization important?</a></li>
+<li class="chapter" data-level="3.3" data-path="data-visualizations.html"><a href="data-visualizations.html#creating-an-effective-and-professional-appearing-graph"><i class="fa fa-check"></i><b>3.3</b> Creating an effective and professional appearing graph</a></li>
+<li class="chapter" data-level="3.4" data-path="data-visualizations.html"><a href="data-visualizations.html#graphical-choices"><i class="fa fa-check"></i><b>3.4</b> Graphical choices</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="non-experimental-designs.html"><a href="non-experimental-designs.html"><i class="fa fa-check"></i><b>4</b> Non-experimental designs</a><ul>
+<li class="chapter" data-level="4.1" data-path="non-experimental-designs.html"><a href="non-experimental-designs.html#introduction-1"><i class="fa fa-check"></i><b>4.1</b> Introduction</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">(Mostly Clinical) Epidemiology with R</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="non-experimental-designs" class="section level1">
+<h1><span class="header-section-number">Chapter 4</span> Non-experimental designs</h1>
+<div id="introduction-1" class="section level2">
+<h2><span class="header-section-number">4.1</span> Introduction</h2>
+<p>This chapter will provide only the briefest review of non-experimental study designs so as to try and assure that the reader has a basic knowledge of the advantages and limitations of each design. The excellent introductory <span class="citation">(Gordis <a href="#ref-Gordis" role="doc-biblioref">2014</a>)</span> <span class="citation">(Rothman <a href="#ref-Rothman" role="doc-biblioref">2012</a>)</span>, intermediate <span class="citation">(Szklo and Nieto <a href="#ref-SN" role="doc-biblioref">2019</a>)</span> and advanced <span class="citation">(Rothman, Greenland, and Lash <a href="#ref-RGL" role="doc-biblioref">2008</a>)</span> epidemiology textbooks referred to in Chapter <a href="intro.html#pre">1.2</a> provide more complete information.</p>
+<p>Study includes surveillance, observation, screening, hypothesis testing, analytic research, experiments, and prediction. Distribution refers to analysis by time, place (or space), and population (i.e., classes or subgroups of persons affected in an organization, population, or society, or at regional and global scales). Determinants are the geophysical, biological, behavioral, social, cultural, economic, and political factors that influence health. Health-related events, states, and processes include outbreaks, diseases, disorders, causes of death, behaviors, environmental and socioeconomic processes, effects of preventive programs, and use of health and social services. Specified populations are those with common contexts and identifiable characteristics. Application to control… makes explicit the aim of epidemiology—to promote, protect, and restore health, and to advance scientific knowledge.</p>
+<p>The primary “knowledge object” of epidemiology as a scientific discipline are causes of health-related events, states, and processes in groups and populations. In the past 90 years, the definition has broadened from concern with communicable disease epidemics to include all phenomena related to health in populations. Therefore, epidemiology is much more than a branch of medicine treating of epidemics. Epidemiology may also study disease in populations of animals and plants. See also causality; group comparison; population thinking strategy.</p>
+
+<div id="refs" class="references">
+<div>
+<p>Gordis, Leon. 2014. <em>Epidemiology</em>. Book.</p>
+</div>
+<div>
+<p>Rothman, Kenneth J. 2012. <em>Epidemiology : An Introduction</em>. Book. New York, NY: Oxford University Press.</p>
+</div>
+<div>
+<p>Rothman, Kenneth J., Sander Greenland, and Timothy L. Lash. 2008. <em>Modern Epidemiology</em>. Book.</p>
+</div>
+<div>
+<p>Szklo, M., and F. Javier Nieto. 2019. <em>Epidemiology : Beyond the Basics</em>. Book.</p>
+</div>
+</div>
+</div>
+</div>
+<h3>References</h3>
+<div id="refs" class="references">
+<div id="ref-Gordis">
+<p>Gordis, Leon. 2014. <em>Epidemiology</em>. Book.</p>
+</div>
+<div id="ref-Rothman">
+<p>Rothman, Kenneth J. 2012. <em>Epidemiology : An Introduction</em>. Book. New York, NY: Oxford University Press.</p>
+</div>
+<div id="ref-RGL">
+<p>Rothman, Kenneth J., Sander Greenland, and Timothy L. Lash. 2008. <em>Modern Epidemiology</em>. Book.</p>
+</div>
+<div id="ref-SN">
+<p>Szklo, M., and F. Javier Nieto. 2019. <em>Epidemiology : Beyond the Basics</em>. Book.</p>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="data-visualizations.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["bookdown-clinepi.pdf", "bookdown-clinepi.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>
