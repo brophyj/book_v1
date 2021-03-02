@@ -26,6 +26,5 @@ sessionInfo()
 ##  [5] magrittr_2.0.1    evaluate_0.14     stringi_1.5.3     rlang_0.4.10     
 ##  [9] jquerylib_0.1.3   bslib_0.2.4       rmarkdown_2.6.6   tools_4.0.3      
 ## [13] stringr_1.4.0     xfun_0.20         yaml_2.2.1        parallel_4.0.3   
-## [17] rsconnect_0.8.16  compiler_4.0.3    htmltools_0.5.1.1 knitr_1.31       
-## [21] sass_0.3.1
+## [17] compiler_4.0.3    htmltools_0.5.1.1 knitr_1.31        sass_0.3.1
 ```
