@@ -492,13 +492,13 @@ ggplot(t, aes(x,ppv,color = as.factor(bias))) +
 
 ## Bayesian data analysis and statistical inference
 
-Unlike the standard frequentist approach described above, Bayesian inference is not based on statistical significance testing, where effects are compared to a "null hypothesis". Standard (frequentist) procedures fix the working hypotheses and, by deduction, make inference on the observed data:\
--- If my hypothesis is true, what is the probability of randomly selecting the data that I actually observed? If small, then deduce weak support of the evidence to the hypothesis\
--- Assess Pr(Observed data \| Hypothesis)
+Unlike the standard frequentist approach described above, Bayesian inference is not based on statistical significance testing, where effects are compared to a "null hypothesis". Standard (frequentist) procedures fix the working hypotheses and, by deduction, make inference on the observed data:   
+- If my hypothesis is true, what is the probability of randomly selecting the data that I actually observed? If small, then deduce weak support of the evidence to the hypothesis\
+- Assesses Pr(Observed data \| Hypothesis)
 
-On the contrary, the Bayesian philosophy proceeds fixing the value of the observed data and, by induction, makes inference on the unobservable hypotheses, which is ultimately what both clinicians and researchers are most interested in.\
-- What is the probability of my hypothesis, given the data I observed? If less than the probability of other competing hypotheses, then weak support of the evidence for the hypothesis\
-- Assess Pr(Hypothesis \| Observed data)
+On the contrary, the Bayesian philosophy proceeds fixing the value of the observed data and, by induction, makes inference on the unobservable hypotheses, which is ultimately what both clinicians and researchers are most interested in.     
+- What is the probability of my hypothesis, given the data I observed? If less than the probability of other competing hypotheses, then weak support of the evidence for the hypothesis     
+- Assesses Pr(Hypothesis \| Observed data)
 
 Advantage of inductive reasoning: conclusions about unobserved states of nature are broader than the observations on which they are based; using this reasoning will generate new hypotheses and learning new things. The drawback is cannot be sure that what we conclude is actually true, a conundrum known as the [problem of induction](https://en.wikipedia.org/wiki/Problem_of_induction). Bayesian reasoning combines a belief calculus (prior) and an evidential calculus (likelihood ratio) where each individual is entitled to their own, subjective evaluation. According to the evidence that is sequentially available, individuals tend to update their beliefs. In identifiable problems as more data accumulates the subjective component diminishes and divergent opinions converge. In non-identifiable problems (missing data, measurement error, unmeasured confounders) priors remain important even as more data accumulates.
 
