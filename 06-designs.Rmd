@@ -23,7 +23,7 @@ knitr::include_graphics("img/ebm/pyramid.png")
 
 However, Figure \@ref(fig:pyramid) is another example of a simple heuristic which enables quick but often erroneous conclusions concerning study design. Unfortunately as shown in this and susequent chapters, there are no shortcuts to the evaluation of study designs which need individual considerations. In that respect the following [pyramid](https://twitter.com/statsepi/status/895012576714731520?lang=en) is both more realistic and helpful.
 
-```{r, echo=FALSE, out.width="50%", fig.cap="EBM pyramid of research designs", fig.align="center"}
+```{r better, echo=FALSE, out.width="50%", fig.cap="Better EBM pyramid of research designs", fig.align="center"}
 knitr::include_graphics("img/ebm/pyramid_good.png")
 ```
 
@@ -31,13 +31,13 @@ Although one may debate that the magnitude of the blue area is an overestimate o
 
 The following is a taxonomy of the different types of study designs.
 
-```{r, echo=FALSE, out.width="1000%", fig.cap="Overview of different research designs", fig.align="center"}
+```{r overview, echo=FALSE, out.width="1000%", fig.cap="Overview of different research designs", fig.align="center"}
 knitr::include_graphics("img/ebm/overview.png")
 ```
 
 Ecological study designs involve populations or groups of individuals as the unit of analysis as opposed to the other observation designs where the unit of analysis is the individual. Ecological studies are especially useful for descriptive reports, the analysis of birth cohorts, when exposure is only available at the group level, or to investigate differences between populations when the between population difference is much greater than within population differences. For example, ecological studies would be appropriate for aggregate exposure involving air pollution, health care systems, or gun control laws. One must be careful to avoid the [**ecological bias**](https://en.wikipedia.org/wiki/Ecological_fallacy) that can occur because an association observed between variables on the aggregate level does not necessarily represent the association that exists at the individual level. The ecological bias can be shown graphically in Figure \@ref(fig:ecology) where the discordance of the exposure association between groups and individuals is especially strong.
 
-```{r, ecology, echo=FALSE, out.width="1000%", fig.cap="Ecological bias", fig.align="center"}
+```{r ecology, echo=FALSE, out.width="1000%", fig.cap="Ecological bias", fig.align="center"}
 knitr::include_graphics("img/ebm/ecological.png")
 ```
 
@@ -113,7 +113,7 @@ After case identification, the most important and difficult next step is the sel
 
 Case control studies may be conducted with an open or closed study population. In a dynamic (open) population, there are two options for selecting controls; i) if the population is in a steady-state, sample randomly from the person-time distribution ii) if not, controls may be selected at the same time as cases occur (i.e., "matched on time"). In a closed study population, there are three options for selecting controls; i) at the end of follow-up ii) at the beginning of follow-up iii) throughout follow-up as cases occur ("matched on time"). Analytically, these distinctions lead to different effect measures, each of which (under various assumptions) parallels an equivalent measure from a full-cohort study.
 
-```{r, echo=FALSE, out.width="50%", fig.cap=c("Case control sampling times"), fig.align="center"}
+```{r cc, echo=FALSE, out.width="50%", fig.cap=c("Case control sampling times"), fig.align="center"}
 knitr::include_graphics("img/ebm/cc.png")
 ```
 
@@ -151,7 +151,7 @@ This is easily understood when it is recalled that the standard error of the est
 
 The following figure from [@Knol] is a useful summary of the effect measures available from case control studies depending on the nature of the cases (prevalent or incident; level 1), the type of source population (fixed cohort or dynamic population; level 2), the sampling design used to select controls (level 3), and the underlying assumptions (level 4).
 
-```{r, echo=FALSE, out.width="1000%", fig.cap=c("Effect measures from case control designs"), fig.align="center"}
+```{r measures, echo=FALSE, out.width="1000%", fig.cap=c("Effect measures from case control designs"), fig.align="center"}
 knitr::include_graphics("img/ebm/cc_measures.png")
 ```
 

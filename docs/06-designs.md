@@ -23,8 +23,8 @@ The common hierarchy of evidence based medicine (EBM) research designs is presen
 However, Figure \@ref(fig:pyramid) is another example of a simple heuristic which enables quick but often erroneous conclusions concerning study design. Unfortunately as shown in this and susequent chapters, there are no shortcuts to the evaluation of study designs which need individual considerations. In that respect the following [pyramid](https://twitter.com/statsepi/status/895012576714731520?lang=en) is both more realistic and helpful.
 
 <div class="figure" style="text-align: center">
-<img src="img/ebm/pyramid_good.png" alt="EBM pyramid of research designs" width="50%" />
-<p class="caption">(\#fig:unnamed-chunk-3)EBM pyramid of research designs</p>
+<img src="img/ebm/pyramid_good.png" alt="Better EBM pyramid of research designs" width="50%" />
+<p class="caption">(\#fig:better)Better EBM pyramid of research designs</p>
 </div>
 
 Although one may debate that the magnitude of the blue area is an overestimate of the scale of good designs, it does underline the importance in clinical epidemiology of assessing individual study quality for both experimental and non-experimental studies. As this book is orientated toward clinical epidemiology, experimental designs (randomized clinical trials (RCTs)) will be emphasized and discussed separately in a later chapter. RCTs have a special emphasis since they are often considered the pinnacle of research designs and greatly influence medical guidelines and consequently clinical practice.
@@ -33,7 +33,7 @@ The following is a taxonomy of the different types of study designs.
 
 <div class="figure" style="text-align: center">
 <img src="img/ebm/overview.png" alt="Overview of different research designs" width="1000%" />
-<p class="caption">(\#fig:unnamed-chunk-4)Overview of different research designs</p>
+<p class="caption">(\#fig:overview)Overview of different research designs</p>
 </div>
 
 Ecological study designs involve populations or groups of individuals as the unit of analysis as opposed to the other observation designs where the unit of analysis is the individual. Ecological studies are especially useful for descriptive reports, the analysis of birth cohorts, when exposure is only available at the group level, or to investigate differences between populations when the between population difference is much greater than within population differences. For example, ecological studies would be appropriate for aggregate exposure involving air pollution, health care systems, or gun control laws. One must be careful to avoid the [**ecological bias**](https://en.wikipedia.org/wiki/Ecological_fallacy) that can occur because an association observed between variables on the aggregate level does not necessarily represent the association that exists at the individual level. The ecological bias can be shown graphically in Figure \@ref(fig:ecology) where the discordance of the exposure association between groups and individuals is especially strong.
@@ -100,10 +100,10 @@ In cohort studies, exposed/unexposed groups **exist** in the source population a
 
 <div class="figure" style="text-align: center">
 <img src="img/ebm/cohort.png" alt="Observational research design" width="50%" />
-<p class="caption">(\#fig:unnamed-chunk-5-1)Observational research design</p>
+<p class="caption">(\#fig:unnamed-chunk-3-1)Observational research design</p>
 </div><div class="figure" style="text-align: center">
 <img src="img/ebm/rct.png" alt="Experimental research design" width="50%" />
-<p class="caption">(\#fig:unnamed-chunk-5-2)Experimental research design</p>
+<p class="caption">(\#fig:unnamed-chunk-3-2)Experimental research design</p>
 </div>
 
 Practically, the best general approach to achieve valid causal non-experimental designs is to try to emulate the RCT[@emulate] you would like to do with special attention to the following:\
@@ -121,7 +121,7 @@ Case control studies may be conducted with an open or closed study population. I
 
 <div class="figure" style="text-align: center">
 <img src="img/ebm/cc.png" alt="Case control sampling times" width="50%" />
-<p class="caption">(\#fig:unnamed-chunk-6)Case control sampling times</p>
+<p class="caption">(\#fig:cc)Case control sampling times</p>
 </div>
 
 -   Sample point 1 - This is the classic "**case based**" sampling (AKA "exclusive", "cumulative") that occurs at the end of follow-up. In this case, the incident odds ratio (OR) ≈ risk ratio (RR) (under the rare disease assumption)\
@@ -141,7 +141,7 @@ kable(dat, caption = "Full cohort")
 
 
 
-Table: (\#tab:unnamed-chunk-7)Full cohort
+Table: (\#tab:unnamed-chunk-4)Full cohort
 
 |            | MI yes| MI no|
 |:-----------|------:|-----:|
@@ -158,7 +158,7 @@ kable(dat.con10, caption = "Case control - 10% of controls")
 
 
 
-Table: (\#tab:unnamed-chunk-7)Case control - 10% of controls
+Table: (\#tab:unnamed-chunk-4)Case control - 10% of controls
 
 |            | MI yes| MI no|
 |:-----------|------:|-----:|
@@ -176,7 +176,7 @@ kable(dat.case10, caption = "Case control - 10% of cases and controls")
 
 
 
-Table: (\#tab:unnamed-chunk-7)Case control - 10% of cases and controls
+Table: (\#tab:unnamed-chunk-4)Case control - 10% of cases and controls
 
 |            | MI yes| MI no|
 |:-----------|------:|-----:|
@@ -196,7 +196,7 @@ The following figure from [@Knol] is a useful summary of the effect measures ava
 
 <div class="figure" style="text-align: center">
 <img src="img/ebm/cc_measures.png" alt="Effect measures from case control designs" width="1000%" />
-<p class="caption">(\#fig:unnamed-chunk-8)Effect measures from case control designs</p>
+<p class="caption">(\#fig:measures)Effect measures from case control designs</p>
 </div>
 
 In summary, case control studies have the advantages of being faster to perform and less expensive to conduct than cohort studies but care must be exercised that they, like all study designs, are carefully performed. Proper control selection is essential and must come from the same target population as cases (easiest when performed within an established cohort). Controls must be sampled independently of exposure and there is improved precision with more controls (1,2,3,4) but diminishing returns (SE 0.167, 0.145, 0.138, 0.134). Effect measure precision is improved precision by taking all the cases. Although case control studies are susceptible to recognized biases (Berkson, recall, incidence/prevalence) these can be avoided with necessary care. The routine placement of case-control studies under cohort studies on hierarchies of study designs is not well-founded.

@@ -896,7 +896,6 @@ div.csl-indent {
 
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>About the Author</a></li>
-<li class="chapter" data-level="" data-path="simple-acknowledgment-and-request.html"><a href="simple-acknowledgment-and-request.html"><i class="fa fa-check"></i>Simple acknowledgment and request</a></li>
 <li class="chapter" data-level="1" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>1</b> Introduction</a>
 <ul>
 <li class="chapter" data-level="1.0.1" data-path="intro.html"><a href="intro.html#r-packages-required-for-this-chapter"><i class="fa fa-check"></i><b>1.0.1</b> R packages required for this chapter</a></li>
@@ -1003,8 +1002,8 @@ div.csl-indent {
 <h1><span class="header-section-number">Chapter 6</span> Non-experimental designs</h1>
 <div id="r-packages-required-for-this-chapter-5" class="section level3" number="6.0.1">
 <h3><span class="header-section-number">6.0.1</span> R packages required for this chapter</h3>
-<div class="sourceCode" id="cb155"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb155-1"><a href="design.html#cb155-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
-<span id="cb155-2"><a href="design.html#cb155-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="design.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-2"><a href="design.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span></code></pre></div>
 </div>
 <div id="introduction-2" class="section level2" number="6.1">
 <h2><span class="header-section-number">6.1</span> Introduction</h2>
@@ -1017,25 +1016,25 @@ Figure 6.1: EBM pyramid of research designs
 </p>
 </div>
 <p>However, Figure <a href="design.html#fig:pyramid">6.1</a> is another example of a simple heuristic which enables quick but often erroneous conclusions concerning study design. Unfortunately as shown in this and susequent chapters, there are no shortcuts to the evaluation of study designs which need individual considerations. In that respect the following <a href="https://twitter.com/statsepi/status/895012576714731520?lang=en">pyramid</a> is both more realistic and helpful.</p>
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-3"></span>
-<img src="img/ebm/pyramid_good.png" alt="EBM pyramid of research designs" width="50%" />
+<div class="figure" style="text-align: center"><span id="fig:better"></span>
+<img src="img/ebm/pyramid_good.png" alt="Better EBM pyramid of research designs" width="50%" />
 <p class="caption">
-Figure 3.1: EBM pyramid of research designs
+Figure 6.2: Better EBM pyramid of research designs
 </p>
 </div>
 <p>Although one may debate that the magnitude of the blue area is an overestimate of the scale of good designs, it does underline the importance in clinical epidemiology of assessing individual study quality for both experimental and non-experimental studies. As this book is orientated toward clinical epidemiology, experimental designs (randomized clinical trials (RCTs)) will be emphasized and discussed separately in a later chapter. RCTs have a special emphasis since they are often considered the pinnacle of research designs and greatly influence medical guidelines and consequently clinical practice.</p>
 <p>The following is a taxonomy of the different types of study designs.</p>
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-4"></span>
+<div class="figure" style="text-align: center"><span id="fig:overview"></span>
 <img src="img/ebm/overview.png" alt="Overview of different research designs" width="1000%" />
 <p class="caption">
-Figure 3.4: Overview of different research designs
+Figure 6.3: Overview of different research designs
 </p>
 </div>
-<p>Ecological study designs involve populations or groups of individuals as the unit of analysis as opposed to the other observation designs where the unit of analysis is the individual. Ecological studies are especially useful for descriptive reports, the analysis of birth cohorts, when exposure is only available at the group level, or to investigate differences between populations when the between population difference is much greater than within population differences. For example, ecological studies would be appropriate for aggregate exposure involving air pollution, health care systems, or gun control laws. One must be careful to avoid the <a href="https://en.wikipedia.org/wiki/Ecological_fallacy"><strong>ecological bias</strong></a> that can occur because an association observed between variables on the aggregate level does not necessarily represent the association that exists at the individual level. The ecological bias can be shown graphically in Figure <a href="design.html#fig:ecology">6.2</a> where the discordance of the exposure association between groups and individuals is especially strong.</p>
+<p>Ecological study designs involve populations or groups of individuals as the unit of analysis as opposed to the other observation designs where the unit of analysis is the individual. Ecological studies are especially useful for descriptive reports, the analysis of birth cohorts, when exposure is only available at the group level, or to investigate differences between populations when the between population difference is much greater than within population differences. For example, ecological studies would be appropriate for aggregate exposure involving air pollution, health care systems, or gun control laws. One must be careful to avoid the <a href="https://en.wikipedia.org/wiki/Ecological_fallacy"><strong>ecological bias</strong></a> that can occur because an association observed between variables on the aggregate level does not necessarily represent the association that exists at the individual level. The ecological bias can be shown graphically in Figure <a href="design.html#fig:ecology">6.4</a> where the discordance of the exposure association between groups and individuals is especially strong.</p>
 <div class="figure" style="text-align: center"><span id="fig:ecology"></span>
 <img src="img/ebm/ecological.png" alt="Ecological bias" width="1000%" />
 <p class="caption">
-Figure 6.2: Ecological bias
+Figure 6.4: Ecological bias
 </p>
 </div>
 <p>The real problem is <strong>cross-level reference</strong>. For an ecological study the level of measurement, level of analysis, and level of inference must all remain at the group level. Ecological studies will not be considered further in this book.</p>
@@ -1044,11 +1043,11 @@ Figure 6.2: Ecological bias
 2) joint assessment of exposure among cases and non-cases (case-control)<br />
 3) reference to one particular time (cross-sectional)</p>
 <p>Since all study designs, including the non-experimental (cohort, case-control, cross-sectional) either secretly or not, aim to estimate similar causal quantities, it could be argued that emphasizing their distinctions is somewhat artificial. In other words, do not mistake the journey (particular study type) for the destination (causal effect of an exposure).</p>
-<p>This lack of randomization with observational studies, is why we are continually reminded that non-experimental studies can’t provide evidence for causality. Instead we are told to talk of associations. A list of the top 2019 JAMA Internal Medicine articles as determined by <a href="https://www.altmetric.com">Altmetric scores</a> can be found <a href="https://jamanetwork.com/pages/2019-most-discussed-articles">here</a> and is reproduced in Figure <a href="design.html#fig:jama">6.3</a>.</p>
+<p>This lack of randomization with observational studies, is why we are continually reminded that non-experimental studies can’t provide evidence for causality. Instead we are told to talk of associations. A list of the top 2019 JAMA Internal Medicine articles as determined by <a href="https://www.altmetric.com">Altmetric scores</a> can be found <a href="https://jamanetwork.com/pages/2019-most-discussed-articles">here</a> and is reproduced in Figure <a href="design.html#fig:jama">6.5</a>.</p>
 <div class="figure" style="text-align: center"><span id="fig:jama"></span>
 <img src="img/ebm/jama.png" alt="JAMA Internal Medicine Top 2019 Altmetric Articles" width="100%" />
 <p class="caption">
-Figure 6.3: JAMA Internal Medicine Top 2019 Altmetric Articles
+Figure 6.5: JAMA Internal Medicine Top 2019 Altmetric Articles
 </p>
 </div>
 <p>Most interestingly, 11 of the top 14 articles have “association” in their title. But are we really interested in mere associations of the type that matches in your pocket or yellow fingers are associated with lung cancer? I don’t believe so and suspect most people are more interested for obvious reasons in causality and whether they care to admit it or not are subconsciously interpreting association studies in this light<span class="citation">(<a href="#ref-cword" role="doc-biblioref">Hernan 2018</a>)</span> . Otherwise there appears little justification to waste one’s time on reading these articles.</p>
@@ -1090,16 +1089,16 @@ Figure 6.3: JAMA Internal Medicine Top 2019 Altmetric Articles
 1. Concurrent (prospective) cohort studies: assembled at present time. Advantages: measurement of exposure, outcome, covariates is decided at baseline and can see temporal ordering of exposure and disease. Disadvantages: expensive and time consuming.<br />
 2. Historical/non-concurrent/mixed (retrospective) cohort studies: incorporates historical time exposed (at least partially). Advantages: less expensive; linking data registries (e.g. exposure and outcome information). Disadvantages: can only use available information; possibly lower quality measurements; data may not have been collected for research purposes.</p>
 <p>In cohort studies, exposed/unexposed groups <strong>exist</strong> in the source population and are <strong>selected</strong> by the investigator while in an RCT, a form of closed cohort, treatment/exposure is <strong>assigned</strong> by the investigator.</p>
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-5-1"></span>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-3-1"></span>
 <img src="img/ebm/cohort.png" alt="Observational research design" width="50%" />
 <p class="caption">
-Figure 6.4: Observational research design
+Figure 6.6: Observational research design
 </p>
 </div>
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-5-2"></span>
+<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-3-2"></span>
 <img src="img/ebm/rct.png" alt="Experimental research design" width="50%" />
 <p class="caption">
-Figure 6.5: Experimental research design
+Figure 6.7: Experimental research design
 </p>
 </div>
 <p>Practically, the best general approach to achieve valid causal non-experimental designs is to try to emulate the RCT<span class="citation">(<a href="#ref-emulate" role="doc-biblioref">Hernan and Robins 2016</a>)</span> you would like to do with special attention to the following:<br />
@@ -1112,10 +1111,10 @@ Figure 6.5: Experimental research design
 <p>Sometimes it useful to start with the cases! Although important for all research designs, it is obviously essential for case control designs to have an unambiguous, valid case definition preferably using objective and established criteria that avoids any misclassification or other biases. Careful distinction between incident and prevalent cases is also of prime importance. Where the cases are found is a function of the particular research question and setting. Potential sources include hospital registers, vital records (births/deaths), national registries (e.g., for cancer, diabetes) and community clinics.</p>
 <p>After case identification, the most important and difficult next step is the selection of the controls. Consideration of a counterfactual model can help operationalize the choice of controls. Controls are drawn from a sample of individuals without the disease, selected from the same reference population that originated the cases and who go through the same selection processes as the cases. Moreover, controls must be individuals who, if they had developed the case disease, would have been included in the case group.</p>
 <p>Case control studies may be conducted with an open or closed study population. In a dynamic (open) population, there are two options for selecting controls; i) if the population is in a steady-state, sample randomly from the person-time distribution ii) if not, controls may be selected at the same time as cases occur (i.e., “matched on time”). In a closed study population, there are three options for selecting controls; i) at the end of follow-up ii) at the beginning of follow-up iii) throughout follow-up as cases occur (“matched on time”). Analytically, these distinctions lead to different effect measures, each of which (under various assumptions) parallels an equivalent measure from a full-cohort study.</p>
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-6"></span>
+<div class="figure" style="text-align: center"><span id="fig:cc"></span>
 <img src="img/ebm/cc.png" alt="Case control sampling times" width="50%" />
 <p class="caption">
-Figure 3.6: Case control sampling times
+Figure 6.8: Case control sampling times
 </p>
 </div>
 <ul>
@@ -1126,13 +1125,13 @@ Figure 3.6: Case control sampling times
 <li>Sample point 3 - “<strong>Nested</strong>” sampling (AKA “incidence density”) from the distribution of exposed person-time matched during follow-up. In this case, the incident odds ratio (OR) ≈ rate ratio (RR)</li>
 </ul>
 <p>The efficiency of the case control design comes from taking a sample, and not all, of the controls. Under that logic, it may be reasonably asked why not take only a sample of the cases? Consider the following example.</p>
-<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb156-1"><a href="design.html#cb156-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
-<span id="cb156-2"><a href="design.html#cb156-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb156-3"><a href="design.html#cb156-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">200</span>,<span class="dv">100</span>,<span class="dv">1800</span>,<span class="dv">1900</span>), <span class="at">nrow=</span><span class="dv">2</span>, <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;Not exposed&quot;</span>,<span class="st">&quot;Exposed&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;MI yes&quot;</span>, <span class="st">&quot;MI no&quot;</span>)))</span>
-<span id="cb156-4"><a href="design.html#cb156-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb156-5"><a href="design.html#cb156-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dat, <span class="at">caption =</span> <span class="st">&quot;Full cohort&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="design.html#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1234</span>)</span>
+<span id="cb2-2"><a href="design.html#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="design.html#cb2-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">200</span>,<span class="dv">100</span>,<span class="dv">1800</span>,<span class="dv">1900</span>), <span class="at">nrow=</span><span class="dv">2</span>, <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="fu">c</span>(<span class="st">&quot;Not exposed&quot;</span>,<span class="st">&quot;Exposed&quot;</span>), <span class="fu">c</span>(<span class="st">&quot;MI yes&quot;</span>, <span class="st">&quot;MI no&quot;</span>)))</span>
+<span id="cb2-4"><a href="design.html#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="design.html#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dat, <span class="at">caption =</span> <span class="st">&quot;Full cohort&quot;</span>)</span></code></pre></div>
 <table>
-<caption><span id="tab:unnamed-chunk-7">Table 6.1: </span>Full cohort</caption>
+<caption><span id="tab:unnamed-chunk-4">Table 6.1: </span>Full cohort</caption>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -1153,13 +1152,13 @@ Figure 3.6: Case control sampling times
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb157"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb157-1"><a href="design.html#cb157-1" aria-hidden="true" tabindex="-1"></a>full <span class="ot">&lt;-</span> <span class="fu">epi.2by2</span>(dat)</span>
-<span id="cb157-2"><a href="design.html#cb157-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb157-3"><a href="design.html#cb157-3" aria-hidden="true" tabindex="-1"></a>dat.con10 <span class="ot">&lt;-</span> dat</span>
-<span id="cb157-4"><a href="design.html#cb157-4" aria-hidden="true" tabindex="-1"></a>dat.con10[,<span class="dv">2</span>] <span class="ot">&lt;-</span> dat[,<span class="dv">2</span>]<span class="sc">/</span><span class="dv">10</span></span>
-<span id="cb157-5"><a href="design.html#cb157-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dat.con10, <span class="at">caption =</span> <span class="st">&quot;Case control - 10% of controls&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="design.html#cb3-1" aria-hidden="true" tabindex="-1"></a>full <span class="ot">&lt;-</span> <span class="fu">epi.2by2</span>(dat)</span>
+<span id="cb3-2"><a href="design.html#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="design.html#cb3-3" aria-hidden="true" tabindex="-1"></a>dat.con10 <span class="ot">&lt;-</span> dat</span>
+<span id="cb3-4"><a href="design.html#cb3-4" aria-hidden="true" tabindex="-1"></a>dat.con10[,<span class="dv">2</span>] <span class="ot">&lt;-</span> dat[,<span class="dv">2</span>]<span class="sc">/</span><span class="dv">10</span></span>
+<span id="cb3-5"><a href="design.html#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dat.con10, <span class="at">caption =</span> <span class="st">&quot;Case control - 10% of controls&quot;</span>)</span></code></pre></div>
 <table>
-<caption><span id="tab:unnamed-chunk-7">Table 6.1: </span>Case control - 10% of controls</caption>
+<caption><span id="tab:unnamed-chunk-4">Table 6.1: </span>Case control - 10% of controls</caption>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -1180,14 +1179,14 @@ Figure 3.6: Case control sampling times
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb158-1"><a href="design.html#cb158-1" aria-hidden="true" tabindex="-1"></a>full<span class="fl">.10</span> <span class="ot">&lt;-</span> <span class="fu">epi.2by2</span>(<span class="fu">as.matrix</span>(dat.con10))</span>
-<span id="cb158-2"><a href="design.html#cb158-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb158-3"><a href="design.html#cb158-3" aria-hidden="true" tabindex="-1"></a>dat.case10 <span class="ot">&lt;-</span> dat</span>
-<span id="cb158-4"><a href="design.html#cb158-4" aria-hidden="true" tabindex="-1"></a>dat.case10[,<span class="dv">1</span>] <span class="ot">&lt;-</span> dat[,<span class="dv">1</span>]<span class="sc">/</span><span class="dv">10</span></span>
-<span id="cb158-5"><a href="design.html#cb158-5" aria-hidden="true" tabindex="-1"></a>dat.case10[,<span class="dv">2</span>] <span class="ot">&lt;-</span> dat[,<span class="dv">2</span>]<span class="sc">/</span><span class="dv">10</span></span>
-<span id="cb158-6"><a href="design.html#cb158-6" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dat.case10, <span class="at">caption =</span> <span class="st">&quot;Case control - 10% of cases and controls&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="design.html#cb4-1" aria-hidden="true" tabindex="-1"></a>full<span class="fl">.10</span> <span class="ot">&lt;-</span> <span class="fu">epi.2by2</span>(<span class="fu">as.matrix</span>(dat.con10))</span>
+<span id="cb4-2"><a href="design.html#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="design.html#cb4-3" aria-hidden="true" tabindex="-1"></a>dat.case10 <span class="ot">&lt;-</span> dat</span>
+<span id="cb4-4"><a href="design.html#cb4-4" aria-hidden="true" tabindex="-1"></a>dat.case10[,<span class="dv">1</span>] <span class="ot">&lt;-</span> dat[,<span class="dv">1</span>]<span class="sc">/</span><span class="dv">10</span></span>
+<span id="cb4-5"><a href="design.html#cb4-5" aria-hidden="true" tabindex="-1"></a>dat.case10[,<span class="dv">2</span>] <span class="ot">&lt;-</span> dat[,<span class="dv">2</span>]<span class="sc">/</span><span class="dv">10</span></span>
+<span id="cb4-6"><a href="design.html#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(dat.case10, <span class="at">caption =</span> <span class="st">&quot;Case control - 10% of cases and controls&quot;</span>)</span></code></pre></div>
 <table>
-<caption><span id="tab:unnamed-chunk-7">Table 6.1: </span>Case control - 10% of cases and controls</caption>
+<caption><span id="tab:unnamed-chunk-4">Table 6.1: </span>Case control - 10% of cases and controls</caption>
 <thead>
 <tr class="header">
 <th align="left"></th>
@@ -1208,16 +1207,16 @@ Figure 3.6: Case control sampling times
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb159"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb159-1"><a href="design.html#cb159-1" aria-hidden="true" tabindex="-1"></a>full.case10 <span class="ot">&lt;-</span> <span class="fu">epi.2by2</span>(<span class="fu">as.matrix</span>(dat.case10))</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="design.html#cb5-1" aria-hidden="true" tabindex="-1"></a>full.case10 <span class="ot">&lt;-</span> <span class="fu">epi.2by2</span>(<span class="fu">as.matrix</span>(dat.case10))</span></code></pre></div>
 <p>The OR is 2.11 with 95% CI 1.65 - 2.71. The OR is fairly close to incident risk ratio for the full cohort (RR = 2) since the rare assumption is approximately true, about 10% incidence.<br />
 If we select only 1/10 of the controls the OR is 2.11 with 95% CI 1.54 - 2.89, a trivial difference.<br />
 On the other hand, suppose we take a 1/10 sample of the cases, the OR remains unbiased at 2.11 but the 95% CI 0.96 - 4.63 is much larger. It is this lack of precision that mandates the inclusion of all cases in a case / control design.<br />
 This is easily understood when it is recalled that the standard error of the estimated OR is <span class="math display">\[se(\hat{OR}) = \sqrt{\dfrac{1}{a} + \dfrac{1}{b} + \dfrac{1}{c} + \dfrac{1}{d}}\]</span> so the largest component comes from the smallest cell entries and se will be minimized by taking all the cases.</p>
 <p>The following figure from <span class="citation">(<a href="#ref-Knol" role="doc-biblioref">Knol et al. 2008</a>)</span> is a useful summary of the effect measures available from case control studies depending on the nature of the cases (prevalent or incident; level 1), the type of source population (fixed cohort or dynamic population; level 2), the sampling design used to select controls (level 3), and the underlying assumptions (level 4).</p>
-<div class="figure" style="text-align: center"><span id="fig:unnamed-chunk-8"></span>
+<div class="figure" style="text-align: center"><span id="fig:measures"></span>
 <img src="img/ebm/cc_measures.png" alt="Effect measures from case control designs" width="1000%" />
 <p class="caption">
-Figure 2.2: Effect measures from case control designs
+Figure 6.9: Effect measures from case control designs
 </p>
 </div>
 <p>In summary, case control studies have the advantages of being faster to perform and less expensive to conduct than cohort studies but care must be exercised that they, like all study designs, are carefully performed. Proper control selection is essential and must come from the same target population as cases (easiest when performed within an established cohort). Controls must be sampled independently of exposure and there is improved precision with more controls (1,2,3,4) but diminishing returns (SE 0.167, 0.145, 0.138, 0.134). Effect measure precision is improved precision by taking all the cases. Although case control studies are susceptible to recognized biases (Berkson, recall, incidence/prevalence) these can be avoided with necessary care. The routine placement of case-control studies under cohort studies on hierarchies of study designs is not well-founded.</p>

@@ -93,3 +93,9 @@ case-control
 cross-sectional
 miscellaneous-designs
 references
+fig:overview
+fig:unnamed-chunk-3-1
+fig:unnamed-chunk-3-2
+fig:cc
+tab:unnamed-chunk-4
+fig:measures
