@@ -12,10 +12,14 @@ library(tidyverse)
 
 This is an intermediate epidemiology book that focuses on the methods most commonly encountered in problems arising in the domain of clinical epidemiology. The emphasis is on research design, quantitative analysis, critical thinking, and reproducible research methods. As it is my belief that epidemiologic principles are fundamental to high quality medical research and the learning and evaluation of these principles are best consolidated through direct application to problem solving, the text emphasizes the use of quantification, via open source software.
 
-By the end of the book students can expect to:     
+By the end of the book readers can expect to:   
+
+::: {.blue-box}    
 • Understand and critically evaluate basic study designs and statistical inferences in medical research    
 • Understand, identify, and quantitatively evaluate sources of bias in epidemiologic and clinical studies     
 • Master quantitative techniques for visualizing, cleaning, analyzing and interpreting epidemiologic and clinical data, including descriptive analyses, stratified analyses, regression analyses and meta-analyses.      
+
+:::    
 
 ## Prerequisites {#pre}
 
@@ -25,11 +29,18 @@ There are multiple excellent introductory [@Gordis] [@Rothman], intermediate [@S
 
 The standard definition of epidemiology is the study of the distribution and determinants of health-related states or events in specified populations, and the application of this study to the control of health problems [@Last].
 
-This definition may be expanded as follows:     
-* The distribution of health-related states refers to analysis by time, place, and population. 
-* The different varieties of epidemiologic study include; i) **Descriptive**: looking at patterns of disease within and between populations, trying to understand why disease rates go up and down, population variation ii) **Etiologic**: understand the causes of disease, with implications for interventions to change disease distributions iii) **Predictive**: predict outcomes for future patients, with implications for interventions to alter outcomes 
-* The common determinants of of health-related states are biological, behavioral, social, cultural, economic, and political factors that influence health 
+This definition may be expanded as follows:   
+
+::: {.blue-box}     
+* The distribution of health-related states refers to analysis by time, place, and population.     
+* The different varieties of epidemiologic study include;     
+  i) **Descriptive**: looking at patterns of disease within and between populations, trying to understand why disease rates go up and down, population variation     
+  ii) **Etiologic**: understand the causes of disease, with implications for interventions to change disease distributions     
+  iii) **Predictive**: predict outcomes for future patients, with implications for interventions to alter outcomes   
+* The common determinants of of health-related states are biological, behavioral, social, cultural, economic, and political factors that influence health     
 * The ultimate goal of epidemiology is the advancement of scientific knowledge to promote, protect, and restore health      
+
+:::    
 
 Clinical epidemiology may therefore be seen (?defined) as the application of epidemiologic principles and reasoning to improve clinical decision making and ultimately "patient" outcomes. However, I think it is preferable to interpret the term "patient" in the widest possible context, and consequently clinical epidemiology might range from the study of preventive measures in asymptomatic individuals to the evaluation of quaternary hospital interventions in large cohorts. As patient cohorts may arise not only from hospitals but also from specific neighborhoods, cities, provinces and countries the distinction between classic epidemiology and clinical epidemiology is hardly distinct. Consequently, while this book will focus on clinical applications, the underlying methods of classic epidemiology will also be presented, admittedly in a focused or condensed manner.
 
@@ -163,7 +174,7 @@ In 2018, medical researchers form John Hopkins reported a clinical trial in JAMA
 
 The problem was a simple miscoding of the intervention and control arms. Being able to read and follow code, can assure that extra eyes are available to catch these errors which can happen to all of us. While reviewing their code to correct this major error, the research team discovered at least two other areas of erroneous code (in the commands to impute missing values and to aggregate data into summary variables).
 
-On a broader level, sharing analytic code is increasingly the norm across many fields and provides an unambiguous record of the analytical methods used, aiding reproducibility, helping avoid duplicated effort and possibly accelerating innovation. it would be nice to see this become the norm in clinical epidemiology.
+On a broader level, sharing analytic code is increasingly the norm across many fields and provides an unambiguous record of the analytical methods used, aiding reproducibility, helping avoid duplicated effort and possibly accelerating innovation. It would be nice to see this become the norm in clinical epidemiology.
 
 ## Outline {#outline}
 
