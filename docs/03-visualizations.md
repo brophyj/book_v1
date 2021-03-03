@@ -27,14 +27,14 @@ Although remembered as the mother of modern nursing, Florence Nightingale was an
 
 <div class="figure">
 <img src="img/rose.png" alt="Classic epidemiology visualizations - Nightingale's Rose" width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-2)Classic epidemiology visualizations - Nightingale's Rose</p>
+<p class="caption">(\#fig:rose)Classic epidemiology visualizations - Nightingale's Rose</p>
 </div>
 [Charles Minard’s](https://en.wikipedia.org/wiki/Charles_Joseph_Minard) 1869 publication of a flow map of Napoleon’s Russian 1812 campaign has been called best statistical graphic ever drawn by [Edward Tufte](https://en.wikipedia.org/wiki/Edward_Tufte) who is a preeminent 21st century statistician and pioneer in the field of data visualization. The figure shows 6 six types of data in two dimensions: the number of Napoleon's troops; the distance traveled; temperature; latitude and longitude; direction of travel; and location relative to specific dates. The chart tells with painful clarity the atrocious losses associated with this campaign as an initial force of 422,000 saw only only 10,000 return. On the retrurn trip 50% of the forces were lost while crossing the Bérézina river under heavy attack. “C'est la Bérézina” is a French expression used to describe a total disaster.
 
 
 <div class="figure">
 <img src="img/minard.png" alt="Classic epidemiology visualizations - Napoleon’s Russian 1812 Campaign " width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-3)Classic epidemiology visualizations - Napoleon’s Russian 1812 Campaign </p>
+<p class="caption">(\#fig:unnamed-chunk-2)Classic epidemiology visualizations - Napoleon’s Russian 1812 Campaign </p>
 </div>
 ## Why is data visualization important? 
 
@@ -74,15 +74,15 @@ output: html_document
 
 <div class="figure" style="text-align: left">
 <img src="img/viz/jobs.png" alt="Pie chart (with Steve Jobs)" width="200%" />
-<p class="caption">(\#fig:unnamed-chunk-4)Pie chart (with Steve Jobs)</p>
+<p class="caption">(\#fig:unnamed-chunk-3)Pie chart (with Steve Jobs)</p>
 </div>
 :::
 
 ::: {}
 
 <div class="figure" style="text-align: right">
-<img src="03-visualizations_files/figure-html/unnamed-chunk-5-1.png" alt="Bar plot (without Steve Jobs)" width="50%" />
-<p class="caption">(\#fig:unnamed-chunk-5)Bar plot (without Steve Jobs)</p>
+<img src="03-visualizations_files/figure-html/unnamed-chunk-4-1.png" alt="Bar plot (without Steve Jobs)" width="50%" />
+<p class="caption">(\#fig:unnamed-chunk-4)Bar plot (without Steve Jobs)</p>
 </div>
 :::
 ::::
@@ -96,7 +96,7 @@ Here is a static image from Rosling's video. It certainly is of professional qua
 
 <div class="figure" style="text-align: center">
 <img src="img/un_graph.png" alt="Gapminder data" width="50%" />
-<p class="caption">(\#fig:unnamed-chunk-6)Gapminder data</p>
+<p class="caption">(\#fig:unnamed-chunk-5)Gapminder data</p>
 </div>
 
 If the first plot we produce is of this quality, it will hopefully inspire us to realize what we can accomplish with data visualizations using `R`. While this may rightly not completely dispel the notion that a definitive learning curve is associated with`R`, it is certainly suggests it can be manageable. Here is the code that reproduces the graph.          
@@ -127,7 +127,7 @@ un_graph
 ## Warning: Removed 4 rows containing missing values (geom_point).
 ```
 
-<img src="03-visualizations_files/figure-html/unnamed-chunk-7-1.png" width="672" />
+<img src="03-visualizations_files/figure-html/unnamed-chunk-6-1.png" width="672" />
 
 ```r
 # to save your figure
@@ -264,7 +264,7 @@ gapminder %>% filter(continent == "Asia" | continent == "Europe") %>%
 ## Warning: Removed 53 rows containing missing values (geom_point).
 ```
 
-<img src="03-visualizations_files/figure-html/unnamed-chunk-11-1.png" width="672" />
+<img src="03-visualizations_files/figure-html/unnamed-chunk-10-1.png" width="672" />
 
 ```r
 gapminder %>% filter(continent == "Asia" | continent == "Europe") %>% 
@@ -276,7 +276,7 @@ gapminder %>% filter(continent == "Asia" | continent == "Europe") %>%
     theme_bw()
 ```
 
-<img src="03-visualizations_files/figure-html/unnamed-chunk-11-2.png" width="672" />
+<img src="03-visualizations_files/figure-html/unnamed-chunk-10-2.png" width="672" />
    
 These graphs show that the heuristic of improved infant and overall life expectancy among European countries was true 60 years ago but is no longer today's truth. This underlines the need to continually question our baseline assumptions.
 
@@ -297,7 +297,7 @@ A graph can provide a quick interpretation of the data and orient more in depth 
 
 <div class="figure" style="text-align: center">
 <img src="img/graphs.png" alt="Data visualization -&gt; Quick understanding of data" width="1000%" />
-<p class="caption">(\#fig:unnamed-chunk-12)Data visualization -> Quick understanding of data</p>
+<p class="caption">(\#fig:unnamed-chunk-11)Data visualization -> Quick understanding of data</p>
 </div>
 
 
@@ -306,7 +306,7 @@ Consider this story from the [New York Times](https://www.nytimes.com/2011/02/19
 
 <div class="figure" style="text-align: center">
 <img src="img/hs_grades.png" alt="Histogram of grades" width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-13)Histogram of grades</p>
+<p class="caption">(\#fig:unnamed-chunk-12)Histogram of grades</p>
 </div>
 
 Graphs can also be combined to provide further insights into the data. The following is a graph from the excellent book [The Art of Statistics](https://github.com/dspiegel29/ArtofStatistics) by David Speigelhalter that shows the gender and timing of the 215 confirmed victims of the mass murderer, Dr. Harold Shipman.   
@@ -314,7 +314,7 @@ Graphs can also be combined to provide further insights into the data. The follo
 
 <div class="figure" style="text-align: center">
 <img src="img/shipman.png" alt="Murder victims" width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-14)Murder victims</p>
+<p class="caption">(\#fig:unnamed-chunk-13)Murder victims</p>
 </div>
 
 Here a basic scatter plot has been combined with marginal histograms. This enables a quick appreciation that the victims were     
@@ -338,7 +338,7 @@ Here is an initial plot as displayed on John Snow’s original map.
 
 <div class="figure">
 <img src="img/ghost_map.png" alt="Classic epidemiology visualizations - John Snow's Cholera Broad Street Ghost Map" width="100%" />
-<p class="caption">(\#fig:unnamed-chunk-15)Classic epidemiology visualizations - John Snow's Cholera Broad Street Ghost Map</p>
+<p class="caption">(\#fig:unnamed-chunk-14)Classic epidemiology visualizations - John Snow's Cholera Broad Street Ghost Map</p>
 </div>
      
 When many points are associated with a single street address, they are “stacked” in a line away from the street so that they are more easily visualized. This dataset is found in the `HistData` package and has 578 observations on the following 3 variables, giving the address of a person who died from cholera.    
@@ -434,7 +434,7 @@ snow.plot1 <- london_main + geom_point(mapping=aes(x=coords.x1, y=coords.x2, col
 snow.plot1
 ```
 
-<img src="03-visualizations_files/figure-html/unnamed-chunk-17-1.png" width="672" />
+<img src="03-visualizations_files/figure-html/unnamed-chunk-16-1.png" width="672" />
 
 ```r
 snow.plot2 <- london_main + geom_density2d(data = tmp[tmp$type =="death", ], aes(x = coords.x1, y = coords.x2),
@@ -444,5 +444,5 @@ snow.plot2 <- london_main + geom_density2d(data = tmp[tmp$type =="death", ], aes
 snow.plot2
 ```
 
-<img src="03-visualizations_files/figure-html/unnamed-chunk-17-2.png" width="672" />
+<img src="03-visualizations_files/figure-html/unnamed-chunk-16-2.png" width="672" />
 

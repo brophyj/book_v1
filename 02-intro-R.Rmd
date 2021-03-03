@@ -50,7 +50,7 @@ This book is not intended to be first line resource for learning `R`, as there a
 * Condensed `R` reference card can be found [here][https://cran.r-project.org/doc/contrib/Short-refcard.pdf]  
 * The [swirl](http://swirlstats.com/) tutorial teaches R programming and data science interactively, install `swirl` with `install.packages("swirl")` and run  with the `swirl()` command   
 * Helpful cheet sheets can be found as the [RStudio website](https://rstudio.com/resources/cheatsheets/)    
-* [UCLA](http://statistics.ats.ucla.edu/stat/r/)
+* [UCLA](https://stats.idre.ucla.edu/r/)
 * [Quick R](http://www.statmethods.net)
 * [R blogger](http://www.r-bloggers.com), a daily compilation of R blogs from over the interent
 * [Advanced R](http://adv-r.had.co.nz)

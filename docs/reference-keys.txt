@@ -99,3 +99,4 @@ fig:unnamed-chunk-3-2
 fig:cc
 tab:unnamed-chunk-4
 fig:measures
+fig:rose

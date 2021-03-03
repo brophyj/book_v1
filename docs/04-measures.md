@@ -85,7 +85,7 @@ More commonly we will have larger 2X2 datasets, or more generally nXm datasets t
 
 ## Contingency tables 
 
-Begin by reading in the `heart.csv` dataset where the outcome status is the `fstat` variable. Details about the other variables can be obtained with `str()`. It is often of interest to initially explore any categorical exposure and outcome create a contingency table of `fstat` (alive / dead)  versus `gender` (men=0, women=1).
+Begin by reading in the `heart.csv` [dataset](https://github.com/brophyj/book_v1/blob/main/data/heart.csv) where the outcome status is the `fstat` variable. Details about the other variables can be obtained with `str()`. It is often of interest to initially explore any categorical exposure and outcome create a contingency table of `fstat` (alive / dead)  versus `gender` (men=0, women=1).
 
 
 ```r
@@ -418,7 +418,7 @@ In this time period there were 3 deaths in 11.18 months of follow-up. There were
 Therefore the incidence rate at 12 months = 0.03 / person month or 3.15 / 100 person months.\
 What is the cumulative incidence over 21 months?\
 On the surface, straightforward calculation of number of deaths / initial population = 0.6. However this ignores the censoring.\
-The incidence proportions in the presence of censoring can be estimated by assuming a constant rates. $$Q = 1 − exp(−I × ∆) = 1- exp(-0.049 * 21) = 0.64$$ With dynamic study population individual follow-up times are variable and difficult to measure accurately such that a common approximation is to use the mid-population average of the initial and final populations multiplied by the follow-up time.
+The incidence proportions in the presence of censoring can be estimated by assuming a constant rates. $$Q = 1 − exp^{(−I × ∆)} = 1- exp^{(-0.049 * 21)} = 0.64$$ With dynamic study population individual follow-up times are variable and difficult to measure accurately such that a common approximation is to use the mid-population average of the initial and final populations multiplied by the follow-up time.
 
 ### Example 2 - rare disease
 
